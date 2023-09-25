@@ -55,7 +55,7 @@ set_target_properties(ImagineModels PROPERTIES
 )
 
 enable_testing()
-set(TESTSOURCES grid parameter_update positions)
+set(TESTSOURCES grid parameter_update positions derivatives)
 foreach(test ${TESTSOURCES})
     set(test_name ${test}_ctest)
     add_executable(${test_name} "${PROJECT_SOURCE_DIR}/test/regular/test_${test}.cc")
