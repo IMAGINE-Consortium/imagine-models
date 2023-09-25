@@ -48,6 +48,9 @@ if(NOT EXISTS ${INTERNAL_findFFTW_DIR})
 endif()
 find_package(FFTW QUIET COMPONENTS DOUBLE_LIB)
 
+
+message("-- libraries ${LIBRARIES}")
+
 if(FFTW_FOUND)
     message("-- FFTW libraries found: ${FFTW_DOUBLE_LIB}; will include random field generation routines.")
         include_directories(${FFTW_INCLUDE_DIRS})
@@ -55,6 +58,8 @@ if(FFTW_FOUND)
 else()
     message("-- FFTW libraries not found: random field generation disabled.")
 endif()
+
+message("-- libraries ${LIBRARIES}")
 
 add_compile_definitions(FFTW_FOUND=${FFTW_FOUND})
 # pkg_search_module(autodiff QUIET)
