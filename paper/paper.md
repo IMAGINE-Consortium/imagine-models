@@ -36,7 +36,7 @@ affiliations:
   index: 6
 - name: Canadian Institute for Theoretical Astrophysics, University of Toronto, 60 St. George Street, Toronto, ON M5S 3H8, Canada
   index: 7
-- name: Jodrell Bank Centre for Astrophysics, Alan Turing Building, School of Physics and Astronomy, The University of Manchester, Oxford Road, Manchester, M13 9PL, UK
+- name: Jodrell Bank Centre for Astrophysics, Alan Turing Building, Department of Physics and Astronomy, School of Natural Sciences, Oxford Road, Manchester, M13 9PL, U.K.
   index: 8
 date: x x 2023
 bibliography: paper.bib
