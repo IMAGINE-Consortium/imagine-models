@@ -6,6 +6,9 @@ tags:
 - astronomy
 - Galactic magnetic field
 - Milky Way
+- non-thermal radiation 
+- CMB foreground
+- Cosmic rays
 authors:
 - name: Sebastian Hutschenreuter
   orcid: 0000-0002-6952-9688
