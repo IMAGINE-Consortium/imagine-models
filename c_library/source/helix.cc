@@ -26,6 +26,6 @@ Eigen::MatrixXd HelixMagneticField::_jac(const double &x, const double &y, const
                                         { return _p._at_position(_x, _y, _z, _p); },
                                         ad::wrt(p.ampx, p.ampy, p.ampz), ad::at(x, y, z, p), out);
   return _filter_diff(_deriv);
-};
+}
 
 #endif

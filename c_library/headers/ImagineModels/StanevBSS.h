@@ -23,10 +23,11 @@ protected:
         using RegularVectorField :: RegularVectorField;
 
         double b_r_max = 20.; // kpc
-        double b_r_min = 1.; // kpc
+        double b_r_min = 4.; // kpc
 
-        number b_b0 = 6.; // muG
-        number b_z0 = 1.; // kpc
+        number b_z01 = 1.; // kpc
+        number b_z02 = 4.; // kpc
+        number b_z0_border = 0.5; // kpc
         number b_r0 = 10.55; // kpc
         number b_p = -10; // degree
         number b_Rsun = 8.5; // kpc

@@ -7,7 +7,6 @@
 
 #include "Field.h"
 #include "RegularField.h"
-#include "param.h"
 
 class JaffeMagneticField : public RegularVectorField
 {
@@ -87,11 +86,11 @@ public:
 
     number radial_scaling(const double &x, const double &y, const JaffeMagneticField &p) const;
 
-    vector arm_compress(const double &x, const double &y, const double &z, const JaffeMagneticField &p) const;
+    std::vector<number> arm_compress(const double &x, const double &y, const double &z, const JaffeMagneticField &p) const;
 
-    vector arm_compress_dust(const double &x, const double &y, const double &z, const JaffeMagneticField &p) const;
+    std::vector<number> arm_compress_dust(const double &x, const double &y, const double &z, const JaffeMagneticField &p) const;
 
-    vector dist2arm(const double &x, const double &y, const JaffeMagneticField &p) const;
+    std::vector<number> dist2arm(const double &x, const double &y, const JaffeMagneticField &p) const;
 
     number arm_scaling(const double &z, const JaffeMagneticField &p) const;
 

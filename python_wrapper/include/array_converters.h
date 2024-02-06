@@ -23,7 +23,7 @@ inline py::array_t<typename Sequence::value_type> as_pyarray(Sequence &&seq) {
   return py::array(size, data, capsule);
 }
 
-inline py::array_t<double> from_pointer_to_pyarray(double* data, size_t arr_size_x, size_t arr_size_y, size_t arr_size_z, bool fftw) {
+inline py::array_t<double> from_pointer_to_pyarray(double* data, size_t arr_size_x, size_t arr_size_y, size_t arr_size_z) {
   
   py::capsule capsule(data, [](void *f) {
       std::unique_ptr<double>(reinterpret_cast<double*>(f));
@@ -31,25 +31,17 @@ inline py::array_t<double> from_pointer_to_pyarray(double* data, size_t arr_size
 
   size_t arr_size = arr_size_x*arr_size_y*arr_size_z;
   py::array_t<double> arr = py::array(arr_size, data, capsule);
-  /*if (fftw) {
-    if (arr_size_z & 2) { //uneven
-      arr.resize({arr_size_x, arr_size_y, arr_size_z - 1});
-    }
-    else { //even
-      arr.resize({arr_size_x, arr_size_y, arr_size_z - 2});
-    }
-  }
-  */
+
   return arr.reshape({arr_size_x, arr_size_y, arr_size_z});
 }
 
 
-inline py::list from_pointer_array_to_list_pyarray(std::array<double*, 3> seq, size_t arr_size_x, size_t arr_size_y, size_t arr_size_z, bool fftw) {
-  size_t arr_size = arr_size_x*arr_size_y*arr_size_z;
+inline py::list from_pointer_array_to_list_pyarray(std::array<double*, 3> seq, size_t arr_size_x, size_t arr_size_y, size_t arr_size_z) {
+
   py::list li;
 
   for (int i = 0; i<3; ++i) {
-    py::array_t<double> arr = from_pointer_to_pyarray(std::move(seq[i]), arr_size_x, arr_size_y, arr_size_z, fftw);
+    py::array_t<double> arr = from_pointer_to_pyarray(std::move(seq[i]), arr_size_x, arr_size_y, arr_size_z);
 
     li.append(arr);
   }

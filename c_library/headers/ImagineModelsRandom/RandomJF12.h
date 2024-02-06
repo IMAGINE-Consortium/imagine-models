@@ -7,8 +7,7 @@
 #include <cassert>
 #include <iostream>
 
-#include "Field.h"
-#include "RandomField.h"
+#include "RandomVectorField.h"
 #include "RegularJF12.h"
 
 class JF12RandomField : public RandomVectorField {
@@ -35,6 +34,12 @@ class JF12RandomField : public RandomVectorField {
     double Rmax = 20.;
     double rho_GC = 1.;
 
+
+    const double rc_B[8] = {
+          5.1, 6.3,  7.1,  8.3,
+          9.8, 11.4, 12.7, 15.5}; // neg x crossings of spiral arms
+    const double inc = 11.5; // inclination, in degrees
+
     double spectral_amplitude = 1.; 
     double spectral_offset = 1.; 
     double spectral_slope = 2.;
@@ -43,11 +48,13 @@ class JF12RandomField : public RandomVectorField {
 
     JF12MagneticField regular_base = JF12MagneticField();
 
-    void _on_grid(std::array<double*, 3> val, const std::array<int, 3> &shp, const std::array<double, 3> &rpt, const std::array<double, 3> &inc, const int seed) override;
+    //void _on_grid(std::array<double*, 3> val, const std::array<int, 3> &shp, const std::array<double, 3> &rpt, const //std::array<double, 3> &inc, const int seed) override;
 
-    double calculate_fourier_sigma(const double &abs_k) const override;
+    double calculate_fourier_sigma(const double &abs_k, const double &dk) const override;
 
-    double spatial_profile(const double &x, const double &y, const double &z) const override; 
+    double spatial_profile(const double &x, const double &y, const double &z) const override;
+
+    vector anisotropy_direction(const double &x, const double &y, const double &z) const; 
 };
 
 #endif

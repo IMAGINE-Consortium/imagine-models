@@ -35,31 +35,38 @@ void test_at_position(std::map<std::string, std::map<std::array<double, 3>, vect
 }
 
 int main() {
-        std::map<std::string, std::map<std::array<double, 3>, vector>> val_pos_map;
-
     // Define some positions in Galactic cartesian coordinates (units are kpc)
+    vector zv{{0., 0., 0.}};
+
+    vector z1{{0., 0., 1.}};
 
     std::map<std::array<double, 3>, vector> jf_12_map;
-    vector nv{{0., 0., 0.}};
-    jf_12_map[{0., 0., 0.}] = nv; // Galactic center
-    jf_12_map[{.1, .3, .4}] = nv; // Within inner boundary
-    jf_12_map[{0., 0., 0.}] = nv; // outside outer boundary 
+    jf_12_map[{0., 0., 0.}] = zv; // Galactic center
+    jf_12_map[{.1, .3, .4}] = zv; // Within inner boundary
+    jf_12_map[{0., 0., 0.}] = zv; // outside outer boundary 
 
 
     std::map<std::array<double, 3>, vector> jaffe_map;
-    //jaffe_map[{0., 0., 0.}] = {0., 0., 0.}; // Galactic center
+    jaffe_map[{0., 0., 0.}] = zv; // Galactic center
+    jaffe_map[{0., 0., 1.}] = zv; // Galactic center
+
+    std::map<std::array<double, 3>, vector> pshirkov_map;
+    pshirkov_map[{0., 0., 0.}] = zv; // Galactic center
 
     std::map<std::array<double, 3>, vector> helix_map;
 
+    std::map<std::string, std::map<std::array<double, 3>, vector>> val_pos_map;
     val_pos_map["JF12"] = jf_12_map;
     val_pos_map["Jaffe"] = jaffe_map;
     val_pos_map["Helix"] = helix_map;
+    val_pos_map["Pshirkov"] = pshirkov_map;
 
 
     std::map <std::string, std::shared_ptr<RegularVectorField>> models;
     models["JF12"] = std::shared_ptr<JF12MagneticField> (new JF12MagneticField());
     models["Jaffe"] = std::shared_ptr<JaffeMagneticField> (new JaffeMagneticField());
     models["Helix"] = std::shared_ptr<HelixMagneticField> (new HelixMagneticField());
+    models["Pshirkov"] = std::shared_ptr<PshirkovMagneticField> (new PshirkovMagneticField());
 
     test_at_position(val_pos_map, models);
 

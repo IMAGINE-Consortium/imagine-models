@@ -23,14 +23,14 @@ class SunMagneticField : public RegularVectorField  {
         using RegularVectorField :: RegularVectorField;
 
         number b_Rsun = 8.5; 
-        number b_R0 = 10.;
+        number b_R0 = 8.5;
         number b_B0 = 2.;
         number b_z0 = 1.;
-        number b_Rc = 5.;
+        number b_Rc = 5.3;
         number b_Bc = 2.;
         number b_p = -12.;
         
-        number bH_B0 = 2.;
+        number bH_B0 = 2.;  // 10 in original publication, 2 in update https://arxiv.org/abs/1010.4394
         number bH_R0 = 4.;
         number bH_z0 = 1.5;
         number bH_z1a = 0.2;

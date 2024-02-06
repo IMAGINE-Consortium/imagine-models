@@ -4,7 +4,11 @@
 #include "Jaffe.h"
 #include "Helix.h"
 #include "Uniform.h"
+#include "Pshirkov.h"
+#include "Archimedes.h"
 #include "Sun.h"
+#include "Han.h"
+#include "TF17.h"
 #include "TinyakovTkachev.h"
 #include "HarariMollerachRoulet.h"
 

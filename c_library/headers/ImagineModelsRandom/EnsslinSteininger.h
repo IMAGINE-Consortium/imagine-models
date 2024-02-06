@@ -3,8 +3,7 @@
 #include <cassert>
 #include <iostream>
 
-#include "Field.h"
-#include "RandomField.h"
+#include "RandomVectorField.h"
 
 
 class ESRandomField : public RandomVectorField {
@@ -22,9 +21,9 @@ class ESRandomField : public RandomVectorField {
     double spectral_slope = 2.;
 
 
-    void _on_grid(std::array<double*, 3> val, const std::array<int, 3> &shp, const std::array<double, 3> &zpt, const std::array<double, 3> &inc, const int seed) override;
+    //void _on_grid(std::array<double*, 3> val, const std::array<int, 3> &shp, const std::array<double, 3> &zpt, const std::array<double, 3> &inc, const int seed) override;
 
-    double calculate_fourier_sigma(const double &abs_k) const override;
+    double calculate_fourier_sigma(const double &abs_k, const double &dk) const override;
 
     double spatial_profile(const double &x, const double &y, const double &z) const override; 
 

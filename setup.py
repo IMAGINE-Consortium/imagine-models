@@ -5,6 +5,9 @@ import sys
 
 from setuptools import Extension, setup, find_packages
 from setuptools.command.build_ext import build_ext
+from setuptools.command.install import install
+from pathlib import Path
+
 
 # Convert distutils Windows platform specifiers to CMake -A arguments
 PLAT_TO_CMAKE = {
@@ -19,18 +22,21 @@ PLAT_TO_CMAKE = {
 # The name must be the _single_ output extension from the CMake build.
 # If you need multiple extensions, see scikit-build.
 class CMakeExtension(Extension):
-    def __init__(self, name, sourcedir=""):
-        Extension.__init__(self, name, sources=[])
-        self.sourcedir = os.path.abspath(sourcedir)
+    def __init__(self, name: str, sourcedir: str = "") -> None:
+        super().__init__(name, sources=[])
+        self.sourcedir = os.fspath(Path(sourcedir).resolve())
 
 
 class CMakeBuild(build_ext):
     def build_extension(self, ext):
-        extdir = os.path.abspath(os.path.dirname(self.get_ext_fullpath(ext.name)))
-
+        print("Build ext hi")
+        # Must be in this form due to bug in .resolve() only fixed in Python 3.10+
+        ext_fullpath = Path.cwd() / self.get_ext_fullpath(ext.name)
+        extdir = ext_fullpath.parent.resolve()
+        print("extdir: ", extdir )
         # required for auto-detection & inclusion of auxiliary "native" libs
-        if not extdir.endswith(os.path.sep):
-            extdir += os.path.sep
+#        if not extdir.endswith(os.path.sep):
+#            extdir += os.path.sep
 
         debug = int(os.environ.get("DEBUG", 0)) if self.debug is None else self.debug
         cfg = "Debug" if debug else "Release"
@@ -43,18 +49,33 @@ class CMakeBuild(build_ext):
         # EXAMPLE_VERSION_INFO shows you how to pass a value into the C++ code
         # from Python.
         cmake_args = [
-            f"-DCMAKE_LIBRARY_OUTPUT_DIRECTORY={extdir}",
-            f"-DPYTHON_EXECUTABLE={sys.executable}",
+            f"-DCMAKE_LIBRARY_OUTPUT_DIRECTORY={extdir}{os.sep}",
+        #     f"-DPYTHON_EXECUTABLE={sys.executable}",
             f"-DCMAKE_BUILD_TYPE={cfg}",  # not used on MSVC, but no harm
         ]
+        
+        cmake_args.append("-DBUILD_PYTHON_PACKAGE=ON")
+        
+        use_autodiff = os.environ.get("USE_AUTODIFF", "")
+        if len(use_autodiff) > 1:
+            cmake_args.append("-DUSE_AUTODIFF={}".format(use_autodiff))
+            
+        use_fftw = os.environ.get("USE_FFTW", "")
+        if len(use_fftw) > 1:
+            cmake_args.append("-DUSE_FFTW={}".format(use_fftw))
+        
         build_args = []
         # Adding CMake arguments set as environment variable
         # (needed e.g. to build for ARM OSx on conda-forge)
         if "CMAKE_ARGS" in os.environ:
             cmake_args += [item for item in os.environ["CMAKE_ARGS"].split(" ") if item]
+            
+    
+        if "CMAKE_PREFIX_PATH" in os.environ:
+            cmake_args += [f"-DCMAKE_PREFIX_PATH={os.environ['CMAKE_PREFIX_PATH']}"]
 
         # In this example, we pass in the version to C++. You might not need to.
-        cmake_args += [f"-DEXAMPLE_VERSION_INFO={self.distribution.get_version()}"]
+        # cmake_args += [f"-DEXAMPLE_VERSION_INFO={self.distribution.get_version()}"]
 
         if self.compiler.compiler_type != "msvc":
             # Using Ninja-build since it a) is available as a wheel and b)
@@ -62,11 +83,15 @@ class CMakeBuild(build_ext):
             # exported for Ninja to pick it up, which is a little tricky to do.
             # Users can override the generator with CMAKE_GENERATOR in CMake
             # 3.15+.
-            if not cmake_generator:
+            if not cmake_generator or cmake_generator == "Ninja":
                 try:
                     import ninja  # noqa: F401
 
-                    cmake_args += ["-GNinja"]
+                    ninja_executable_path = Path(ninja.BIN_DIR) / "ninja"
+                    cmake_args += [
+                        "-GNinja",
+                        f"-DCMAKE_MAKE_PROGRAM:FILEPATH={ninja_executable_path}",
+                    ]
                 except ImportError:
                     pass
 
@@ -105,14 +130,17 @@ class CMakeBuild(build_ext):
             if hasattr(self, "parallel") and self.parallel:
                 # CMake 3.12+ only.
                 build_args += [f"-j{self.parallel}"]
-        if not os.path.exists(self.build_temp):
-            os.makedirs(self.build_temp)
-        print("CMAKE ", cmake_args)
-        subprocess.check_call(
-            ["cmake", ext.sourcedir] + cmake_args, cwd=self.build_temp
+        build_temp = Path(self.build_temp) / ext.name
+        if not build_temp.exists():
+            build_temp.mkdir(parents=True)
+
+        print('setup.py: cmake args: ', cmake_args)
+        print('setup.py: build: ', build_args)
+        subprocess.run(
+            ["cmake", ext.sourcedir, *cmake_args], cwd=build_temp, check=True
         )
-        subprocess.check_call(
-            ["cmake", "--build", "."] + build_args, cwd=self.build_temp
+        subprocess.run(
+            ["cmake", "--build", ".", *build_args], cwd=build_temp, check=True
         )
 
 
@@ -120,20 +148,21 @@ setup(
     name="ImagineModels",
     version="0.2.0",
     author="Sebastian Hutschenreuter",
-    author_email="hutsch@astro.ru.nl",
+    author_email="sebastian.hutschenreuter@univie.ac.at",
     description="IMAGINE Model Library",
     long_description="",
     ext_modules=[CMakeExtension("_ImagineModels")],
-    cmdclass={"build_ext": CMakeBuild},
+    cmdclass={"build_ext": CMakeBuild,},
     packages=find_packages(),
     zip_safe=False,
     extras_require={"test": ["pytest>=6.0"]},
     python_requires=">=3.6",
     classifiers=[
-        "Development Status :: 1 - Planning",
+        "Development Status :: 3-Alpha",
         "Topic :: Scientific/Engineering :: Astronomy",
-        "License :: ",
-        "Operating System :: OS Independent",
+        "License :: OSI Approved :: GNU General Public License v3 (GPLv3) ",
+        "Operating System :: MacOS",
+        "Operating System :: Unix",
         "Programming Language :: Python",
         "Programming Language :: C++",
         "Intended Audience :: Science/Research"],
