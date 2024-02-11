@@ -1,3 +1,5 @@
+#define CATCH_CONFIG_MAIN
+#include <catch.hpp>
 #include <cassert>
 #include <iostream>
 #include <vector>
@@ -9,16 +11,52 @@
 #define assertm(exp, msg) assert(((void)msg, exp))
 
 
+// Custom matcher to check array equality
+template <typename T, size_t N>
+struct ArrayEqualsMatcher : Catch::Matchers::Impl::MatcherBase<std::array<T, N>> {
+    ArrayEqualsMatcher(const std::array<T, N>& expected) : m_expected(expected) {}
+
+    bool match(const std::array<T, N>& arr) const override {
+        for (size_t i = 0; i < N; ++i) {
+            if (arr[i] != m_expected[i]) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    std::string describe() const override {
+        std::ostringstream oss;
+        oss << "equals: [";
+        for (size_t i = 0; i < N; ++i) {
+            if (i > 0) oss << ", ";
+            oss << m_expected[i];
+        }
+        oss << "]";
+        return oss.str();
+    }
+
+    const std::array<T, N>& m_expected;
+};
+
+// Helper function to create the matcher
+template <typename T, size_t N>
+ArrayEqualsMatcher<T, N> EqualsArray(const std::array<T, N>& expected) {
+    return ArrayEqualsMatcher<T, N>(expected);
+}
+
+
 void _check_array_equality_from_pointer(std::array<double*, 3> a, std::array<double*, 3> b , size_t &n) {
     for (int d = 0; d==3; ++d) {
         std::vector<double>  arr_a(a[d], a[d] + n);
         std::vector<double>  arr_b(b[d], b[d] + n);
         assert (arr_a == arr_b); 
     }
+}
 
 
-void test_uniform() {
 
+TEST_CASE("UniformMagneticField") {
     // DEFINITIONS
 
     // define positions in Galactic cartesian coordinates (units are kpc)
@@ -83,63 +121,93 @@ void test_uniform() {
         updated_irregular_grid[2][i] = bz; 
     }
 
-    // constructor 
-    
-    UniformMagneticField umf_plain = UniformMagneticField();
-    UniformMagneticField umf_regular_grid = UniformMagneticField(shape, refpoint, increment);
-    UniformMagneticField umf_irregular_grid = UniformMagneticField(grid_x, grid_y, grid_z);
+    SECTION("Empty constructor") {
+        // constructor s
+        UniformMagneticField umf_plain = UniformMagneticField();
+        // test at_position -- default parameters
+        REQUIRE_THAT(umf_plain.at_position(zeros[0], zeros[1], zeros[2]), EqualsArray(zeros));
+        REQUIRE_THAT(umf_plain.at_position(position[0], position[1], position[2]), EqualsArray(zeros));
+        // test on_grid -- default parameters
+        REQUIRE_THROWS(umf_plain.on_grid(), GridException);
+        REQUIRE_THAT(umf_plain.on_grid(shape, refpoint, increment), EqualsArray(default_regular_grid));
+        REQUIRE_THAT( umf_plain.on_grid(grid_x, grid_y, grid_z), EqualsArray(default_irregular_grid));
+        // parameter update
+        umf_plain.bx = bx; 
+        umf_plain.by = by;
+        umf_plain.bz = bz;  
+        REQUIRE(umf_plain.bx == bx); 
+        REQUIRE(umf_plain.by == by); 
+        REQUIRE(umf_plain.bz == bz); 
+        // test at_position -- default parameters
+        REQUIRE_THAT(umf_plain.at_position(zeros[0], zeros[1], zeros[2]), EqualsArray(updated));
+        REQUIRE_THAT(umf_plain.at_position(position[0], position[1], position[2]), EqualsArray(updated));
+        // test on_grid -- default parameters
+        REQUIRE_THROWS(umf_plain.on_grid(), GridException);
+        REQUIRE_THAT(umf_plain.on_grid(shape, refpoint, increment), EqualsArray(updated_regular_grid));
+        REQUIRE_THAT(umf_plain.on_grid(grid_x, grid_y, grid_z), EqualsArray(updated_irregular_grid));
+        #if autodiff_FOUND
+        // test derivative 
+        REQUIRE_THAT(umf_plain.derivative(position[0], position[1], position[2]), EqualsArray(zeros));
+        #endif
+    }
 
-    // TESTING
-    
-    // test at_position -- default parameters 
+    SECTION("Regular grid constructor") {
+        // constructor s
+        UniformMagneticField umf_regular_grid = UniformMagneticField(shape, refpoint, increment);
+        // test at_position -- default parameters
+        REQUIRE_THAT(umf_regular_grid.at_position(zeros[0], zeros[1], zeros[2]), EqualsArray(zeros));
+        REQUIRE_THAT(umf_regular_grid.at_position(position[0], position[1], position[2]), EqualsArray(zeros));
+        // test on_grid -- default parameters
+        REQUIRE_THAT(umf_regular_grid.on_grid(), EqualsArray(default_regular_grid));       
+        REQUIRE_THAT(umf_regular_grid.on_grid(shape, refpoint, increment), EqualsArray(default_regular_grid));
+        REQUIRE_THAT(umf_regular_grid.on_grid(grid_x, grid_y, grid_z), EqualsArray(default_irregular_grid));
+        // parameter update
+        umf_regular_grid.bx = bx; 
+        umf_regular_grid.by = by;
+        umf_regular_grid.bz = bz;  
+        REQUIRE(umf_regular_grid.bx == bx); 
+        REQUIRE(umf_regular_grid.by == by); 
+        REQUIRE(umf_regular_grid.bz == bz); 
+        // test at_position -- default parameters
+        REQUIRE_THAT(umf_regular_grid.at_position(zeros[0], zeros[1], zeros[2]), EqualsArray(updated));
+        REQUIRE_THAT(umf_regular_grid.at_position(position[0], position[1], position[2]), EqualsArray(updated));
+        // test on_grid -- default parameters
+        REQUIRE_THAT(umf_regular_grid.on_grid(), EqualsArray(updated_regular_grid));       
+        REQUIRE_THAT(umf_regular_grid.on_grid(shape, refpoint, increment), EqualsArray(updated_regular_grid));
+        REQUIRE_THAT(umf_regular_grid.on_grid(grid_x, grid_y, grid_z), EqualsArray(updated_irregular_grid));
+        #if autodiff_FOUND
+        // test derivative
+        REQUIRE_THAT(umf_regular_grid.derivative(position[0], position[1], position[2]), EqualsArray(zeros));
+        #endif
+    }
 
-    assert (umf_plain.at_position(zeros[0], zeros[1], zeros[2]) == zeros);
-    assert (umf_plain.at_position(position[0], position[1], position[2]) == zeros);
-    assert (umf_regular_grid.at_position(zeros[0], zeros[1], zeros[2]) == zeros);
-    assert (umf_regular_grid.at_position(position[0], position[1], position[2]) == zeros);
-    assert (umf_irregular_grid.at_position(zeros[0], zeros[1], zeros[2]) == zeros);
-    assert (umf_irregular_grid.at_position(position[0], position[1], position[2]) == zeros);
-    
-    // test on_grid -- default parameters 
-
-    // assert (umf_plain.on_grid() == zeros); need to catch excpetion here
-
-    std::array<double * , 3> plain_regular = umf_plain.on_grid(shape, refpoint, increment);
-    _check_array_equality_from_pointer(plain_regular, default_regular_grid);
-
-    std::array<double * , 3> plain_irregular = umf_plain.on_grid(grid_x, grid_y, grid_z);
-    _check_array_equality_from_pointer(plain_irregular, default_irregular_grid);
-
-    std::array<double * , 3> regular_noinput = umf_regular_grid.on_grid();
-    _check_array_equality_from_pointer(regular_noinput, default_regular_grid);
-
-    std::array<double * , 3> irregular_noinput = umf_irregular_grid.on_grid();
-    _check_array_equality_from_pointer(irregular_noinput, default_irregular_grid);
-
-    // test parameter update
-    
-    umf_plain.bx = bx; 
-    umf_plain.by = by;
-    umf_plain.bz = bz;  
-    
-    assert (umf_plain.bx == bx); 
-    assert (umf_plain.by == by); 
-    assert (umf_plain.bz == bz); 
-
-    // test at_position -- updated parameters 
-    
-    assert (umf_plain.at_position(zeros[0], zeros[1], zeros[2]) == updated);
-    assert (umf_plain.at_position(position[0], position[1], position[2]) == updated);
-
-
-    // test on_grid -- updated parameters 
-
-    std::array<double * , 3> plain_regular_updated = umf_plain.on_grid(shape, refpoint, increment);
-    _check_array_equality_from_pointer(plain_regular_updated, updated_regular_grid);
-
-    std::array<double * , 3> plain_irregular_updated = umf_plain.on_grid(grid_x, grid_y, grid_z);
-    _check_array_equality_from_pointer(plain_irregular_updated, updated_irregular_grid);
-
-
-    // test derivative
+    SECTION("Irregular grid constructor") {
+        // constructor s
+        UniformMagneticField umf_irregular_grid = UniformMagneticField(grid_x, grid_y, grid_z);
+        // test at_position -- default parameters
+        REQUIRE_THAT(umf_irregular_grid.at_position(zeros[0], zeros[1], zeros[2]), EqualsArray(zeros));
+        REQUIRE_THAT(umf_irregular_grid.at_position(position[0], position[1], position[2]), EqualsArray(zeros));
+        // test on_grid -- default parameters
+        REQUIRE_THAT(umf_irregular_grid.on_grid(), EqualsArray(default_irregular_grid));       
+        REQUIRE_THAT(umf_irregular_grid.on_grid(shape, refpoint, increment), EqualsArray(default_regular_grid));
+        REQUIRE_THAT(umf_irregular_grid.on_grid(grid_x, grid_y, grid_z), EqualsArray(default_irregular_grid));
+        // parameter update
+        umf_irregular_grid.bx = bx; 
+        umf_irregular_grid.by = by;
+        umf_irregular_grid.bz = bz;  
+        REQUIRE(umf_irregular_grid.bx == bx); 
+        REQUIRE(umf_irregular_grid.by == by); 
+        REQUIRE(umf_irregular_grid.bz == bz); 
+        // test at_position -- default parameters
+        REQUIRE_THAT(umf_irregular_grid.at_position(zeros[0], zeros[1], zeros[2]), EqualsArray(updated));
+        REQUIRE_THAT(umf_irregular_grid.at_position(position[0], position[1], position[2]), EqualsArray(updated));
+        // test on_grid -- default parameters
+        REQUIRE_THAT(umf_irregular_grid.on_grid(), EqualsArray(updated_irregular_grid));       
+        REQUIRE_THAT(umf_irregular_grid.on_grid(shape, refpoint, increment), EqualsArray(updated_regular_grid));
+        REQUIRE_THAT(umf_irregular_grid.on_grid(grid_x, grid_y, grid_z), EqualsArray(updated_irregular_grid));
+        #if autodiff_FOUND
+        // test derivative
+        REQUIRE_THAT(umf_irregular_grid.derivative(position[0], position[1], position[2]), EqualsArray(zeros));
+        #endif
+    }
 }
