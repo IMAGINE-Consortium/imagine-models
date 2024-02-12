@@ -61,13 +61,27 @@ set_target_properties(ImagineModels PROPERTIES VERSION ${PROJECT_VERSION} SOVERS
 
 # Build tests
 enable_testing()
-set(TESTSOURCES grid parameter_update positions derivatives)
+find_package(Catch2 3 REQUIRED)
+#set(TESTSOURCES grid parameter_update positions derivatives)
+#foreach(test ${TESTSOURCES})
+#    set(test_name ${test}_ctest)
+#    add_executable(${test_name} "${PROJECT_SOURCE_DIR}/test/regular/test_${test}.cc")
+#    target_link_libraries(${test_name} ImagineModels ${LIBRARIES})
+#    add_test(${test_name} ${test_name})
+#endforeach()
+
+set(TESTSOURCES uniform) #parameter_update positions derivatives)
+add_executable(test_main "${PROJECT_SOURCE_DIR}/test/test_main.cc")
+target_link_libraries(test_main ImagineModels ${LIBRARIES} Catch2::Catch2WithMain)
+add_test(test_main test_main)
+
 foreach(test ${TESTSOURCES})
     set(test_name ${test}_ctest)
     add_executable(${test_name} "${PROJECT_SOURCE_DIR}/test/regular/test_${test}.cc")
-    target_link_libraries(${test_name} ImagineModels ${LIBRARIES})
+    target_link_libraries(${test_name} ImagineModels ${LIBRARIES} Catch2::Catch2WithMain)
     add_test(${test_name} ${test_name})
 endforeach()
+
 
 configure_file(${PROJECT_SOURCE_DIR}/ImagineModels.pc.in ${CMAKE_BINARY_DIR}/ImagineModels.pc @ONLY)
 

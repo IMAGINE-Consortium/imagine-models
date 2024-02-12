@@ -16,11 +16,6 @@ void _check_array_equality_from_pointer(std::array<double*, 3> a, std::array<dou
         assert (arr_a == arr_b); 
     }
 
-}
-
-
-
-
 void test_grid(std::map <std::string, std::shared_ptr<RegularVectorField>> models_no_grid, 
                std::map <std::string, std::shared_ptr<RegularVectorField>> models_regular_grid, 
                std::map <std::string, std::shared_ptr<RegularVectorField>> models_irregular_grid, 
@@ -28,8 +23,6 @@ void test_grid(std::map <std::string, std::shared_ptr<RegularVectorField>> model
                std::vector<double> grid_x, std::vector<double> grid_y, std::vector<double> grid_z
               ) {
     auto model_iter = models_no_grid.begin();
-
-    
 
 
     while (model_iter != models_no_grid.end()) { 
@@ -73,15 +66,15 @@ int main() {
     std::map <std::string, std::shared_ptr<RegularVectorField>> models_w_irregular_constructor;
 
     models_w_empty_constructor["JF12"] = std::shared_ptr<JF12MagneticField> (new JF12MagneticField());
-    //models_w_empty_constructor["Jaffe"] = std::shared_ptr<JaffeMagneticField> (new JaffeMagneticField());
+    models_w_empty_constructor["Jaffe"] = std::shared_ptr<JaffeMagneticField> (new JaffeMagneticField());
     models_w_empty_constructor["Helix"] = std::shared_ptr<HelixMagneticField> (new HelixMagneticField());
 
     models_w_regular_constructor["JF12"] = std::shared_ptr<JF12MagneticField> (new JF12MagneticField(shape, refpoint, increment));
-    //models_w_regular_constructor["Jaffe"] = std::shared_ptr<JaffeMagneticField> (new JaffeMagneticField(shape, refpoint, increment));
+    models_w_regular_constructor["Jaffe"] = std::shared_ptr<JaffeMagneticField> (new JaffeMagneticField(shape, refpoint, increment));
     models_w_regular_constructor["Helix"] = std::shared_ptr<HelixMagneticField> (new HelixMagneticField(shape, refpoint, increment));
 
     models_w_irregular_constructor["JF12"] = std::shared_ptr<JF12MagneticField> (new JF12MagneticField(grid_x, grid_y, grid_z));
-    //models_w_irregular_constructor["Jaffe"] = std::shared_ptr<JaffeMagneticField> (new JaffeMagneticField(grid_x, grid_y, grid_z));
+    models_w_irregular_constructor["Jaffe"] = std::shared_ptr<JaffeMagneticField> (new JaffeMagneticField(grid_x, grid_y, grid_z));
     models_w_irregular_constructor["Helix"] = std::shared_ptr<HelixMagneticField> (new HelixMagneticField(grid_x, grid_y, grid_z));
 
 

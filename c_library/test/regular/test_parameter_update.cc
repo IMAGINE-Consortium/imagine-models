@@ -6,7 +6,8 @@
 
 #include "RegularModels.h"
 
-void test_parameter_update() {
+
+void test_archimedean_update() {
     UniformMagneticField umf = UniformMagneticField();
     assert (umf.bx == 0.);
     assert (umf.by == 0.);
@@ -26,5 +27,5 @@ void test_parameter_update() {
 }
 
 int main() {
-    test_parameter_update();
+    test_uniform_update();
 }
