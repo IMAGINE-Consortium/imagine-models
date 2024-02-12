@@ -8,7 +8,7 @@
 #include <iostream>
 #include <memory>
 
-#include "exceptions.h"
+#include "Exceptions.h"
 
 #if autodiff_FOUND
     #include <autodiff/forward/real.hpp>

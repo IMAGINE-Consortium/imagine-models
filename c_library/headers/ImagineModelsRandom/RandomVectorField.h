@@ -12,7 +12,7 @@
 #include <memory>
 #include <initializer_list>
 
-#include "exceptions.h"
+#include "Exceptions.h"
 #include "RandomField.h"
 #include "RegularField.h"
 

@@ -9,7 +9,7 @@
 #include <algorithm>
 #include <set>
 
-#include "exceptions.h"
+#include "Exceptions.h"
 #include "Field.h"
 
 class RegularScalarField : public Field<number, double *>
