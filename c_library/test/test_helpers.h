@@ -4,7 +4,47 @@
 
 #define assertm(exp, msg) assert(((void)msg, exp))
 
-// Custom matcher to check array equality
+// Custom matchers to check array equality
+
+struct MatrixEqualsMatcher : Catch::Matchers::MatcherGenericBase {
+    MatrixEqualsMatcher(const Eigen::MatrixXd & expected) : m_expected(expected) {}
+
+    bool match(const Eigen::MatrixXd & arr) const {
+        
+        int r = static_cast<int>(arr.rows());
+        if (r != r_expected) return false;
+        int c = static_cast<int>(arr.cols());
+        if (c != c_expected) return false;
+        
+        for (size_t i = 0; i < r; ++i) {
+            for (size_t j = 0; i < c; ++j) {
+                if (arr(i, j) != m_expected(i, j)) {
+                    return false;
+                }
+            }
+        }
+        
+        return true;
+    }
+
+    std::string describe() const override {
+        std::ostringstream oss;
+        oss << "equals: [";
+        for (size_t i = 0; i < r_expected; ++i) {
+            if (i > 0) oss << "\n ";
+            for (size_t j = 0; i < c_expected; ++j) {
+                if (j > 0) oss << ", ";
+                oss << m_expected(i, j);
+            }
+        }
+        oss << "]";
+        return oss.str();
+    }
+
+    const Eigen::MatrixXd& m_expected;
+    int r_expected = static_cast<int>(m_expected.rows());
+    int c_expected = static_cast<int>(m_expected.cols());
+};
 
 template <typename T, size_t N>
 // old: struct ArrayEqualsMatcher : Catch::Matchers::Impl::MatcherBase<std::array<T, N>> {
@@ -108,6 +148,11 @@ ArrayEqualsMatcher<T, N> EqualsArray(const std::array<T, N>& expected) {
 template <typename T, size_t N>
 PointerArrayEqualsMatcher<T, N> EqualsPointerArray(const std::array<T, N>& expected, const size_t N_internal) {
     return PointerArrayEqualsMatcher<T, N>(expected, N_internal);
+}
+
+// Helper function to create the matcher
+auto EqualsMatrix(const Eigen::MatrixXd& expected) -> MatrixEqualsMatcher {
+    return MatrixEqualsMatcher(expected);
 }
 
 // Helper function to create the matcher

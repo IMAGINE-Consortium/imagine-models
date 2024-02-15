@@ -70,7 +70,7 @@ find_package(Catch2 3 REQUIRED)
 #    add_test(${test_name} ${test_name})
 #endforeach()
 
-set(TESTSOURCES uniform) #parameter_update positions derivatives)
+set(TESTSOURCES uniform helix) #parameter_update positions derivatives)
 add_executable(test_main "${PROJECT_SOURCE_DIR}/test/test_main.cc")
 target_link_libraries(test_main ImagineModels ${LIBRARIES} Catch2::Catch2WithMain)
 add_test(test_main test_main)
