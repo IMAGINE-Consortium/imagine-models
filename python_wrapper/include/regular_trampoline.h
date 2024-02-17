@@ -37,6 +37,10 @@ public:
     using Field<vector, std::array<double*, 3>>:: Field; // Inherit constructors
     vector at_position(const double& x, const double& y, const double& z) const override {PYBIND11_OVERRIDE_PURE(vector, Field, at_position, x, y, z); }
 
+    //#if autodiff_FOUND
+    //Eigen::MatrixXd derivative(const double &x, const double &y, const double &z) override {PYBIND11_OVERRIDE_PURE(Eigen::MatrixXd, Field, derivative, x, y, z); }
+    //#endif
+
     std::array<double*, 3> on_grid(int seed) override {PYBIND11_OVERRIDE_PURE(Array3PointerType, Field, on_grid, seed); }
     
     std::array<double*, 3> on_grid(const std::vector<double>& grid_x, const std::vector<double>& grid_y, const std::vector<double>& grid_z, int seed) override {PYBIND11_OVERRIDE_PURE(Array3PointerType, Field, on_grid, grid_x, grid_y, grid_z, seed); }
@@ -55,6 +59,10 @@ class PyRegularVectorField: public RegularVectorField {
 public:
     using RegularVectorField:: RegularVectorField; // Inherit constructors
     vector at_position(const double& x, const double& y, const double& z) const override {PYBIND11_OVERRIDE_PURE(vector, RegularVectorField, at_position, x, y, z); }
+
+    #if autodiff_FOUND
+    Eigen::MatrixXd derivative(const double &x, const double &y, const double &z) override {PYBIND11_OVERRIDE_PURE(Eigen::MatrixXd, Field, derivative, x, y, z); }
+    #endif
 
     std::array<double*, 3> on_grid(int seed) override {PYBIND11_OVERRIDE(Array3PointerType, RegularVectorField, on_grid, seed); }
     

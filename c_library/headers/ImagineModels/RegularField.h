@@ -216,6 +216,8 @@ public:
     return inp;
   }
 
+  virtual Eigen::MatrixXd derivative(const double &x, const double &y, const double &z) = 0;
+
 #endif
 };
 
