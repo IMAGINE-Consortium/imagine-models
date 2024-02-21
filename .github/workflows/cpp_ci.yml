@@ -14,7 +14,7 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     - name: setup
-      run: cd c_library && mkdir build && cd build
+      run: cd c_library && mkdir build && cd build && pwd
     - name: cmake
       run: cmake ..
     - name: make
