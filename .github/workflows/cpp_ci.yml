@@ -1,0 +1,21 @@
+name: ImagineModels C++ CI
+
+on: [push]
+ # push:
+ #   branches: [ $main, ]
+ # pull_request:
+ #   branches: [ $main]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: cmake
+      run: cmake
+    - name: make
+      run: make install
+    - name: ctest
+      run: ctest --output-on-failure --use-colour yes
