@@ -12,7 +12,7 @@ vector StanevBSSMagneticField::_at_position(const double &x, const double &y, co
     const double r = sqrt(x * x + y * y);
     const double phi = atan2(y, x);
 
-    if (r > b_r_max)
+    if (r > b_r_max || r == 0.)
     {
         return B_vec3;
     }

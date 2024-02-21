@@ -5,7 +5,10 @@ vector ArchimedeanMagneticField::_at_position(const double &x, const double &y, 
 {
 
     vector B_cart{{0., 0., 0.}};
+
     const double r = sqrt(x * x + y * y + z * z);
+
+	if (r == 0.) return B_cart;
 
 	double theta = atan2(sqrt(x * x + y * y), z);
 	double phi = std::atan2(y, x); 

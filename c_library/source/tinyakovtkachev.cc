@@ -10,7 +10,7 @@ vector TTMagneticField::_at_position(const double &x, const double &y, const dou
     double phi = atan2(y, x);
 
     vector B_vec3{{0, 0, 0}};
-    if (r > b_r_max)
+    if (r > b_r_max || r == 0.)
     {
         return B_vec3;
     }
