@@ -1,50 +1,63 @@
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/matchers/catch_matchers.hpp>
+#include <Eigen/Dense>
 
 
 #define assertm(exp, msg) assert(((void)msg, exp))
 
+
+bool containsNaN(const Eigen::Matrix<autodiff::detail::Real<1, double>, -1, 1, 0, -1, 1>& arr) {
+    for (const auto& elem : arr) {
+        if (std::isnan(elem.val())) {
+            return true;
+        }
+    }
+    return false;
+}
+
+bool containsNaN(const std::vector<double>& arr) {
+    for (const auto& elem : arr) {
+        if (std::isnan(elem)) {
+            return true;
+        }
+    }
+    return false;
+}
+
+
 // Custom matchers to check array equality
 
-struct MatrixEqualsMatcher : Catch::Matchers::MatcherGenericBase {
-    MatrixEqualsMatcher(const Eigen::MatrixXd & expected) : m_expected(expected) {}
 
-    bool match(const Eigen::MatrixXd & arr) const {
-        
-        int r = static_cast<int>(arr.rows());
-        if (r != r_expected) return false;
-        int c = static_cast<int>(arr.cols());
-        if (c != c_expected) return false;
-        
-        for (size_t i = 0; i < r; ++i) {
-            for (size_t j = 0; i < c; ++j) {
-                if (arr(i, j) != m_expected(i, j)) {
-                    return false;
-                }
-            }
-        }
-        
-        return true;
+// Custom matcher for comparing Eigen matrices
+template<typename Derived1, typename Derived2>
+struct MatrixEqualsMatcher : Catch::Matchers::MatcherBase<Eigen::MatrixBase<Derived1>> {
+    
+    const Eigen::MatrixBase<Derived2>& m_expected;
+
+    MatrixEqualsMatcher(const Eigen::MatrixBase<Derived2>& expected)
+        : m_expected(expected) {}
+
+    // Override the match method to perform the comparison
+    bool match(const Eigen::MatrixBase<Derived1>& actual) const override {
+        return actual.isApprox(m_expected);
     }
 
+    // Override the describe method to provide a description for the failure message
     std::string describe() const override {
-        std::ostringstream oss;
-        oss << "equals: [";
-        for (size_t i = 0; i < r_expected; ++i) {
-            if (i > 0) oss << "\n ";
-            for (size_t j = 0; i < c_expected; ++j) {
-                if (j > 0) oss << ", ";
-                oss << m_expected(i, j);
-            }
-        }
-        oss << "]";
-        return oss.str();
+        std::ostringstream ss;
+        ss << "is approximately equal to\n" << m_expected;
+        return ss.str();
     }
 
-    const Eigen::MatrixXd& m_expected;
-    int r_expected = static_cast<int>(m_expected.rows());
-    int c_expected = static_cast<int>(m_expected.cols());
 };
+
+
+// Factory function for creating the custom matcher
+template<typename Derived>
+MatrixEqualsMatcher<Derived, Derived> EqualsMatrix(const Eigen::MatrixBase<Derived>& expected) {
+    return MatrixEqualsMatcher<Derived, Derived>(expected);
+}
+
 
 template <typename T, size_t N>
 // old: struct ArrayEqualsMatcher : Catch::Matchers::Impl::MatcherBase<std::array<T, N>> {
@@ -92,13 +105,10 @@ struct PointerArrayEqualsMatcher : Catch::Matchers::MatcherBase<std::array<T, N>
 
     std::string describe() const override {
         std::ostringstream oss;
-        oss << "equals: [";
+        oss << "should equal values at : [";
         for (size_t i = 0; i < N; ++i) {
-            if (i > 0) oss << "\n ";
-            for (size_t j = 0; j < N2; ++j) {
-                if (j > 0) oss << ", ";
-                oss << m_expected[i][j];
-            }
+            if (i!=0) oss << ", ";
+            oss << m_expected[i];
         }
         oss << "]";
         return oss.str();
@@ -108,11 +118,8 @@ struct PointerArrayEqualsMatcher : Catch::Matchers::MatcherBase<std::array<T, N>
     const size_t N2;
 };
 
-// old: struct ArrayEqualsMatcher : Catch::Matchers::Impl::MatcherBase<std::array<T, N>> {
 struct VectorEqualsMatcher : Catch::Matchers::MatcherGenericBase {
-    VectorEqualsMatcher(const vector& expected) : m_expected(expected) {}
-
-    size_t N = m_expected.size();
+    VectorEqualsMatcher(const vector& expected) : m_expected(expected), N(m_expected.size()) {}
 
     bool match(const vector& arr) const {
         for (size_t i = 0; i < N; ++i) {
@@ -135,6 +142,7 @@ struct VectorEqualsMatcher : Catch::Matchers::MatcherGenericBase {
     }
 
     vector const& m_expected;
+    size_t N;
 };
 
 
@@ -148,11 +156,6 @@ ArrayEqualsMatcher<T, N> EqualsArray(const std::array<T, N>& expected) {
 template <typename T, size_t N>
 PointerArrayEqualsMatcher<T, N> EqualsPointerArray(const std::array<T, N>& expected, const size_t N_internal) {
     return PointerArrayEqualsMatcher<T, N>(expected, N_internal);
-}
-
-// Helper function to create the matcher
-auto EqualsMatrix(const Eigen::MatrixXd& expected) -> MatrixEqualsMatcher {
-    return MatrixEqualsMatcher(expected);
 }
 
 // Helper function to create the matcher
