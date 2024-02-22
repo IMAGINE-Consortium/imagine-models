@@ -16,7 +16,7 @@ jobs:
     - name: setup
       run: cd c_library && mkdir build && export MKPATH=pwd && cd build 
     - name: cmake
-      run: cmake -P ${MKPATH}
+      run: cmake ${MKPATH}
     - name: make
       run: make install
     - name: ctest
