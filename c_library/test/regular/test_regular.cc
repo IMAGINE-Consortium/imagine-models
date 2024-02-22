@@ -12,7 +12,7 @@
 #include "../test_helpers.h"
 
 
-TEST_CASE("RegularMagneticField") { 
+TEST_CASE("RegularVectorFields") { 
     //                                   
     const std::vector<double> positions_x {{0., 0. , 0.   , 0.  , 0.  , 0.3, -17.2, 
     0.     , 0.    , 0.   , 0.    , -35.032, 2.2, -6. , .234,  -0.00424, -2.2, -2.32 , .234,  
@@ -135,6 +135,90 @@ TEST_CASE("RegularMagneticField") {
 
         REQUIRE_THAT(eval_regular, EqualsPointerArray(eval_no_grid_regular, 4*3*2));
         REQUIRE_THAT(eval_irregular, EqualsPointerArray(eval_no_grid_irregular, size_pos));
+        
+        ++empty_model_iter;
+        ++regular_model_iter;
+        ++irregular_model_iter;
+    }
+}
+
+TEST_CASE("RegularScalarFields") { 
+    //                                   
+    const std::vector<double> positions_x {{0., 0. , 0.   , 0.  , 0.  , 0.3, -17.2, 
+    0.     , 0.    , 0.   , 0.    , -35.032, 2.2, -6. , .234,  -0.00424, -2.2, -2.32 , .234,  
+    0.43 , 8.23    , 3.   , 1., -0.001   , -5.342, -5.23, -2.432  }};
+    const std::vector<double> positions_y {{0., 0. , 0.   , 11.5, -7.2, 0. , 0.   , 
+    -0.0032, 23.353, -6.1 , 4.    , 0.     , 0. , 0.  , 0.  ,  -0.00132, 2.2 ,  -6.42, .234,   
+    6.123, 8.1     , -3.  , -1., 0.0033  , 0.45  , -30.2, -1.543  }};
+    const std::vector<double> positions_z {{0., 3.1, -0.01, 0.  , 0.  , 0. , 0.   , 
+    -5.32  , 0.012 , 34.02, -8.431, -5.132, 9.3 , -6.1, 4.  , 0.       , 0.  , 0.    , 0.  ,
+    10.3 , -0.02   , 3.   , -1., 0.000432, -15.43, 0.001, -7.123  }};
+
+    int size_pos = positions_x.size();
+
+    UNSCOPED_INFO("Test case broken!");
+    REQUIRE(size_pos == positions_y.size());
+    REQUIRE(size_pos == positions_z.size());
+
+    // Define a regular grid in Galactic cartesian coordinates (units are kpc)
+    const std::array<int, 3> shape {{4, 3, 2}};
+    const std::array<double, 3> refpoint {{-4., 0.1, -0.3}};
+    const std::array<double, 3> increment {{2.1, 0.3, 1.}};
+
+
+    // Dictionaries of all models, uniform an helix are tested elsewhere
+    // using pointer here since RegularField is abstract
+    std::map <std::string, std::shared_ptr<RegularScalarField>> models_w_empty_constructor;
+    std::map <std::string, std::shared_ptr<RegularScalarField>> models_w_regular_constructor;
+    std::map <std::string, std::shared_ptr<RegularScalarField>> models_w_irregular_constructor;
+
+    models_w_empty_constructor["YMW16"] = std::shared_ptr<YMW16> (new YMW16());
+    models_w_regular_constructor["YMW16"] = std::shared_ptr<YMW16> (new YMW16(shape, refpoint, increment));
+	models_w_irregular_constructor["YMW16"] = std::shared_ptr<YMW16> (new YMW16(positions_x, positions_y, positions_z));
+
+
+    auto empty_model_iter = models_w_empty_constructor.begin();
+    auto regular_model_iter = models_w_empty_constructor.begin();
+    auto irregular_model_iter = models_w_empty_constructor.begin();
+
+    while (empty_model_iter != models_w_empty_constructor.end()) { 
+        auto pos_x_iter = positions_x.begin();
+        auto pos_y_iter = positions_y.begin();
+        auto pos_z_iter = positions_z.begin();
+        while (pos_x_iter != positions_x.end()) { 
+            UNSCOPED_INFO("RegularModels testing: at_position call failed for: ");
+            CAPTURE(irregular_model_iter->first, *pos_x_iter, *pos_y_iter, *pos_z_iter);
+            REQUIRE_NOTHROW((*models_w_empty_constructor[empty_model_iter->first]).at_position(*pos_x_iter, *pos_y_iter, *pos_z_iter));
+            UNSCOPED_INFO("RegularModels testing: at_position contained NaN: ");
+            CAPTURE(irregular_model_iter->first, *pos_x_iter, *pos_y_iter, *pos_z_iter);
+            auto eval = (*models_w_empty_constructor[empty_model_iter->first]).at_position(*pos_x_iter, *pos_y_iter, *pos_z_iter);
+            REQUIRE(eval != NAN);
+            
+            //#if autodiff_FOUND
+            // test derivative
+            //UNSCOPED_INFO("RegularModels testing: derivative call failed for: ");
+            //CAPTURE(irregular_model_iter->first, pos_x_iter, pos_y_iter, pos_z_iter);
+            //REQUIRE_NOTHROW((*models_w_empty_constructor[empty_model_iter->first]).derivative(*pos_x_iter, *pos_y_iter, *pos_z_iter));
+            //#endif
+
+            ++pos_x_iter;
+            ++pos_y_iter;
+            ++pos_z_iter;
+            }
+
+        UNSCOPED_INFO("RegularModels testing: on grid failed for: ");
+        CAPTURE(irregular_model_iter->first);
+        //std::cout << irregular_model_iter->first << std::endl;
+        
+        REQUIRE_THROWS_WITH((*models_w_empty_constructor[empty_model_iter->first]).on_grid(), "The class has not been initialized with a grid, hence on_grid can only be called with a grid provided.");
+        double* eval_irregular = (*models_w_irregular_constructor[irregular_model_iter->first]).
+        on_grid(); 
+        double* eval_regular = (*models_w_regular_constructor[regular_model_iter->first]).on_grid(); 
+        double* eval_no_grid_regular = (*models_w_empty_constructor[empty_model_iter->first]).on_grid(shape, refpoint, increment); 
+        double* eval_no_grid_irregular = (*models_w_empty_constructor[empty_model_iter->first]).on_grid(positions_x, positions_y, positions_z);         
+
+        REQUIRE_THAT(eval_regular, EqualsPointer(eval_no_grid_regular, 4*3*2));
+        REQUIRE_THAT(eval_irregular, EqualsPointer(eval_no_grid_irregular, size_pos));
         
         ++empty_model_iter;
         ++regular_model_iter;

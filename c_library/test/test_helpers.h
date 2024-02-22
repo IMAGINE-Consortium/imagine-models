@@ -101,6 +101,36 @@ struct ArrayEqualsMatcher : Catch::Matchers::MatcherBase<std::array<T, N>> {
     const std::array<T, N>& m_expected;
 };
 
+template <typename T>
+// old: struct ArrayEqualsMatcher : Catch::Matchers::Impl::MatcherBase<std::array<T, N>> {
+struct PointerEqualsMatcher : Catch::Matchers::MatcherBase<T> {
+    PointerEqualsMatcher(const T expected, const size_t N_internal) : m_expected(expected), N2(N_internal) {}
+
+    bool match(const T& arr) const override {
+        for (size_t i = 0; i < N2; ++i) {
+            if (arr[i] != m_expected[i]) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    std::string describe() const override {
+        std::ostringstream oss;
+        oss << "should equal : [";
+        for (size_t i = 0; i < N2; ++i) {
+            if (i!=0) oss << ", ";
+            oss << m_expected[i];
+        }
+        oss << "]";
+        return oss.str();
+    }
+
+    const T m_expected;
+    const size_t N2;
+};
+
+
 template <typename T, size_t N>
 // old: struct ArrayEqualsMatcher : Catch::Matchers::Impl::MatcherBase<std::array<T, N>> {
 struct PointerArrayEqualsMatcher : Catch::Matchers::MatcherBase<std::array<T, N>> {
@@ -171,6 +201,13 @@ template <typename T, size_t N>
 PointerArrayEqualsMatcher<T, N> EqualsPointerArray(const std::array<T, N>& expected, const size_t N_internal) {
     return PointerArrayEqualsMatcher<T, N>(expected, N_internal);
 }
+
+// Helper function to create the matcher
+template <typename T>
+PointerEqualsMatcher<T> EqualsPointer(const T expected, const size_t N_internal) {
+    return PointerEqualsMatcher<T>(expected, N_internal);
+}
+
 
 // Helper function to create the matcher
 auto EqualsVector(const vector& expected) -> VectorEqualsMatcher {
