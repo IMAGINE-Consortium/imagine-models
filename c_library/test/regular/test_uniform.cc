@@ -220,3 +220,184 @@ TEST_CASE("UniformMagneticField") {
     }
 }
 
+
+TEST_CASE("UniformDensityField") {
+    
+    UNSCOPED_INFO("Start testing uniform test case");
+    // DEFINITIONS
+
+    // define positions in Galactic cartesian coordinates (units are kpc)
+
+    double posx = -3.5;
+    double posy = 2.6;
+    double posz = 0.2;
+
+    // define parameters to be updated
+
+    double n0 = -3.2;
+
+    // define expected results of at_position
+    number zero{0.};
+    number updated{n0};
+
+    // define parameters for a regular grid in Galactic cartesian coordinates (units are kpc)
+    const std::array<int, 3> shape {{4, 3, 2}};
+    const std::array<double, 3> refpoint {{-4., 0.1, -0.3}};
+    const std::array<double, 3> increment {{2.1, 0.3, 1.}};
+
+    size_t arr_sz = 4*3*2;
+
+    double*  default_regular_grid;  
+    default_regular_grid = new double[arr_sz];
+
+    double*  updated_regular_grid;  
+    updated_regular_grid = new double[arr_sz];
+
+    for (int i=0; i < arr_sz; i++) {
+        default_regular_grid[i] = 0.; 
+        updated_regular_grid[i] = n0; 
+    }
+
+    // define positions of a irregular grid in Galactic cartesian coordinates (units are kpc)
+    const std::vector<double> grid_x {{2.  , -4. , 0. , 1., 0.4}};
+    const std::vector<double> grid_y {{4.  , 6. , -0.1, 0., 0.2}};
+    const std::vector<double> grid_z {{-0.2, 0.8, 0.2, 0., 1.}};
+    
+    double*  default_irregular_grid;   
+    default_irregular_grid = new double[5];
+
+    double*  updated_irregular_grid;   
+    updated_irregular_grid = new double[5];
+
+    for (int i=0; i < 5; i++) {
+        default_irregular_grid[i] = 0.; 
+        updated_irregular_grid[i] = n0; 
+    }
+
+    //#if autodiff_FOUND
+
+    // Initialize a dynamic-size matrix filled with zeros
+    //Eigen::MatrixXd matrixZero = Eigen::MatrixXd::Zero(3, 3);
+    //Eigen::MatrixXd matrixOne = Eigen::MatrixXd::Zero(3, 3);
+    // Set the diagonal elements to 1
+    //matrixOne.diagonal() = Eigen::VectorXd::Ones(3);
+
+   // #endif
+
+    INFO("UniformMagneticField test: definitions done");
+
+
+    SECTION("Empty constructor") {
+        INFO("UniformMagneticField test: empty contructor start");
+        // constructor s
+        UniformDensityField umf_plain = UniformDensityField();
+        UNSCOPED_INFO("UniformMagneticField test: empty contructor test case: construcor tested");
+        // test at_position -- default parameters
+        REQUIRE(umf_plain.at_position(0., 0., 0.) == zero);
+        REQUIRE(umf_plain.at_position(posx, posy, posz) == zero );
+        UNSCOPED_INFO("UniformMagneticField test: empty contructor test case: at_position tested");
+
+        // test on_grid -- default parameters
+        REQUIRE_THROWS_WITH(umf_plain.on_grid(), "The class has not been initialized with a grid, hence on_grid can only be called with a grid provided.");
+        REQUIRE_THAT(umf_plain.on_grid(shape, refpoint, increment), EqualsPointer(default_regular_grid, arr_sz));
+        REQUIRE_THAT(umf_plain.on_grid(grid_x, grid_y, grid_z), EqualsPointer(default_irregular_grid, 5));
+        UNSCOPED_INFO("UniformMagneticField test: empty contructor test case: on_grid tested");
+
+        //#if autodiff_FOUND
+        // test derivative 
+        //REQUIRE_THAT(umf_plain.derivative(posx, posy, posz), EqualsMatrix(matrixOne));
+        //#endif
+
+        // parameter update
+        umf_plain.n0 = n0; 
+        REQUIRE(umf_plain.n0 == n0); 
+        UNSCOPED_INFO("UniformDensityField test: empty contructor test case: parameter update tested");
+ 
+        // test at_position -- default parameters
+        REQUIRE(umf_plain.at_position(0., 0., 0.) == updated);
+        REQUIRE(umf_plain.at_position(posx, posy, posz) == updated);
+ 
+
+        // test on_grid -- default parameters
+        REQUIRE_THROWS_WITH(umf_plain.on_grid(), "The class has not been initialized with a grid, hence on_grid can only be called with a grid provided.");
+        REQUIRE_THAT(umf_plain.on_grid(shape, refpoint, increment), EqualsPointer(updated_regular_grid, arr_sz));
+        REQUIRE_THAT(umf_plain.on_grid(grid_x, grid_y, grid_z), EqualsPointer(updated_irregular_grid, 5));
+        
+        //#if autodiff_FOUND
+        // test derivative
+        //auto deriv = umf_plain.derivative(posx, posy, posz);
+ 
+        //REQUIRE_THAT(umf_plain.derivative(posx, posy, posz), EqualsMatrix(matrixOne));
+        //#endif
+  
+    }
+
+
+    SECTION("Regular grid constructor") {
+
+        UNSCOPED_INFO("UniformDensityField test: regular grid contructor start");
+        // constructor s
+        UniformDensityField umf_regular_grid = UniformDensityField(shape, refpoint, increment);
+        // test at_position -- default parameters
+        REQUIRE(umf_regular_grid.at_position(0., 0., 0.) == zero);
+        REQUIRE(umf_regular_grid.at_position(posx, posy, posz) == zero);
+        // test on_grid -- default parameters
+        REQUIRE_THAT(umf_regular_grid.on_grid(), EqualsPointer(default_regular_grid, arr_sz));       
+        REQUIRE_THAT(umf_regular_grid.on_grid(shape, refpoint, increment), EqualsPointer(default_regular_grid, arr_sz));
+        REQUIRE_THAT(umf_regular_grid.on_grid(grid_x, grid_y, grid_z), EqualsPointer(default_irregular_grid, 5));
+
+        //#if autodiff_FOUND
+        // test derivative
+        //REQUIRE_THAT(umf_regular_grid.derivative(posx, posy, posz), EqualsMatrix(matrixOne));
+        //#endif
+        // parameter update
+        umf_regular_grid.n0 = n0;  
+        REQUIRE(umf_regular_grid.n0 == n0); 
+        // test at_position -- default parameters
+        REQUIRE(umf_regular_grid.at_position(0., 0., 0.) == updated);
+        REQUIRE(umf_regular_grid.at_position(posx, posy, posz) == updated);
+        // test on_grid -- default parameters
+        REQUIRE_THAT(umf_regular_grid.on_grid(), EqualsPointer(updated_regular_grid, arr_sz));       
+        REQUIRE_THAT(umf_regular_grid.on_grid(shape, refpoint, increment), EqualsPointer(updated_regular_grid, arr_sz));
+        REQUIRE_THAT(umf_regular_grid.on_grid(grid_x, grid_y, grid_z), EqualsPointer(updated_irregular_grid, 5));
+        //#if autodiff_FOUND
+        // test derivative
+        //REQUIRE_THAT(umf_regular_grid.derivative(posx, posy, posz), EqualsMatrix(matrixOne));
+        //#endif
+    }
+
+    SECTION("Irregular grid constructor") {
+        // constructor s
+        UniformDensityField umf_irregular_grid = UniformDensityField(grid_x, grid_y, grid_z);
+        // test at_position -- default parameters
+        REQUIRE(umf_irregular_grid.at_position(0., 0., 0.) == zero);
+        REQUIRE(umf_irregular_grid.at_position(posx, posy, posz) == zero);
+                  
+        // test on_grid -- default parameters
+        REQUIRE_THAT(umf_irregular_grid.on_grid(), EqualsPointer(default_irregular_grid, 5)); 
+        REQUIRE_THAT(umf_irregular_grid.on_grid(shape, refpoint, increment), EqualsPointer(default_regular_grid, arr_sz));
+        REQUIRE_THAT(umf_irregular_grid.on_grid(grid_x, grid_y, grid_z), EqualsPointer(default_irregular_grid, 5));
+                
+        //#if autodiff_FOUND
+        // test derivative
+        //REQUIRE_THAT(umf_irregular_grid.derivative(posx, posy, posz), EqualsMatrix(matrixOne));
+        //#endif
+ 
+        // parameter update
+        umf_irregular_grid.n0 = n0; 
+        REQUIRE(umf_irregular_grid.n0 == n0); 
+        // test at_position -- default parameters
+        REQUIRE(umf_irregular_grid.at_position(0., 0., 0.) == updated);
+        REQUIRE(umf_irregular_grid.at_position(posx, posy, posz) == updated);
+        // test on_grid -- default parameters
+        REQUIRE_THAT(umf_irregular_grid.on_grid(), EqualsPointer(updated_irregular_grid, 5));       
+        REQUIRE_THAT(umf_irregular_grid.on_grid(shape, refpoint, increment), EqualsPointer(updated_regular_grid, arr_sz));
+        REQUIRE_THAT(umf_irregular_grid.on_grid(grid_x, grid_y, grid_z), EqualsPointer(updated_irregular_grid, 5));
+        
+        //#if autodiff_FOUND
+        // test derivative
+        //REQUIRE_THAT(umf_irregular_grid.derivative(posx, posy, posz), EqualsMatrix(matrixOne));
+        //#endif
+    }
+}
+
