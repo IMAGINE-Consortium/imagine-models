@@ -102,6 +102,7 @@ TEST_CASE("HelixMagneticField") {
     updated_irregular_grid[1] = new double[size_pos];
     updated_irregular_grid[2] = new double[size_pos];
 
+    #if autodiff_FOUND
     for (int i=0; i < size_pos; i++) {
         vector def_mod_at_grid_point = model(grid_x[0], grid_y[0], helix.ampx, helix.ampy, helix.ampz, helix.rmin, helix.rmax);
         default_irregular_grid[0][i] = def_mod_at_grid_point[0].val(); 
@@ -112,6 +113,18 @@ TEST_CASE("HelixMagneticField") {
         updated_irregular_grid[1][i] = up_mod_at_grid_point[1].val(); 
         updated_irregular_grid[2][i] = up_mod_at_grid_point[2].val(); 
     }
+    #else 
+    for (int i=0; i < size_pos; i++) {
+        vector def_mod_at_grid_point = model(grid_x[0], grid_y[0], helix.ampx, helix.ampy, helix.ampz, helix.rmin, helix.rmax);
+        default_irregular_grid[0][i] = def_mod_at_grid_point[0]; 
+        default_irregular_grid[1][i] = def_mod_at_grid_point[1]; 
+        default_irregular_grid[2][i] = def_mod_at_grid_point[2]; 
+        vector up_mod_at_grid_point = model(grid_x[0], grid_y[0], ampx, ampy, ampz, rmin, rmax);
+        updated_irregular_grid[0][i] = up_mod_at_grid_point[0]; 
+        updated_irregular_grid[1][i] = up_mod_at_grid_point[1]; 
+        updated_irregular_grid[2][i] = up_mod_at_grid_point[2]; 
+    }
+    #endif
 
     // test at_position -- default parameters
     REQUIRE_THAT(helix.at_position(origin[0], origin[1], origin[2]), EqualsVector(zeros));
