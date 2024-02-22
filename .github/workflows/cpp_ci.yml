@@ -15,10 +15,8 @@ jobs:
     - uses: actions/checkout@v4
     - name: load submodules
       run: git submodule update --init
-    - name: setup
-      run: cd c_library && mkdir build 
     - name: cmake
-      run: export MKPATH="${PWD}" && cd build && echo "${MKPATH}" && cmake "${MKPATH}"
+      run: cd c_library && mkdir build && export MKPATH="${PWD}" && cd build && echo "${MKPATH}" && cmake "${MKPATH}"
     - name: make
       run: make install
     - name: ctest
