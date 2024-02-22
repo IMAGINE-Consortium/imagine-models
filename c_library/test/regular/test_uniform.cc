@@ -134,10 +134,10 @@ TEST_CASE("UniformMagneticField") {
         REQUIRE_THAT(umf_plain.on_grid(shape, refpoint, increment), EqualsPointerArray(updated_regular_grid, arr_sz));
         REQUIRE_THAT(umf_plain.on_grid(grid_x, grid_y, grid_z), EqualsPointerArray(updated_irregular_grid, 5));
         
-        auto deriv = umf_plain.derivative(posx, posy, posz);
-
         #if autodiff_FOUND
-        // test derivative 
+        // test derivative
+        auto deriv = umf_plain.derivative(posx, posy, posz);
+ 
         REQUIRE_THAT(umf_plain.derivative(posx, posy, posz), EqualsMatrix(matrixOne));
         #endif
   
