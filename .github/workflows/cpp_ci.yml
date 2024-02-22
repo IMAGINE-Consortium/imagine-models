@@ -16,9 +16,9 @@ jobs:
     - name: load submodules
       run: git submodule update --init
     - name: setup
-      run: cd c_library && mkdir build && export MKPATH="${PWD}" && cd build && echo "${MKPATH}"
+      run: cd c_library && mkdir build 
     - name: cmake
-      run: echo "${MKPATH}" && cmake "${MKPATH}"
+      run: export MKPATH="${PWD}" && cd build && echo "${MKPATH}" && cmake "${MKPATH}"
     - name: make
       run: make install
     - name: ctest
