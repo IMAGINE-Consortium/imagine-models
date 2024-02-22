@@ -3,11 +3,6 @@
 
 #if autodiff_FOUND
 #include <Eigen/Dense>
-#endif
-
-
-#define assertm(exp, msg) assert(((void)msg, exp))
-
 
 bool containsNaN(const Eigen::Matrix<autodiff::detail::Real<1, double>, -1, 1, 0, -1, 1>& arr) {
     for (const auto& elem : arr) {
@@ -17,6 +12,12 @@ bool containsNaN(const Eigen::Matrix<autodiff::detail::Real<1, double>, -1, 1, 0
     }
     return false;
 }
+
+#endif
+
+
+#define assertm(exp, msg) assert(((void)msg, exp))
+
 
 bool containsNaN(const std::vector<double>& arr) {
     for (const auto& elem : arr) {
