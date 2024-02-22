@@ -62,7 +62,6 @@ set_target_properties(ImagineModels PROPERTIES VERSION ${PROJECT_VERSION} SOVERS
 if (COMPILE_TESTS)
     # Build tests
     enable_testing()
-    find_package(Catch2 3 REQUIRED)
     #set(TESTSOURCES grid parameter_update positions derivatives)
     #foreach(test ${TESTSOURCES})
     #    set(test_name ${test}_ctest)
