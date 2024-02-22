@@ -11,13 +11,30 @@ include(FetchContent)
 include(GNUInstallDirs)
 
 set(USE_AUTODIFF ON CACHE BOOL OFF)
+set(COMPILE_TESTS ON CACHE BOOL OFF)
 set(USE_FFTW ON CACHE BOOL OFF)
 set(BUILD_PYTHON_PACKAGE OFF CACHE BOOL OFF)
 
 ### DEPENDENCIES
 # First we try to find dependecies, if requested.
 
-## starting with AUTODIFF
+## starting with the tests
+
+if (COMPILE_TESTS)
+    message("-- Trying to find Catch2 to compile the test cases. Turn off via setting 'COMPILE_TESTS=OFF' in your environment before installation. ")
+    find_package(Catch2 3)
+    if (Catch2_FOUND)         
+        message("-- catch2 library found. Tests will be compiled.")
+    else()
+        message("-- catch2 library not found. Testing disabled.")
+        set(RUN_TESTS OFF) 
+    endif()
+else()
+    set(Catch2_FOUND OFF) 
+    message("-- testing manually disabled")
+endif()
+
+## then AUTODIFF
 
 if (USE_AUTODIFF)
     message("-- Trying to find autodiff. Turn off via setting 'USE_AUTODIFF=OFF' in your environment before installation. ")
@@ -43,7 +60,7 @@ endif()
 
 add_compile_definitions(autodiff_FOUND=${autodiff_FOUND})
                 
-## FFTW
+## and FFTW
 
 if (USE_FFTW)
     message("-- Trying to find FFTW for random field generation. Turn off via setting 'USE_FFTW=OFF' in your environment before installation.")
