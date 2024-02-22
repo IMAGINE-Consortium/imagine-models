@@ -20,4 +20,4 @@ jobs:
     - name: make
       run: cd build && sudo make install
     - name: ctest
-      run: ctest --output-on-failure --use-colour yes
+      run: cd build && ctest --output-on-failure --use-colour yes
