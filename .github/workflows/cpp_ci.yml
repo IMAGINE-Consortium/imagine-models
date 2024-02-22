@@ -14,9 +14,9 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     - name: setup
-      run: cd c_library && mkdir build && cd build && pwd
+      run: cd c_library && mkdir build && export MKPATH=pwd && cd build 
     - name: cmake
-      run: cmake -P ..
+      run: cmake -P ${MKPATH}
     - name: make
       run: make install
     - name: ctest
