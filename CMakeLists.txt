@@ -22,6 +22,8 @@ set(BUILD_PYTHON_PACKAGE OFF CACHE BOOL OFF)
 
 if (COMPILE_TESTS)
     message("-- Trying to find Catch2 to compile the test cases. Turn off via setting 'COMPILE_TESTS=OFF' in your environment before installation. ")
+    set(INTERNAL_findCatch2_DIR ${PROJECT_SOURCE_DIR}/extern/Catch2)
+    set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${INTERNAL_findCatch2_DIR}")
     find_package(Catch2 3)
     if (Catch2_FOUND)         
         message("-- catch2 library found. Tests will be compiled.")
