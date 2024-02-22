@@ -1,6 +1,9 @@
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/matchers/catch_matchers.hpp>
+
+#if autodiff_FOUND
 #include <Eigen/Dense>
+#endif
 
 
 #define assertm(exp, msg) assert(((void)msg, exp))
@@ -27,7 +30,7 @@ bool containsNaN(const std::vector<double>& arr) {
 
 // Custom matchers to check array equality
 
-
+  #if autodiff_FOUND
 // Custom matcher for comparing Eigen matrices
 template<typename Derived1, typename Derived2>
 struct MatrixEqualsMatcher : Catch::Matchers::MatcherBase<Eigen::MatrixBase<Derived1>> {
@@ -57,7 +60,7 @@ template<typename Derived>
 MatrixEqualsMatcher<Derived, Derived> EqualsMatrix(const Eigen::MatrixBase<Derived>& expected) {
     return MatrixEqualsMatcher<Derived, Derived>(expected);
 }
-
+#endif
 
 template <typename T, size_t N>
 // old: struct ArrayEqualsMatcher : Catch::Matchers::Impl::MatcherBase<std::array<T, N>> {
