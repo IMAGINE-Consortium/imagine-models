@@ -29,6 +29,16 @@ bool containsNaN(const std::vector<double>& arr) {
 }
 
 
+bool containsNaN(const std::array<double, 3>& arr) {
+    for (const auto& elem : arr) {
+        if (std::isnan(elem)) {
+            return true;
+        }
+    }
+    return false;
+}
+
+
 // Custom matchers to check array equality
 
   #if autodiff_FOUND
