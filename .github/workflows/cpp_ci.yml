@@ -18,7 +18,7 @@ jobs:
     - name: load submodules
       run: git submodule update --init
     - name: debug
-      run: ls
+      run: ls && cd build && ls
     - name: cmake
       run: mkdir build && export MKPATH="${PWD}" && cd build && echo "${MKPATH}" && cmake "${MKPATH}"
     - name: make
