@@ -14,9 +14,10 @@ set(USE_AUTODIFF ON CACHE BOOL OFF)
 set(COMPILE_TESTS ON CACHE BOOL OFF)
 set(USE_FFTW ON CACHE BOOL OFF)
 set(BUILD_PYTHON_PACKAGE OFF CACHE BOOL OFF)
+set(EIGEN_PATH "/usr/include/eigen3" CACHE STRING OFF)
 
 ### DEPENDENCIES
-# First we try to find dependecies, if requested.
+# First we try to find dependecies, if not turned off.
 
 ## starting with the tests
 
@@ -29,10 +30,13 @@ if (COMPILE_TESTS)
     message("-- no global installation of catch2 library found. Trying to include it as a submodule.")
         set(INTERNAL_findCatch2_DIR ${PROJECT_SOURCE_DIR}/extern/Catch2)
         if(NOT EXISTS ${INTERNAL_findCatch2_DIR})
-            message(FATAL_ERROR "The catch2 submodule was not initialized! Please run 'git submodule update --init'. Alternativly you can install catch2 globally on your system." )
+            message("The catch2 submodule was not found! Please run 'git submodule update --init'. Alternatively you can install catch2 globally on your system. Will proceed without compiling the tests." )
+            set(COMPILE_TESTS OFF) 
+        else()
+            add_subdirectory(${INTERNAL_findCatch2_DIR})
+            message("-- catch2 library found as a submodule. Tests will be compiled.")
+            set(Catch2_FOUND ON) 
         endif()
-        add_subdirectory(${INTERNAL_findCatch2_DIR})
-        message("-- catch2 library found as a submodule. Tests will be compiled.")
     endif()
 else()
     set(Catch2_FOUND OFF) 
@@ -45,10 +49,25 @@ if (USE_AUTODIFF)
     message("-- Trying to find autodiff. Turn off via setting 'USE_AUTODIFF=OFF' in your environment before installation. ")
     find_package(autodiff)
     if (autodiff_FOUND)         
-        message("-- autodiff library found: attempting to find Eigen3.")
-        set(autodiff_INCLUDE_DIRS /usr/include/eigen3)
-    
+        message("-- global installation of the autodiff library found: attempting to find Eigen3.")
+    else() 
+    message("-- no global installation of autodiff library found. Trying to include it as a submodule.")
+        set(INTERNAL_findautodiff_DIR ${PROJECT_SOURCE_DIR}/extern/autodiff)
+        if(NOT EXISTS ${INTERNAL_findautodiff_DIR})
+            message("The autodiff submodule was not found! Please run 'git submodule update --init'. Alternatively you can install autodiff globally on your system." )
+            set(USE_AUTODIFF OFF) 
+        else()
+            add_subdirectory(${INTERNAL_findautodiff_DIR})
+            message("-- autodiff library found as a submodule. Tests will be compiled.")
+            set(autodiff_FOUND ON) 
+        endif()
+    endif()
+
+    if (autodiff_FOUND)   
+
         find_package(Eigen3 REQUIRED NO_MODULE)
+
+        set(autodiff_INCLUDE_DIRS ${EIGEN_PATH})
 
         if(NOT Eigen3_FOUND)
             message("-- Could not find the Eigen3 library! Autodifferention disabled.")
