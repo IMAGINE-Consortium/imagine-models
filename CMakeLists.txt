@@ -46,9 +46,7 @@ endif()
 ## then AUTODIFF
 
 if (USE_AUTODIFF)
-
-
-    find_package(Eigen3 REQUIRED NO_MODULE)
+    find_package(Eigen3 NO_MODULE)
     if(NOT Eigen3_FOUND)
         message("-- Could not find Eigen3 library globally! Trying to include it as a submodule.")
         set(EIGEN_PATH ${PROJECT_SOURCE_DIR}/extern/Eigen)
