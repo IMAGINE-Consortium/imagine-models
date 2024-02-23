@@ -10,7 +10,7 @@
 	path = extern/Catch2
 	url = https://github.com/catchorg/Catch2.git
 [submodule "extern/Eigen"]
-	path = extern/Eigen
+	path = extern/Eigen3
 	url = https://gitlab.com/libeigen/eigen.git
 [submodule "extern/autodiff"]
 	path = extern/autodiff
