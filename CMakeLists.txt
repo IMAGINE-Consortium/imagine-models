@@ -51,7 +51,7 @@ if (USE_AUTODIFF)
         message("-- Could not find Eigen3 library globally! Trying to include it as a submodule.")
         set(EIGEN_PATH ${PROJECT_SOURCE_DIR}/extern/Eigen)
         if(NOT EXISTS ${EIGEN_PATH})
-            message("The Eigen3 submodule was not found! Please run 'git submodule update --init'. Alternatively you can try to set the EIGEN_PATH to the eigen header files manually. Will proceed without autodiiferentiation." )
+            message("The Eigen3 submodule was not found! Please run 'git submodule update --init' OR set the EIGEN_PATH variable to the eigen header files manually. Will proceed with autodifferentiation disabled." )
             set(USE_AUTODIFF OFF) 
         else()
             message("-- Eigen3 library found as a submodule. Tests will be compiled.")
@@ -60,6 +60,8 @@ if (USE_AUTODIFF)
     else()
         message("-- Eigen3 library at ${EIGEN_PATH} found.")
     endif()
+
+    list(APPEND CMAKE_PREFIX_PATH ${EIGEN_PATH})
 
     if (Eigen3_FOUND)
 
