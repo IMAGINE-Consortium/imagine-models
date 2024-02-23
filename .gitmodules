@@ -9,3 +9,9 @@
 [submodule "extern/Catch2"]
 	path = extern/Catch2
 	url = https://github.com/catchorg/Catch2.git
+[submodule "build/extern/Eigen"]
+	path = build/extern/Eigen
+	url = https://gitlab.com/libeigen/eigen.git
+[submodule "build/extern/autodiff"]
+	path = build/extern/autodiff
+	url = https://github.com/autodiff/autodiff.git
