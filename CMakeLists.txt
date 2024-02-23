@@ -10,19 +10,24 @@ include(CTest)
 include(FetchContent)
 include(GNUInstallDirs)
 
-set(USE_AUTODIFF ON CACHE BOOL OFF)
-set(COMPILE_TESTS ON CACHE BOOL OFF)
-set(USE_FFTW ON CACHE BOOL OFF)
-set(BUILD_PYTHON_PACKAGE OFF CACHE BOOL OFF)
-set(EIGEN_PATH "/usr/include/eigen3" CACHE STRING OFF)
+option(IMAGINEMODELS_USE_AUTODIFF "enable autodiff functionality, requires autodiff and Eigen3 libraries" ON)
+option(IMAGINEMODELS_COMPILE_TESTS "compile C++ tests, requires Catch2 library" ON)
+option(IMAGINEMODELS_USE_FFTW "enable random fields, requires fftw3" ON)
+option(IMAGINEMODELS_BUILD_PYTHON_PACKAGE "build python package, if OFF, only the C++ library will be installed" ON)
+
+message("use autodiff: ${IMAGINEMODELS_USE_AUTODIFF}")
+
+message("use fftw: ${IMAGINEMODELS_USE_FFTW}")
+
+set(EIGEN_PATH "/usr/include/eigen3" CACHE STRING "")
 
 ### DEPENDENCIES
 # First we try to find dependecies, if not turned off.
 
 ## starting with the tests
 
-if (COMPILE_TESTS)
-    message("-- Trying to find Catch2 to compile the test cases. Turn off via setting 'COMPILE_TESTS=OFF' in your environment before installation. ")
+if (IMAGINEMODELS_COMPILE_TESTS)
+    message("-- Trying to find Catch2 to compile the test cases. Turn off via setting 'IMAGINEMODELS_COMPILE_TESTS=OFF' in your environment before installation. ")
     find_package(Catch2 3)
     if (Catch2_FOUND)         
         message("-- global installation of catch2 library found. Tests will be compiled.")
@@ -31,7 +36,7 @@ if (COMPILE_TESTS)
         set(INTERNAL_findCatch2_DIR ${PROJECT_SOURCE_DIR}/extern/Catch2)
         if(NOT EXISTS ${INTERNAL_findCatch2_DIR})
             message("The catch2 submodule was not found! Please run 'git submodule update --init'. Alternatively you can install catch2 globally on your system. Will proceed without compiling the tests." )
-            set(COMPILE_TESTS OFF) 
+            set(IMAGINEMODELS_COMPILE_TESTS OFF) 
         else()
             add_subdirectory(${INTERNAL_findCatch2_DIR})
             message("-- catch2 library found as a submodule. Tests will be compiled.")
@@ -45,29 +50,30 @@ endif()
 
 ## then AUTODIFF
 
-if (USE_AUTODIFF)
+if (IMAGINEMODELS_USE_AUTODIFF)
     find_package(Eigen3 NO_MODULE)
     if(NOT Eigen3_FOUND)
         message("-- Could not find Eigen3 library globally! Trying to include it as a submodule.")
         set(EIGEN_PATH ${PROJECT_SOURCE_DIR}/extern/Eigen)
         if(NOT EXISTS ${EIGEN_PATH})
             message("The Eigen3 submodule was not found! Please run 'git submodule update --init' OR set the EIGEN_PATH variable to the eigen header files manually. Will proceed with autodifferentiation disabled." )
-            set(USE_AUTODIFF OFF) 
+            set(IMAGINEMODELS_USE_AUTODIFF OFF) 
         else()
-            message("-- Eigen3 library found as a submodule  at ${EIGEN_PATH}. Tests will be compiled.")
+            message("-- Eigen3 library found as a submodule  at ${EIGEN_PATH}. Trying to find autodiff now.")
             set(Eigen3_FOUND ON) 
         endif()
     else()
-        message("-- Eigen3 library at ${EIGEN_PATH} found.")
+        message("-- Eigen3 library at ${EIGEN_PATH} found. Trying to find autodiff now.")
     endif()
 
     list(APPEND CMAKE_PREFIX_PATH ${EIGEN_PATH})
+    message("-- CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} ")
 
     if (Eigen3_FOUND)
 
         set(autodiff_INCLUDE_DIRS ${EIGEN_PATH})
 
-        message("-- Trying to find autodiff. Turn off via setting 'USE_AUTODIFF=OFF' in your environment before installation. ")
+        message("-- Trying to find autodiff. Turn off via setting 'IMAGINEMODELS_USE_AUTODIFF=OFF' in your environment before installation. ")
         find_package(autodiff)
         if (autodiff_FOUND)         
             message("-- global installation of the autodiff library found: attempting to find Eigen3.")
@@ -76,7 +82,7 @@ if (USE_AUTODIFF)
             set(INTERNAL_findautodiff_DIR ${PROJECT_SOURCE_DIR}/extern/autodiff)
             if(NOT EXISTS ${INTERNAL_findautodiff_DIR})
                 message("The autodiff submodule was not found! Please run 'git submodule update --init'. Alternatively you can install autodiff globally on your system." )
-                set(USE_AUTODIFF OFF) 
+                set(IMAGINEMODELS_USE_AUTODIFF OFF) 
             else()
                 add_subdirectory(${INTERNAL_findautodiff_DIR})
                 message("-- autodiff library found as a submodule. Tests will be compiled.")
@@ -93,8 +99,8 @@ add_compile_definitions(autodiff_FOUND=${autodiff_FOUND})
                 
 ## and FFTW
 
-if (USE_FFTW)
-    message("-- Trying to find FFTW for random field generation. Turn off via setting 'USE_FFTW=OFF' in your environment before installation.")
+if (IMAGINEMODELS_USE_FFTW)
+    message("-- Trying to find FFTW for random field generation. Turn off via setting 'IMAGINEMODELS_USE_FFTW=OFF' in your environment before installation.")
     # Activating the findFFTW cmake package
     set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${PROJECT_SOURCE_DIR}/c_library/findFFTW")
     message("-- Trying to find FFTW. Turn off via 'cmake ..DUSE_FFTW=OFF'")
@@ -129,7 +135,7 @@ add_subdirectory(${PROJECT_SOURCE_DIR}/c_library)
 
 ## Python, if requested
 
-if(BUILD_PYTHON_PACKAGE)
+if(IMAGINEMODELS_BUILD_PYTHON_PACKAGE)
 
     set(IM_INCLUDE_DIR ${PROJECT_SOURCE_DIR}/c_library/headers)
 
