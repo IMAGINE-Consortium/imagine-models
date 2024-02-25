@@ -104,7 +104,7 @@ public:
           i_to_keep.push_back(index);
         }
       }
-      return inp(Eigen::all, i_to_keep);
+      return inp(Eigen::indexing::all, i_to_keep);
     }
     return inp;
   }
@@ -211,7 +211,7 @@ public:
           i_to_keep.push_back(index);
         }
       }
-      return inp(Eigen::all, i_to_keep);
+      return inp(Eigen::indexing::all, i_to_keep);
     }
     return inp;
   }
