@@ -20,7 +20,7 @@ jobs:
     - name: downloading and installing Eigen3
       run: git clone https://gitlab.com/libeigen/eigen.git && cd eigen && mkdir build && cd build && cmake ..
     - name: downloading and installing autodiff
-      run: git clone https://github.com/autodiff/autodiff.git && cd autodiff && mkdir .build && cd .build && cmake .. -DAUTODIFF_BUILD_PYTHON=OFF && cmake --build . --target install
+      run: git clone https://github.com/autodiff/autodiff.git && cd autodiff && mkdir .build && cd .build && cmake .. -DAUTODIFF_BUILD_PYTHON=OFF && sudo cmake --build . --target install
     - name: load submodules
       run: git submodule update --init
     - name: cmake
