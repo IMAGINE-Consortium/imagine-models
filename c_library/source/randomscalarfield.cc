@@ -102,11 +102,32 @@ double* RandomScalarField::random_numbers_on_grid(const std::array<int, 3> &shp,
 
     seed_complex_random_numbers(val_comp, shp, inc, seed);
     fftw_execute(c2r);
-    for (int s = 0; s < padded_size; ++s)  {
-        (val)[s] /= sqrt_gs;  
-    }
+
     remove_padding(val, shp, pad);
-    
+
+    std::cout << "gs: " << gs << std::endl; 
+
+    double var = 0.;
+    double mean = 0.;
+
+    for (int s = 0; s < gs; s++)  {
+        val[s] /= sqrt_gs;  
+        mean = mean + val[s]; 
+    }
+
+    mean = mean / gs;
+
+    for (int s = 0; s < gs; s++)  {
+        var = var + val[s]*val[s]; 
+    }
+
+
+    var = var /(gs - 1); 
+
+    std::cout << "MEAN: " << mean << std::endl; 
+    std::cout << "VAR: " << var << std::endl; 
+
+
     return val;
 }
 

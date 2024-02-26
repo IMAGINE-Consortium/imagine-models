@@ -40,11 +40,12 @@ void RandomField<POSTYPE, GRIDTYPE>::remove_padding(double* val, const std::arra
 template<typename POSTYPE, typename GRIDTYPE>
 void RandomField<POSTYPE, GRIDTYPE>::seed_complex_random_numbers(fftw_complex* vec,  const std::array<int, 3> &shp, const std::array<double, 3> &inc, const int seed)  {
 
-  bool debug_random = false;
+  bool debug_random = true;
   auto gen = std::mt19937(seed);
   int no_of_real = 0;
   int no_of_free = 0;
   int no_of_rand = 0;
+  double var = 0;
 
   double lx = shp[0]*inc[0];
   double ly = shp[1]*inc[1];
@@ -56,32 +57,30 @@ void RandomField<POSTYPE, GRIDTYPE>::seed_complex_random_numbers(fftw_complex* v
 
   int size_z = static_cast<int>(nyquist_z) + 1;
 
-  for (int i = 0; i < shp[0]; ++i) {
-    double kx = (double)i / lx;
-    if (i > nyquist_x)
-      kx -= 1./ inc[0];
-    const int idx_lv1 = i * shp[1] * size_z;
+  for (int l = 0; l < size_z; ++l) {
+    const int idx_lv1 = l * shp[1] * shp[0];
+    double kz = (double)l / lz;
+
     for (int j = 0; j < shp[1]; ++j) {
       double ky = (double)j / ly;
       if (j > nyquist_y)
         ky -= 1./ inc[1];
-      const int idx_lv2 = idx_lv1 + j * size_z;
-      for (int l = 0; l < size_z; ++l) {
-        const int idx = idx_lv2 + l;
-        double kz = (double)l / lz;
+      const int idx_lv2 = idx_lv1 + j * shp[0];
+      for (int i = 0; i < shp[0]; ++i) {
+        double kx = (double)i / lx;
+        if (i > nyquist_x)
+          kx -= 1./ inc[0];
+          const int idx = idx_lv2 + i;
+        
         if (debug_random) {
           std::cout << "At Index (i, j, k): (" << i << j << l << ")" << std::endl;
-          std::cout << "flat array index " << idx <<  std::endl;
+          //std::cout << "flattened array index " << idx <<  std::endl;
         }
         if (l == 0 and j == 0 and i == 0) {
           // Full Monopole is set to zero, dealt with seperately in the outer scope
           vec[0][0] = 0.;
           vec[0][1] = 0.;
-          if (debug_random) {
-          std::cout << "Type: Monopole" << std::endl;
-          std::cout << "Array val (real, imag): " << vec[idx][0] << ", " << vec[idx][1] << std::endl;
-          std::cout <<  "\n";
-          }
+
           continue;
         }
         
@@ -94,17 +93,33 @@ void RandomField<POSTYPE, GRIDTYPE>::seed_complex_random_numbers(fftw_complex* v
         else {
           sigma = 1.;
         }
-        std::normal_distribution<double> nd{0, sigma};
+        std::normal_distribution<double> nd{0., sigma};
 
         bool l_is_zero_or_nyquist = (l == 0 or l == nyquist_z);
         bool j_is_zero_or_nyquist = (j == 0 or j == nyquist_y);
         bool i_is_zero_or_nyquist = (i == 0 or i == nyquist_x);
         int cg_idx;
+        /* 
+        Below, the random numbers are dostributed on the grid. Since we require real output, certain parts of the grid must obey hermitian symmetry. To illustrate this, below is an example with (x, y, z ) )=  (4,4, 3) dimensions.
+        Just as in the script, the respective indices are i, j, l.
+        The l = 2 case is just the complex conjugate of l = 1 and dealt with autmomatically by FFTW.
 
 
-        if (l_is_zero_or_nyquist) { // real z planes
+        l = 0                                                                            l = 1  (just complex numbers)
+
+        i -->
+
+        R1  C1  R2  C*1  -- real y line after x-directed trafo                           C C C C
+        C2  C3  C4  C5   -- complex y line after x-directed trafo                        C C C C
+        R3  C6  R4  C*6  -- real y line after x-directed trafo                           C C C C
+        C*5 C*4 C*3 C*2  -- complex conjugate to j=1 line after x-directed trafo         C C C C
+
+
+        */
+
+        if (l_is_zero_or_nyquist) { // real z planes (l = 0 )
           if (j_is_zero_or_nyquist) { // real y_lines 
-            if (i_is_zero_or_nyquist) {  // line monopole or nyquist, ->draw real numbers (global momopole is dealt with earlier)
+            if (i_is_zero_or_nyquist) {  // line monopole or nyquist, ->draw real numbers (global monopole is dealt with earlier)
               vec[idx][0] = nd(gen);
               vec[idx][1] = 0.;     
               if (debug_random) {
@@ -112,7 +127,7 @@ void RandomField<POSTYPE, GRIDTYPE>::seed_complex_random_numbers(fftw_complex* v
                 no_of_real += 1;
               }  
             }
-            else if (i < nyquist_x) {  // line values below nyqist
+            else if (i < nyquist_x) {  // line values below nyqist x, draw complex numbers
               vec[idx][0] = nd(gen);
               vec[idx][1] = nd(gen);
               if (debug_random) {
@@ -120,29 +135,14 @@ void RandomField<POSTYPE, GRIDTYPE>::seed_complex_random_numbers(fftw_complex* v
                 no_of_free += 1;
               }
             }
-            else {                     // complex conjugate online
-            cg_idx = (shp[0] - i)  * shp[1] * size_z + j* size_z  + l;
+            else { // complex conjugate on the line, mirroring the x coordinate
+            cg_idx = (shp[0] - i) + j * shp[0] + l * shp[1] * shp[0];
               vec[idx][0] = vec[cg_idx][0];
               vec[idx][1] = - vec[cg_idx][1];
             }  
           }
-          else {                 // complex lines below nyqist  
-            if (i_is_zero_or_nyquist) {
-              if (j  < nyquist_y) {
-                vec[idx][0] = nd(gen);
-                vec[idx][1] = nd(gen);
-                if (debug_random) {
-                  no_of_rand += 2;
-                  no_of_free += 1;
-                }
-              }
-              else {
-                cg_idx = i * shp[1] * size_z + (shp[1] - j) * size_z  + l;
-                vec[idx][0] = vec[cg_idx][0];
-                vec[idx][1] = - vec[cg_idx][1];
-              }
-            } 
-            else if (i < nyquist_x) {
+          else {  // complex lines  
+            if (j  < nyquist_y) {  // just draw numbers 
               vec[idx][0] = nd(gen);
               vec[idx][1] = nd(gen);
               if (debug_random) {
@@ -150,8 +150,8 @@ void RandomField<POSTYPE, GRIDTYPE>::seed_complex_random_numbers(fftw_complex* v
                 no_of_free += 1;
               }
             }
-            else {
-              cg_idx = (shp[0] - i) * shp[1] * size_z + (shp[1] - j) * size_z  + l;
+            else {  // mirrored complex conjugate of above
+              cg_idx = (shp[0] - i + 1) + (shp[1] - j + 1) * shp[0]  + l * shp[1] * shp[0];
               vec[idx][0] = vec[cg_idx][0];
               vec[idx][1] = - vec[cg_idx][1];
             }
@@ -165,13 +165,19 @@ void RandomField<POSTYPE, GRIDTYPE>::seed_complex_random_numbers(fftw_complex* v
             no_of_free += 1;
             }
         }
+        if (debug_random) {
+          var += vec[idx][0]*vec[idx][0] +  vec[idx][1] * vec[idx][1];
+          std::cout << "Array val (real, imag): " << vec[idx][0] << ", " << vec[idx][1] << std::endl;
+          }
+        
       }
     }
   }
   if (debug_random) {
     std::cout <<  "\n" << std::endl;
-
-    std::cout <<  "\nnumber of real: " << no_of_real << "\nnumber of free: " << no_of_free<<  std::endl;    std::cout <<  "\ndegrees of freedom: " << (shp[1] * nyquist_z*2 * shp[0]) << "\nnumber of random numbers drawn: " << no_of_rand << std::endl;
+    var = var/(no_of_rand - 1);
+    std::cout <<  "\nnumber of real: " << no_of_real << "\nnumber of free: " << no_of_free<<  std::endl;    std::cout <<  "\ndegrees of freedom: " << (shp[1] * nyquist_z*2 * shp[0]) << "\nnumber of random numbers drawn: " << no_of_rand << 
+    "\nvariance: " << var << std::endl;
     std::cout <<  "\n" << std::endl;
   }
 
