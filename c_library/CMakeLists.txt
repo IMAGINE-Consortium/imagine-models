@@ -63,7 +63,12 @@ if (IMAGINEMODELS_COMPILE_TESTS)
     # Build tests
     enable_testing()
 
-    set(TESTSOURCES uniform helix regular) #parameter_update positions derivatives)
+    set(TESTSOURCES uniform helix regular) 
+
+    if (IMAGINEMODELS_USE_FFTW) 
+        set(TESTSOURCES_RANDOM)  #gaussianscalar) 
+    endif()
+
     add_executable(test_main "${PROJECT_SOURCE_DIR}/test/test_main.cc")
     target_link_libraries(test_main ImagineModels ${LIBRARIES} Catch2::Catch2WithMain)
     add_test(test_main test_main)
@@ -74,6 +79,15 @@ if (IMAGINEMODELS_COMPILE_TESTS)
         target_link_libraries(${test_name} ImagineModels ${LIBRARIES} Catch2::Catch2WithMain)
         add_test(${test_name} ${test_name})
     endforeach()
+
+    if (IMAGINEMODELS_USE_FFTW) 
+        foreach(test ${TESTSOURCES_RANDOM})
+            set(test_name ${test}_ctest)
+            add_executable(${test_name} "${PROJECT_SOURCE_DIR}/test/random/test_${test}.cc")
+            target_link_libraries(${test_name} ImagineModels ${LIBRARIES} Catch2::Catch2WithMain)
+            add_test(${test_name} ${test_name})
+        endforeach()
+    endif()
 endif()
 
 
