@@ -14,11 +14,11 @@ TEST_CASE("GaussianScalarField") {
 
     const int n_seeds = 10;
 
-    std::array<int,  n_seeds> seeds{23, 35, 645, 1, 75, 968876 , 323424, 89987,86786, 2342};
+    std::array<int,  n_seeds> seeds{23, 35, 645, 1, 75, 968876 , 323424, 89987, 86786, 2342};
     
     UNSCOPED_INFO("Start testing gaussian scalar test case");
 
-    //const std::array<int, 3> shape {{150, 200, 60}};
+    //const std::array<int, 3> shape {{150, 200, 600}};
     const std::array<int, 3> shape {{4, 4, 3}};
     const std::array<double, 3> refpoint {{-4., -0.1, -3.2}};
     const std::array<double, 3> increment {{0.5, 0.01, 1.6}};
@@ -49,6 +49,7 @@ TEST_CASE("GaussianScalarField") {
         double sample_mean = 0.;
         double sample_variance = 0.;
 
+        fftw_complex* ev_random_c = gauss_plain.test_random_numbers(shape, increment, seeds[i]);
         double* ev_random = gauss_plain.random_numbers_on_grid(shape, increment, seeds[i]);
 
         for (int j = 0; j < size - 1; j++) {
@@ -58,18 +59,18 @@ TEST_CASE("GaussianScalarField") {
 
         sample_mean = sample_mean / (size - 1);
 
-        CHECK_THAT(sample_mean, Catch::Matchers::WithinAbs(gauss_plain.mean, 2.* variance_of_the_sample_mean) );    
+        CHECK_THAT(sample_mean, Catch::Matchers::WithinAbs(gauss_plain.mean, 2.* std::sqrt(variance_of_the_sample_mean)) );    
 
         for (int j = 0; j < size - 1; j++) {
-            double diff = ev_random[j] - sample_mean;
+            double diff = ev_random[j] - gauss_plain.mean;
             sample_variance = sample_variance + diff*diff;
         }
-        sample_variance = sample_variance / (size - 2) ; /// M_PI;
+        sample_variance = sample_variance / (size - 1) ; /// M_PI;
 
         std::cout << "sample_mean: " << sample_mean << std::endl;
         std::cout << "sample_variance: " << sample_variance << std::endl;
 
-        CHECK_THAT(sample_variance, Catch::Matchers::WithinAbs(model_var, 2.*variance_of_the_sample_variance) ); 
+        CHECK_THAT(sample_variance, Catch::Matchers::WithinAbs(model_var, 2.*std::sqrt(variance_of_the_sample_variance)) ); 
     }
   
 

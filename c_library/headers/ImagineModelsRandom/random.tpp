@@ -32,7 +32,11 @@ void RandomField<POSTYPE, GRIDTYPE>::remove_padding(double* val, const std::arra
   int sz = shp[2];
   int n = shp[0]*shp[1];
   for (int i = 1; i<n; i++) {
-      std::copy(val + i*(sz + pad), val + i*(sz + pad) + sz, val + i*sz);
+      auto start_new = val + i*sz;
+      auto start_old  = start_new + i*pad;
+      auto end_old = start_old + sz;
+
+      std::copy(start_old, end_old, start_new);
   }
 }
 
@@ -57,25 +61,27 @@ void RandomField<POSTYPE, GRIDTYPE>::seed_complex_random_numbers(fftw_complex* v
 
   int size_z = static_cast<int>(nyquist_z) + 1;
 
+  // In the following, we walk FORTRAN style through the array. The reason for this is that implementing the complex conjugates is easier this way 
+
   for (int l = 0; l < size_z; ++l) {
-    const int idx_lv1 = l * shp[1] * shp[0];
+    const int idx_lv1 = l;  //* shp[1] * shp[0];
     double kz = (double)l / lz;
 
     for (int j = 0; j < shp[1]; ++j) {
       double ky = (double)j / ly;
       if (j > nyquist_y)
         ky -= 1./ inc[1];
-      const int idx_lv2 = idx_lv1 + j * shp[0];
+      const int idx_lv2 = idx_lv1 + j * size_z;  //* shp[0];
       for (int i = 0; i < shp[0]; ++i) {
         double kx = (double)i / lx;
         if (i > nyquist_x)
           kx -= 1./ inc[0];
-          const int idx = idx_lv2 + i;
+          const int idx = idx_lv2 + i * shp[1] * size_z;
         
-        if (debug_random) {
-          std::cout << "At Index (i, j, k): (" << i << j << l << ")" << std::endl;
+        //if (debug_random) {
+        //  std::cout << "At Index (i, j, k): (" << i << j << l << ")" << std::endl;
           //std::cout << "flattened array index " << idx <<  std::endl;
-        }
+        //}
         if (l == 0 and j == 0 and i == 0) {
           // Full Monopole is set to zero, dealt with seperately in the outer scope
           vec[0][0] = 0.;
@@ -100,29 +106,34 @@ void RandomField<POSTYPE, GRIDTYPE>::seed_complex_random_numbers(fftw_complex* v
         bool i_is_zero_or_nyquist = (i == 0 or i == nyquist_x);
         int cg_idx;
         /* 
-        Below, the random numbers are dostributed on the grid. Since we require real output, certain parts of the grid must obey hermitian symmetry. To illustrate this, below is an example with (x, y, z ) )=  (4,4, 3) dimensions.
+        Below, the random numbers are distributed on the grid. Since we require real output, certain parts of the grid must obey hermitian symmetry. To illustrate this, below is an example of such a complex grid with (x, y, z) = (4, 4, 3) dimensions.
+        RX means real type, CX complex type, and C*X complex conjugate w.r.t to CX. 
+        We number the values by type. 
         Just as in the script, the respective indices are i, j, l.
         The l = 2 case is just the complex conjugate of l = 1 and dealt with autmomatically by FFTW.
 
 
-        l = 0                                                                            l = 1  (just complex numbers)
+                      l = 0                                                              l = 1  (just complex numbers, 
+                                                                                                 no symmetry, labels omitted)
 
-        i -->
+               i -->
 
-        R1  C1  R2  C*1  -- real y line after x-directed trafo                           C C C C
-        C2  C3  C4  C5   -- complex y line after x-directed trafo                        C C C C
-        R3  C6  R4  C*6  -- real y line after x-directed trafo                           C C C C
-        C*5 C*4 C*3 C*2  -- complex conjugate to j=1 line after x-directed trafo         C C C C
+          j    R1  C1  R2  C*1  -- real y line after x-directed trafo                           C C C C
+               C2  C3  C4  C5   -- complex y line after x-directed trafo                        C C C C
+          |    R3  C6  R4  C*6  -- real y line after x-directed trafo                           C C C C
+          v    C*5 C*4 C*3 C*2  -- complex conjugate to j=1 line after x-directed trafo         C C C C
 
+        Most of the logic below deals with the l=0 case and the symmetries in there.
 
         */
 
-        if (l_is_zero_or_nyquist) { // real z planes (l = 0 )
-          if (j_is_zero_or_nyquist) { // real y_lines 
+        if (l_is_zero_or_nyquist) { // real z planes (l = 0, l=nyq_z)
+          if (j_is_zero_or_nyquist) { // real y_lines  (j = 0, j=nyq_y)
             if (i_is_zero_or_nyquist) {  // line monopole or nyquist, ->draw real numbers (global monopole is dealt with earlier)
               vec[idx][0] = nd(gen);
               vec[idx][1] = 0.;     
               if (debug_random) {
+                var += vec[idx][0]*vec[idx][0];
                 no_of_rand += 1;
                 no_of_real += 1;
               }  
@@ -131,6 +142,7 @@ void RandomField<POSTYPE, GRIDTYPE>::seed_complex_random_numbers(fftw_complex* v
               vec[idx][0] = nd(gen);
               vec[idx][1] = nd(gen);
               if (debug_random) {
+                var += vec[idx][0]*vec[idx][0] +  vec[idx][1] * vec[idx][1];
                 no_of_rand += 2;
                 no_of_free += 1;
               }
@@ -141,34 +153,36 @@ void RandomField<POSTYPE, GRIDTYPE>::seed_complex_random_numbers(fftw_complex* v
               vec[idx][1] = - vec[cg_idx][1];
             }  
           }
-          else {  // complex lines  
+          else {  // complex y lines  
             if (j  < nyquist_y) {  // just draw numbers 
               vec[idx][0] = nd(gen);
               vec[idx][1] = nd(gen);
               if (debug_random) {
+                var += vec[idx][0]*vec[idx][0] +  vec[idx][1] * vec[idx][1];
                 no_of_rand += 2;
                 no_of_free += 1;
               }
             }
-            else {  // mirrored complex conjugate of above
-              cg_idx = (shp[0] - i + 1) + (shp[1] - j + 1) * shp[0]  + l * shp[1] * shp[0];
+            else {  // mirrored complex conjugate of above (note that the -1 in the mirrored i index reflects the different symmetry in x here, as we also need to consider the x monopole of the line.)
+              cg_idx = (shp[0] - i - 1) + (shp[1] - j) * shp[0]  + l * shp[1] * shp[0];
+              //std::cout << " update index: " << (shp[0] - i - 1) << ", " <<  (shp[1] - j - 1) << std::endl;
               vec[idx][0] = vec[cg_idx][0];
               vec[idx][1] = - vec[cg_idx][1];
             }
           }
         }
-        else { //  complex z planes
+        else { //  complex z planes, just draw random numbers. Complex conjugate dealt with by FFTW.
           vec[idx][0] = nd(gen);
           vec[idx][1] = nd(gen);
           if (debug_random) {
+            var += vec[idx][0]*vec[idx][0] +  vec[idx][1] * vec[idx][1];
             no_of_rand += 2;
             no_of_free += 1;
             }
         }
-        if (debug_random) {
-          var += vec[idx][0]*vec[idx][0] +  vec[idx][1] * vec[idx][1];
-          std::cout << "Array val (real, imag): " << vec[idx][0] << ", " << vec[idx][1] << std::endl;
-          }
+        //if (debug_random) {
+        //  std::cout << "Array val (real, imag): " << vec[idx][0] << ", " << vec[idx][1] << std::endl;
+        //  }
         
       }
     }

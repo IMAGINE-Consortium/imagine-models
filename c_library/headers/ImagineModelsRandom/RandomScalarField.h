@@ -45,6 +45,7 @@ public:
   virtual double spatial_profile(const double &x, const double &y, const double &z) const = 0;
 
   double* random_numbers_on_grid(const std::array<int, 3> &shp, const std::array<double, 3> &inc, const int seed);
+  fftw_complex* test_random_numbers(const std::array<int, 3> &shp, const std::array<double, 3> &inc, const int seed);
 
   double* on_grid(const std::array<int, 3> &shp, const std::array<double, 3> &rpt, const std::array<double, 3> &inc, const int seed);
 
