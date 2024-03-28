@@ -141,6 +141,56 @@ double* RandomScalarField::random_numbers_on_grid(const std::array<int, 3> &shp,
     return val;
 }
 
+fftw_complex* RandomScalarField::complex_random_numbers_on_grid(const std::array<int, 3> &shp, const std::array<double, 3> &inc, const int seed) {
+    double* val = allocate_memory(shp);
+    fftw_complex* val_comp = construct_plans(val, shp); 
+    int gs = grid_size(shp);
+    double sqrt_gs = std::sqrt(gs);
+    std::array<int, 3> padded_shp = {shp[0],  shp[1],  2*(shp[2]/2 + 1)}; 
+    int padded_size = grid_size(padded_shp);
+    int pad =  padded_shp[2] - shp[2];
+
+    seed_complex_random_numbers(val_comp, shp, inc, seed);
+    fftw_execute(c2r);
+    
+    //std::cout << "val[s] before padding: \n " << std::endl; 
+    //for (int s = 0; s < padded_size; s++)  {
+    //    std::cout << s << ": " << val[s]/sqrt_gs << std::endl; 
+    //}
+    remove_padding(val, shp, pad);
+    
+    //std::cout << "val[s] after padding: \n " << std::endl; 
+    //for (int s = 0; s < padded_size; s++)  {
+    //    std::cout << s << ": " << val[s]/sqrt_gs << std::endl; 
+    //}
+
+
+    std::cout << "gs: " << gs << std::endl; 
+
+    double var = 0.;
+    double mean = 0.;
+
+    for (int s = 0; s < gs; s++)  {
+        val[s] /= sqrt_gs;  
+        if (s!=gs-1) mean = mean + val[s]; 
+    }
+
+    mean = mean / (gs - 1);
+
+    for (int s = 0; s < gs - 1; s++)  {
+        var = var + (val[s] -mean)*(val[s] - mean); 
+    }
+
+
+    var = var /(gs - 2); 
+
+    std::cout << "MEAN: " << mean << std::endl; 
+    std::cout << "VAR: " << var << std::endl; 
+
+
+    return val;
+}
+
 
 fftw_complex* RandomScalarField::test_random_numbers(const std::array<int, 3> &shp, const std::array<double, 3> &inc, const int seed) {
     double* val = allocate_memory(shp);
@@ -154,30 +204,35 @@ fftw_complex* RandomScalarField::test_random_numbers(const std::array<int, 3> &s
     auto gen = std::mt19937(seed);
     std::normal_distribution<double> nd{0., 1.};
 
-    for (int i = 0; i < shp[0]; ++i) {
-    const int idx_lv1 = i * shp[1] * padded_shp[2];
-      for (int j = 0; j < shp[1]; ++j) {
+    int size_z = static_cast<int>(shp[2]/2.) + 1;
+    
+    for (int i = 0; i < padded_shp[0]; ++i) {
+      const int idx_lv1 = i * padded_shp[1] * padded_shp[2];
+      for (int j = 0; j < padded_shp[1]; ++j) {
         const int idx_lv2 = idx_lv1 + j * padded_shp[2];
-        for (int k = 0; k < shp[2]; ++k) {
+        for (int k = 0; k < padded_shp[2]; ++k) {
           const int idx = idx_lv2 + k;
           val[idx] = nd(gen);
+          std::cout << i << ", " << j << ", " << k << ": " << val[idx] << std::endl; 
         }
       }
     }
 
-
     fftw_execute(r2c);
     
-    std::cout << "test: val[s]: \n " << std::endl; 
-    for (int s = 0; s < padded_size; s++)  {
-        std::cout << s << ": " << val[s] << std::endl; 
-    }
-    
-    std::cout << "test val_comp[s]: \n " << std::endl; 
-    for (int s = 0; s < padded_size; s++)  {
-        std::cout << s << ": " << val_comp[s][0]/sqrt_gs << ", " << val_comp[s][1]/sqrt_gs << std::endl; 
-    }
+    std::cout << "\n" << std::endl;
 
+    for (int i = 0; i < padded_shp[0]; ++i) {
+      const int idx_lv1 = i * padded_shp[1] * size_z;
+      for (int j = 0; j < padded_shp[1]; ++j) {
+        const int idx_lv2 = idx_lv1 + j * size_z;
+        for (int k = 0; k < size_z; ++k) {
+          const int idx = idx_lv2 + k;
+          std::cout << i << ", " << j << ", " << k << ": " << val_comp[idx][0] << ", " <<  val_comp[idx][1] << std::endl; 
+
+        }
+      }
+    }
 
     std::cout << "gs: " << gs << std::endl; 
 

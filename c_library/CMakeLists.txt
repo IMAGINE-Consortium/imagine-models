@@ -66,7 +66,7 @@ if (IMAGINEMODELS_COMPILE_TESTS)
     set(TESTSOURCES uniform helix regular) 
 
     if (IMAGINEMODELS_USE_FFTW) 
-        set(TESTSOURCES_RANDOM)  #gaussianscalar) 
+        set(TESTSOURCES_RANDOM gaussianscalar) 
     endif()
 
     add_executable(test_main "${PROJECT_SOURCE_DIR}/test/test_main.cc")

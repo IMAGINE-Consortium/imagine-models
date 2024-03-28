@@ -12,8 +12,8 @@ class GaussianScalarField : public RandomScalarField {
   public:
     using RandomScalarField :: RandomScalarField;
 
-    double mean = 0;
-    double rms = 1;
+    double mean = 0.;
+    double rms = 1.;
 
     //bool apply_spectrum = true;
     double spectral_offset = .001;

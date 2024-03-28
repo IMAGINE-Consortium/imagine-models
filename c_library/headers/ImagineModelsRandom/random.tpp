@@ -58,25 +58,22 @@ void RandomField<POSTYPE, GRIDTYPE>::seed_complex_random_numbers(fftw_complex* v
   float nyquist_x = shp[0]/2.;
   float nyquist_y = shp[1]/2.;
   float nyquist_z = shp[2]/2.;
-
+ 
   int size_z = static_cast<int>(nyquist_z) + 1;
 
-  // In the following, we walk FORTRAN style through the array. The reason for this is that implementing the complex conjugates is easier this way 
-
-  for (int l = 0; l < size_z; ++l) {
-    const int idx_lv1 = l;  //* shp[1] * shp[0];
-    double kz = (double)l / lz;
-
+  for (int i = 0; i < shp[0]; ++i) {
+    const int idx_lv1 = i * shp[1] * size_z;
+    double kx = (double)i / lx;
+    if (i > nyquist_x)
+      kx -= 1./ inc[0];
     for (int j = 0; j < shp[1]; ++j) {
       double ky = (double)j / ly;
       if (j > nyquist_y)
         ky -= 1./ inc[1];
       const int idx_lv2 = idx_lv1 + j * size_z;  //* shp[0];
-      for (int i = 0; i < shp[0]; ++i) {
-        double kx = (double)i / lx;
-        if (i > nyquist_x)
-          kx -= 1./ inc[0];
-          const int idx = idx_lv2 + i * shp[1] * size_z;
+      for (int l = 0; l < size_z; ++l) {
+          double kz = (double)l / lz;
+          const int idx = idx_lv2 + l;
         
         //if (debug_random) {
         //  std::cout << "At Index (i, j, k): (" << i << j << l << ")" << std::endl;
@@ -148,7 +145,7 @@ void RandomField<POSTYPE, GRIDTYPE>::seed_complex_random_numbers(fftw_complex* v
               }
             }
             else { // complex conjugate on the line, mirroring the x coordinate
-            cg_idx = (shp[0] - i) + j * shp[0] + l * shp[1] * shp[0];
+            cg_idx = (shp[0] - i) * shp[1] * size_z + j * size_z + l;
               vec[idx][0] = vec[cg_idx][0];
               vec[idx][1] = - vec[cg_idx][1];
             }  
@@ -163,11 +160,20 @@ void RandomField<POSTYPE, GRIDTYPE>::seed_complex_random_numbers(fftw_complex* v
                 no_of_free += 1;
               }
             }
-            else {  // mirrored complex conjugate of above (note that the -1 in the mirrored i index reflects the different symmetry in x here, as we also need to consider the x monopole of the line.)
-              cg_idx = (shp[0] - i - 1) + (shp[1] - j) * shp[0]  + l * shp[1] * shp[0];
-              //std::cout << " update index: " << (shp[0] - i - 1) << ", " <<  (shp[1] - j - 1) << std::endl;
-              vec[idx][0] = vec[cg_idx][0];
-              vec[idx][1] = - vec[cg_idx][1];
+            else {  
+              if (i_is_zero_or_nyquist) {
+                cg_idx = i * shp[1] * size_z + (shp[1] - j) * size_z  + l ;
+                vec[idx][0] = vec[cg_idx][0];
+                vec[idx][1] = - vec[cg_idx][1];
+              }
+              else {
+                // mirrored complex conjugate of (shp[1] - j) line
+                //cg_idx = (shp[0] - i - 1) + (shp[1] - j) * shp[0]  + l * shp[1] * shp[0];
+                cg_idx = (shp[0] - i - 1) * shp[1] * size_z + (shp[1] - j) * size_z  + l ;
+                //std::cout << " update index: " << (shp[0] - i - 1) << ", " <<  (shp[1] - j - 1) << std::endl;
+                vec[idx][0] = vec[cg_idx][0];
+                vec[idx][1] = - vec[cg_idx][1];
+              }
             }
           }
         }
