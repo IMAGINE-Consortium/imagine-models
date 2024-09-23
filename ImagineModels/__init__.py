@@ -18,7 +18,7 @@ except AttributeError:
     
     
         
-from .HelperFunctions.CoordinateConversions import cyl2cart
+from .HelperFunctions.CoordinateConversions import cyl2cart, cart2cyl
 from .HelperFunctions.PlottingHelpers import plot_slice
 
 from .MagneticFields.RegularMagneticFields import AxiSymmetricSpiral

@@ -1,6 +1,6 @@
 import numpy as np
 
-from ImagineModels import RegularVectorField, cyl2cart
+from ImagineModels import RegularVectorField, cyl2cart, cart2cyl
 
 
 class AxiSymmetricSpiral(RegularVectorField):
@@ -70,7 +70,7 @@ class AxiSymmetricSpiral(RegularVectorField):
         return self._evaluate_grid(grid_x, grid_y, grid_z, self.at_position)
 
     def at_position(self, x, y, z):
-        rho, z, phi = cyl2cart([x, y, z])
+        rho, z, phi = cart2cyl([x, y, z])
         b_amp = self.b0_of_r(rho, z)
         ### Tilt angle
         xi_z = self.xi_0 * np.tanh(z / self.z0)
