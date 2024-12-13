@@ -58,9 +58,11 @@ The `--recursive` flag makes sure that also the pybind module is cloned (to the 
 
 The package can then be installed with
 
-    python3 -m pip install -e folder/where/setup/py/is/
+    python3 -m pip install folder/where/setup/py/is/
 
-where `-e` flag makes it possible to edit the source files directly, which is convenient for developing. 
+You can then add your model at the appropriate locations.
+
+Note that the editable install flag '-e' for pip does not work, which means that you will have to reinstall your local version of the library each time you want to test something.
 
 The installer will automatically figure out which of the optional dependencies you have installed. 
 If you want to disable those, you can do so by defining the `USE_AUTODIFF=OFF` and `USE_FFTW=OFF` environment variables BEFORE you run pip. 

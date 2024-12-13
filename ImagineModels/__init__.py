@@ -1,8 +1,7 @@
 from _ImagineModels import VectorFieldBase, ScalarFieldBase, RegularVectorField, RegularScalarField, \
-    JF12RegularField,  JaffeMagneticField, HelixMagneticField, UniformMagneticField, UniformDensityField, YMW16, SunMagneticField, \
+    SVT22,JF12RegularField,  JaffeMagneticField, HelixMagneticField, UniformMagneticField, UniformDensityField, YMW16, SunMagneticField, \
     HanMagneticField,\
     WMAPMagneticField, TTMagneticField, HMRMagneticField, FauvetMagneticField, StanevBSSMagneticField, TFMagneticField, PshirkovMagneticField, ArchimedeanMagneticField, UngerFarrarMagneticField
-
     
 try: 
     from _ImagineModels import JF12RandomField, ESRandomField, GaussianScalarField, LogNormalScalarField
@@ -19,6 +18,7 @@ except AttributeError:
     
     
         
-from .HelperFunctions.CoordinateConversions import cyl2cart
+from .HelperFunctions.CoordinateConversions import cyl2cart, cart2cyl
+from .HelperFunctions.PlottingHelpers import plot_slice
 
 from .MagneticFields.RegularMagneticFields import AxiSymmetricSpiral
