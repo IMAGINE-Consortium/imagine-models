@@ -34,6 +34,7 @@ using namespace pybind11::literals;
 #include "include/regular/HarariMollerachRouletWrapper.h"
 #include "include/regular/TinyakovTkachevWrapper.h"
 #include "include/regular/RegularJF12Wrapper.h"
+#include "include/regular/UngerFarrarWrapper.h"
 
 #if FFTW_FOUND
 #include "include/random/RandomFieldBases.h"
@@ -54,6 +55,7 @@ void Archimedes(py::module_ &);
 void Pshirkov(py::module_ &);
 void Sun2008(py::module_ &);
 void TF17(py::module_ &);
+void UF24(py::module_ &);
 void Han2018(py::module_ &);
 void StanevBSS(py::module_ &);
 void TinyakovTkachev(py::module_ &);
@@ -84,6 +86,7 @@ PYBIND11_MODULE(_ImagineModels, m)
   Sun2008(m);
   Han2018(m);
   TF17(m);
+  UF24(m);
   Archimedes(m);
   Pshirkov(m);
   StanevBSS(m);

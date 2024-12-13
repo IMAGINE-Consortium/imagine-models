@@ -52,26 +52,11 @@ public:
 
 public:
   /// model variations (see Tab.2 of UF23 paper)
-  enum ModelType {
-    base,
-    neCL,
-    expX,
-    spur,
-    cre10,
-    synCG,
-    twistX,
-    nebCor
-  };
-
-public:
-
-private:
+  const std::array<std::string, 3> possibleModels{"base", "neCL", "expX", "spur", "cre10", "synCG", "twistX", "nebCor"};
 
   /// model type given in constructor
-  const ModelType fModelType;
+  std::string activeDiskModel = "Ad1";
   /// maximum galacto-centric radius beyond which B=0
-  const double fMaxRadiusSquared;
-
   /// model parameters, see Table 3 of UF23 paper
   number fDiskB1 = 0;
   number fDiskB2 = 0;
@@ -99,10 +84,14 @@ private:
   number fToroidalZ = 0;
   number fTwistingTime = 0;
 
+
+private:
   // some pre-calculated derived parameter values
+
   double fSinPitch = 0;
   double fCosPitch = 0;
   double fTanPitch = 0;
+  const double fMaxRadiusSquared;
 
   /// major field components
   vector GetDiskField(const double x, const double y, const double z, const UFMagneticField &p) const;
