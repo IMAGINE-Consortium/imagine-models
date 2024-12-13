@@ -31,6 +31,7 @@ set(IM_SRC_FILES
     ${IM_SOURCE_DIR}/tinyakovtkachev.cc
     ${IM_SOURCE_DIR}/hararimollerachroulet.cc  
     ${IM_SOURCE_DIR}/svt22.cc   
+    ${IM_SOURCE_DIR}/ungerfarrar.cc   
 )
 
 if(FFTW_FOUND)
