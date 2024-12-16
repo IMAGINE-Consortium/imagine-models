@@ -37,6 +37,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <iostream>
 
 #include "RegularField.h"
+#include "units.h"
 
 class UFMagneticField : public RegularVectorField
 {
@@ -52,10 +53,10 @@ public:
 
 public:
   /// model variations (see Tab.2 of UF23 paper)
-  const std::array<std::string, 3> possibleModels{"base", "neCL", "expX", "spur", "cre10", "synCG", "twistX", "nebCor"};
+  const std::array<std::string, 8> possibleModels{"base", "neCL", "expX", "spur", "cre10", "synCG", "twistX", "nebCor"};
 
   /// model type given in constructor
-  std::string activeDiskModel = "Ad1";
+  std::string activeModel = "base";
   /// maximum galacto-centric radius beyond which B=0
   /// model parameters, see Table 3 of UF23 paper
   number fDiskB1 = 0;
@@ -85,17 +86,33 @@ public:
   number fTwistingTime = 0;
 
 
+  vector at_position(const double &x, const double &y, const double &z) const
+  {
+    return _at_position(x, y, z, *this);
+  }
+
+#if autodiff_FOUND
+  const std::set<std::string> all_diff{"fDiskB1", "fDiskB2", "fDiskB3", "fDiskH", "fDiskPhase1", "fDiskPhase2", "fDiskPhase3", "fDiskPitch", "fDiskW", "fPoloidalA", "fPoloidalB", "fPoloidalP", "fPoloidalR", "fPoloidalW", "fPoloidalZ", "fSpurCenter", "fSpurLength", "fSpurWidth", "fStriation", "fToroidalBN", "fToroidalBS", "fToroidalR", "fToroidalW", "fToroidalZ", "fTwistingTime"};
+  std::set<std::string> active_diff{"fDiskB1", "fDiskB2", "fDiskB3", "fDiskH", "fDiskPhase1", "fDiskPhase2", "fDiskPhase3", "fDiskPitch", "fDiskW", "fPoloidalA", "fPoloidalB", "fPoloidalP", "fPoloidalR", "fPoloidalW", "fPoloidalZ", "fSpurCenter", "fSpurLength", "fSpurWidth", "fStriation", "fToroidalBN", "fToroidalBS", "fToroidalR", "fToroidalW", "fToroidalZ", "fTwistingTime"};
+
+  Eigen::MatrixXd derivative(const double &x, const double &y, const double &z)
+  {
+    return _jac(x, y, z, *this);
+  }
+#endif
+
 private:
+
   // some pre-calculated derived parameter values
 
   double fSinPitch = 0;
   double fCosPitch = 0;
   double fTanPitch = 0;
-  const double fMaxRadiusSquared;
+  const double fMaxRadiusSquared = 0;
 
   /// major field components
-  vector GetDiskField(const double x, const double y, const double z, const UFMagneticField &p) const;
-  vector GetHaloField(const double x, const double y, const double z, const UFMagneticField &p) const;
+  vector GetDiskField(const double &x, const double &y, const double &z, const UFMagneticField &p) const;
+  vector GetHaloField(const double &x, const double &y, const double &z, const UFMagneticField &p) const;
 
   /// sub-components depending on model type
   /// -- Sec. 5.2.2
@@ -109,20 +126,6 @@ private:
   /// -- Sec. 5.3.3
   vector GetTwistedHaloField(const double x, const double y, const double z, const UFMagneticField &p) const;
   
-#if autodiff_FOUND
-  const std::set<std::string> all_diff{"b_arm_1", "b_arm_2", "b_arm_3", "b_arm_4", "b_arm_5", "b_arm_6", "b_arm_7", "b_ring", "h_disk", "w_disk", "Bn", "Bs", "rn", "rs", "wh", "z0", "B0_X", "Xtheta_const", "rpc_X", "r0_X"};
-  std::set<std::string> active_diff{"b_arm_1", "b_arm_2", "b_arm_3", "b_arm_4", "b_arm_5", "b_arm_6", "b_arm_7", "b_ring", "h_disk", "w_disk", "Bn", "Bs", "rn", "rs", "wh", "z0", "B0_X", "Xtheta_const", "rpc_X", "r0_X"};
-
-  Eigen::MatrixXd derivative(const double &x, const double &y, const double &z)
-  {
-    return _jac(x, y, z, *this);
-  }
-#endif
-
-  vector at_position(const double &x, const double &y, const double &z) const
-  {
-    return _at_position(x, y, z, *this);
-  }
 };
 
 #endif

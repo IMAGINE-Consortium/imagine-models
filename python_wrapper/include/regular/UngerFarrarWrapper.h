@@ -39,7 +39,7 @@ void UF24(py::module_ &m)
         .def_readwrite("fTwistingTime", &UFMagneticField::fTwistingTime)
 
         .def_readwrite("activeModel", &UFMagneticField::activeModel)
-        .def_readonly("possibleModels", &UFMagneticField::ModelType)
+        .def_readonly("possibleModels", &UFMagneticField::possibleModels)
 
 #if autodiff_FOUND
         .def_readwrite("active_diff", &TFMagneticField::active_diff)
