@@ -1,7 +1,7 @@
 #include <cmath>
 #include <cassert>
 #include <iostream>
-#include "hamunits.h"
+#include "units.h"
 #include "SVT22.h"
 
 vector SVT22MagneticField::_at_position(const double &x, const double &y, const double &z, const SVT22MagneticField &p) const

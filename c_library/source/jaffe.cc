@@ -1,7 +1,7 @@
 #include <cmath>
 #include <vector>
 #include <iostream>
-#include "hamunits.h"
+#include "units.h"
 #include "Jaffe.h"
 
 vector JaffeMagneticField::_at_position(const double &x, const double &y, const double &z, const JaffeMagneticField &p) const

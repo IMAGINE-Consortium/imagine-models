@@ -1,5 +1,5 @@
 #include <cmath>
-#include "hamunits.h"
+#include "units.h"
 #include "Pshirkov.h"
 
 vector PshirkovMagneticField::_at_position(const double &x, const double &y, const double &z, const PshirkovMagneticField &p) const

@@ -74,7 +74,6 @@ void RandomJF12(py::module_ &);
 void EnsslinSteininger(py::module_ &);
 void GaussianScalar(py::module_ &);
 void LogNormal(py::module_ &);
-void SVT22(py::module_ &);
 
 #endif
 
