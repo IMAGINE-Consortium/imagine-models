@@ -34,11 +34,48 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "units.h"
 
 
+
+void UFMagneticField::set_parameters(const std::string &model_choice)
+{
+  bool model_exists = std::find(possibleModels.begin(), possibleModels.end(), model_choice) != possibleModels.end();
+
+  if (model_exists) {
+    std::map<std::string, double> model_parameters = all_parameters[model_choice];
+    fDiskB1        =  model_parameters["fDiskB1"];
+    fDiskB2        =  model_parameters["fDiskB2"];
+    fDiskB3        =  model_parameters["fDiskB3"];
+    fDiskH         =  model_parameters["fDiskH"];
+    fDiskPhase1    =  model_parameters["fDiskPhase1"];
+    fDiskPhase2    =  model_parameters["fDiskPhase2"];
+    fDiskPhase3    =  model_parameters["fDiskPhase3"];
+    fDiskPitch     =  model_parameters["fDiskPitch"];
+    fDiskW         =  model_parameters["fDiskW"];
+    fPoloidalB     =  model_parameters["fPoloidalB"];
+    fPoloidalP     =  model_parameters["fPoloidalP"];
+    fPoloidalR     =  model_parameters["fPoloidalR"];
+    fPoloidalW     =  model_parameters["fPoloidalW"];
+    fPoloidalZ     =  model_parameters["fPoloidalZ"];
+    fStriation     =  model_parameters["fStriation"];
+    fToroidalBN    =  model_parameters["fToroidalBN"];
+    fToroidalBS    =  model_parameters["fToroidalBS"];
+    fToroidalR     =  model_parameters["fToroidalR"];
+    fToroidalW     =  model_parameters["fToroidalW"];
+    fToroidalZ     =  model_parameters["fToroidalZ"];
+    
+    fSpurCenter    = model_parameters["fSpurCenter"];
+    fSpurLength    = model_parameters["fSpurLength"];
+    fSpurWidth     = model_parameters["fSpurWidth"];
+    fTwistingTime  = model_parameters["fTwistingTime"];
+  }
+  else throw std::runtime_error("unknown field model");
+}
+
+
 vector UFMagneticField::_at_position(const double &x, const double &y, const double &z, const UFMagneticField &p) const
 {
   vector B_cart{{0., 0., 0.}};
   double squared_length = pow(x, 2) + pow(y, 2) + pow(z, 2);
-  if (squared_length > p.fMaxRadiusSquared)
+  if (squared_length > pow(p.fMaxRadius, 2))
     return B_cart;
   else {
     const auto diskField = GetDiskField(x, y, z, p);
@@ -208,6 +245,9 @@ vector UFMagneticField::GetSpurField(const double x, const double y, const doubl
   // reference approximately at solar radius
   const double rRef = 8.2; //kpc
 
+  auto fSinPitch = sin(p.fDiskPitch);
+  auto fCosPitch = cos(p.fDiskPitch);
+  auto fTanPitch = tan(p.fDiskPitch);
   // cylindrical coordinates
   const double r2 = x*x + y*y;
   const double r = sqrt(r2);
@@ -223,14 +263,14 @@ vector UFMagneticField::GetSpurField(const double x, const double y, const doubl
   number bestDist = -1;
   for (int i = -1; i <= 1; ++i) {
     number pphi = phi - phiRef + i*num::twopi;
-    number rr = rRef*exp(pphi * p.fTanPitch);
+    number rr = rRef*exp(pphi * fTanPitch);
     if (bestDist < 0 || abs(r-rr) < bestDist) {
       bestDist =  abs(r-rr);
       iBest = i;
     }
   }
   if (iBest == 0) {
-    number phi0 = phi - log(r/rRef) / p.fTanPitch;
+    number phi0 = phi - log(r/rRef) / fTanPitch;
 
     // Eq. (16)
     //number deltaPhi0 = DeltaPhi<number, number, number>(phiRef, phi0);
@@ -275,6 +315,10 @@ vector UFMagneticField::GetSpiralField(const double x, const double y, const dou
   const double rOuter = 20; // kpc
   const double wOuter = 0.5; // kpc
 
+  auto fSinPitch = sin(p.fDiskPitch);
+  auto fCosPitch = cos(p.fDiskPitch);
+  auto fTanPitch = tan(p.fDiskPitch);
+
   // cylindrical coordinates
   const double r2 = x*x + y*y;
   if (r2 == 0)
@@ -298,7 +342,7 @@ vector UFMagneticField::GetSpiralField(const double x, const double y, const dou
   const double gdrTimesRrefByR = rRef * rFac * rFacO * rFacI;
 
   // Eq. (12)
-  number phi0 = phi - log(r/rRef) / p.fTanPitch;
+  number phi0 = phi - log(r/rRef) / fTanPitch;
 
   // Eq. (10)
   number b =
@@ -308,11 +352,26 @@ vector UFMagneticField::GetSpiralField(const double x, const double y, const dou
 
   // Eq. (11)
   number fac = hdz * gdrTimesRrefByR;
-  vector bCyl{{ b * fac * p.fSinPitch,
-      b * fac * p.fCosPitch,
+  vector bCyl{{ b * fac * fSinPitch,
+      b * fac * fCosPitch,
       0.}};
 
   const double cosPhi = x / r;
   const double sinPhi = y / r;
   return Cyl2Cart<vector>(bCyl, cosPhi, sinPhi);
 }
+
+#if autodiff_FOUND
+
+Eigen::MatrixXd UFMagneticField::_jac(const double &x, const double &y, const double &z, UFMagneticField &p) const
+{
+  vector out;
+  Eigen::MatrixXd _deriv = ad::jacobian([&](double _x, double _y, double _z, UFMagneticField &_p)
+                                        { return _p._at_position(_x, _y, _z, _p); },
+                                        ad::wrt(p.fPoloidalA, p.fDiskB1, p.fDiskB2, p.fDiskB3, p.fDiskH, p.fDiskPhase1, p.fDiskPhase2, p.fDiskPhase3, p.fDiskPitch, p.fDiskW, p.fPoloidalB,p.fPoloidalP, p.fPoloidalR, p.fPoloidalW, p.fPoloidalZ, p.fStriation, p.fToroidalBN, p.fToroidalBS, p.fToroidalR, p.fToroidalW, p.fToroidalZ, p.fSpurCenter, p.fSpurLength, p.fSpurWidth, p.fTwistingTime
+                                        
+                                        ), ad::at(x, y, z, p), out);
+  return _filter_diff(_deriv);
+}
+
+#endif

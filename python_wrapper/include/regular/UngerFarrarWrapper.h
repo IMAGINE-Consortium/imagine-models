@@ -40,9 +40,10 @@ void UF24(py::module_ &m)
 
         .def_readwrite("activeModel", &UFMagneticField::activeModel)
         .def_readonly("possibleModels", &UFMagneticField::possibleModels)
+        .def_readonly("all_parameters", &UFMagneticField::all_parameters)
 
 #if autodiff_FOUND
-        .def_readwrite("active_diff", &TFMagneticField::active_diff)
+        .def_readwrite("active_diff", &UFMagneticField::active_diff)
         .def_readonly("all_diff", &UFMagneticField::all_diff)
 
         .def(
@@ -57,8 +58,8 @@ void UF24(py::module_ &m)
             return std::make_tuple(f[0], f[1], f[2]); },
             "x"_a, "y"_a, "z"_a, py::return_value_policy::take_ownership)
 
-        .def("set_params", [](UFMagneticField &self, std::string dtype, std::string htype) {
-            self.set_params(dtype, htype); 
+        .def("set_parameters", [](UFMagneticField &self, std::string model_type) {
+            self.set_parameters(model_type); 
         });
 }
 
