@@ -40,6 +40,7 @@ void UFMagneticField::set_parameters(const std::string &model_choice)
   bool model_exists = std::find(possibleModels.begin(), possibleModels.end(), model_choice) != possibleModels.end();
 
   if (model_exists) {
+    activeModel = model_choice;
     std::map<std::string, double> model_parameters = all_parameters[model_choice];
     fDiskB1        =  model_parameters["fDiskB1"];
     fDiskB2        =  model_parameters["fDiskB2"];
@@ -74,7 +75,6 @@ void UFMagneticField::set_parameters(const std::string &model_choice)
 vector UFMagneticField::_at_position(const double &x, const double &y, const double &z, const UFMagneticField &p) const
 {
   vector B_cart{{0., 0., 0.}};
-  std::cout << "x: " << x  << "y: " << y << "z: " << z  << std::endl;
   double squared_length = pow(x, 2) + pow(y, 2) + pow(z, 2);
   if (squared_length > pow(p.fMaxRadius, 2))
     return B_cart;
