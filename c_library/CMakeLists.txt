@@ -1,3 +1,5 @@
+cmake_minimum_required(VERSION 3.16)
+
 project(ImagineModels VERSION 0.2 DESCRIPTION "A library for Galactic models.")
 
 set(CMAKE_CXX_STANDARD 17)

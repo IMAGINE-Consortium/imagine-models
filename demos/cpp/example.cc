@@ -1,5 +1,5 @@
-#include <ImagineModels/RegularModels.h>
-#include <ImagineModels/RandomModels.h>
+#include "RegularModels.h"
+//#include <ImagineModelsRandom/RandomModels.h>
 
 #include <cassert>
 #include <iostream>
@@ -17,7 +17,7 @@ void print_pos(std::map <std::string, std::array<double, 3>> pd,
         auto position_iter = pd.begin();
         std::cout << "The model " << model_iter->first << " is evaluated: \n\n";
         while (position_iter != pd.end()) {
-          std::array<double, 3> mval = (*(model_iter->second)).getField(position_iter->second);
+          std::array<double, 3> mval = (*(model_iter->second)).at_position((position_iter->second)[0], (position_iter->second)[1],(position_iter->second)[2]);
 
           std::cout << "Position: ";
           for (size_t l = 0; l < (position_iter->second).size(); l++) {
@@ -71,7 +71,7 @@ void print_ev_grid_no_grid(std::map <std::string, std::shared_ptr<VECTORFIELD>> 
 
 template void print_ev_grid_no_grid<RegularVectorField>(std::map <std::string, std::shared_ptr<RegularVectorField>> md, std::array<double, 3> siz); 
 
-template void print_ev_grid_no_grid<RandomVectorField>(std::map <std::string, std::shared_ptr<RandomVectorField>> md, std::array<double, 3> siz); 
+//template void print_ev_grid_no_grid<RandomVectorField>(std::map <std::string, std::shared_ptr<RandomVectorField>> md, std::array<double, 3> siz); 
 
 template<typename VECTORFIELD>
 void print_ev_grid_reg(std::map <std::string, std::shared_ptr<VECTORFIELD>> md, std::array<int, 3> size, std::array<double, 3> zeropoint, std::array<double, 3> increment) {
@@ -104,7 +104,7 @@ void print_ev_grid_reg(std::map <std::string, std::shared_ptr<VECTORFIELD>> md, 
 template void print_ev_grid_reg<RegularVectorField>(std::map <std::string, std::shared_ptr<RegularVectorField>> md, std::array<int, 3> size, std::array<double, 3> zeropoint, std::array<double, 3> increment);
 
 
-template void print_ev_grid_reg<RandomVectorField>(std::map <std::string, std::shared_ptr<RandomVectorField>> md, std::array<int, 3> size, std::array<double, 3> zeropoint, std::array<double, 3> increment);
+//template void print_ev_grid_reg<RandomVectorField>(std::map <std::string, std::shared_ptr<RandomVectorField>> md, std::array<int, 3> size, std::array<double, 3> zeropoint, std::array<double, 3> increment);
 
 void print_ev_grid_irreg(std::map <std::string, std::shared_ptr<RegularVectorField>> md, std::vector<double> grid_x, std::vector<double> grid_y, std::vector<double> grid_z) {
 
@@ -184,47 +184,47 @@ int main() {
   reg_mods_w_reg_grid["Jaffe"] = std::shared_ptr<JaffeMagneticField> (new JaffeMagneticField(shape, zeropoint, increment));
   reg_mods_w_reg_grid["Helix"] = std::shared_ptr<HelixMagneticField> (new HelixMagneticField(shape, zeropoint, increment));
 
-  std::map <std::string, std::shared_ptr<RandomVectorField>> rand_mods;
+  //std::map <std::string, std::shared_ptr<RandomVectorField>> rand_mods;
 
   //rand_mods["Jansson Farrar random"] = std::shared_ptr<JF12RandomField> (new JF12RandomField());
   //rand_mods["Ensslin Steininger"] = std::shared_ptr<ESRandomField> (new ESRandomField());
 
 
-  std::map <std::string, std::shared_ptr<RandomVectorField>> rand_mods_w_reg_grid;
-  std::map <std::string, std::shared_ptr<RandomScalarField>> rand_mods_w_reg_grid_scalar;
+  //std::map <std::string, std::shared_ptr<RandomVectorField>> rand_mods_w_reg_grid;
+  //std::map <std::string, std::shared_ptr<RandomScalarField>> rand_mods_w_reg_grid_scalar;
 
-  std::cout << "Random scalar fields" << std::endl;
-  rand_mods_w_reg_grid_scalar["Gauss"] = std::shared_ptr<GaussianScalarField> (new GaussianScalarField());
+  //std::cout << "Random scalar fields" << std::endl;
+  //rand_mods_w_reg_grid_scalar["Gauss"] = std::shared_ptr<GaussianScalarField> (new GaussianScalarField());
 
-  std::cout << "Random vector fields" << std::endl;
-  rand_mods_w_reg_grid["Jansson Farrar random"] = std::shared_ptr<JF12RandomField> (new JF12RandomField(shape, zeropoint, increment));
-  rand_mods_w_reg_grid["Ensslin Steininger"] = std::shared_ptr<ESRandomField> (new ESRandomField(shape, zeropoint, increment));
+  //std::cout << "Random vector fields" << std::endl;
+  //rand_mods_w_reg_grid["Jansson Farrar random"] = std::shared_ptr<JF12RandomField> (new JF12RandomField(shape, zeropoint, increment));
+  //rand_mods_w_reg_grid["Ensslin Steininger"] = std::shared_ptr<ESRandomField> (new ESRandomField(shape, zeropoint, increment));
 
 
 
   print_pos(position_dict, reg_mods);
 
 
-  //print_ev_grid_no_grid(reg_mods_w_irreg_grid, {5, 5, 5});
+  print_ev_grid_no_grid(reg_mods_w_irreg_grid, {5, 5, 5});
 
 
 
 
-  rand_mods["Jansson Farrar random"] = std::shared_ptr<JF12RandomField> (new JF12RandomField());
-  rand_mods["Ensslin Steininger"] = std::shared_ptr<ESRandomField> (new ESRandomField());
+  //rand_mods["Jansson Farrar random"] = std::shared_ptr<JF12RandomField> (new JF12RandomField());
+  //rand_mods["Ensslin Steininger"] = std::shared_ptr<ESRandomField> (new ESRandomField());
 
-  print_ev_grid_reg(rand_mods, shape, zeropoint, increment);
-  print_ev_grid_no_grid(rand_mods_w_reg_grid, {4, 3, 2});
+  //print_ev_grid_reg(rand_mods, shape, zeropoint, increment);
+  //print_ev_grid_no_grid(rand_mods_w_reg_grid, {4, 3, 2});
 
   //print_ev_grid_irreg(reg_mods, grid_x, grid_y, grid_z);
 
 
 
-  //std::vector<double> jf12_grid = jf12_1.evaluate_model_on_grid(grid_x, grid_y, grid_z);
+  //std::vector<double> jf12_grid = jf12.on_grid(grid_x, grid_y, grid_z);
 
   //std::vector<std::vector<std::vector<double>>> ymw_grid = ymw16.evaluate_grid(grid_x, grid_y, grid_z);
 
-  //print_ev_grid(jf12_grid, grid_x, grid_y, grid_z);
+  //print_ev_grid_irreg(jf12_grid, grid_x, grid_y, grid_z);
 
 
 //  std::cout << "\n b_arm_1: " << jf12.b_arm_1 << std::endl;
@@ -238,7 +238,7 @@ int main() {
   // Evaluate model again
   //std::vector<double> jf12_val2 = jf12.getField(position_dict.at("pos_on_xy_plane"));
 
-  HelixMagneticField helix = HelixMagneticField();
-  std::cout << helix._derivative(1.9, -2.9, 0., helix.param) << std::endl;
+  //HelixMagneticField helix = HelixMagneticField();
+  //std::cout << helix._derivative(1.9, -2.9, 0., helix.param) << std::endl;
   return 0;
 }
