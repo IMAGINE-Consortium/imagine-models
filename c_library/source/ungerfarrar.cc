@@ -74,13 +74,17 @@ void UFMagneticField::set_parameters(const std::string &model_choice)
 vector UFMagneticField::_at_position(const double &x, const double &y, const double &z, const UFMagneticField &p) const
 {
   vector B_cart{{0., 0., 0.}};
+  std::cout << "x: " << x  << "y: " << y << "z: " << z  << std::endl;
   double squared_length = pow(x, 2) + pow(y, 2) + pow(z, 2);
   if (squared_length > pow(p.fMaxRadius, 2))
     return B_cart;
   else {
     const auto diskField = GetDiskField(x, y, z, p);
     const auto haloField = GetHaloField(x, y, z, p);
-    return (diskField + haloField);
+    for (size_t l = 0; l < 3; l++) {
+      B_cart[l] = diskField[l] + haloField[l];
+    }
+    return B_cart;
   }
 }
 
@@ -99,10 +103,16 @@ vector UFMagneticField::GetHaloField(const double &x, const double &y, const dou
 {
   if (p.activeModel == "twistX")
     return GetTwistedHaloField(x, y, z, p);
-  else
-    return
-      GetToroidalHaloField(x, y, z, p) +
-      GetPoloidalHaloField(x, y, z, p);
+  else {
+    vector B_cart_halo{{0., 0., 0.}};
+    const auto poloidalHaloField = GetPoloidalHaloField(x, y, z, p);
+    const auto toroidalHaloField = GetToroidalHaloField(x, y, z, p);
+    for (size_t l = 0; l < 3; l++) {
+      B_cart_halo[l] = toroidalHaloField[l] + poloidalHaloField[l];
+    }
+    return B_cart_halo;
+  }
+      
 }
 
 

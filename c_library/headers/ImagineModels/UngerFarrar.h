@@ -60,7 +60,7 @@ public:
   std::string activeModel = "base";
   /// maximum galacto-centric radius beyond which B=0
 
-  double fMaxRadius = 10;
+  double fMaxRadius = 20;
 
   number fPoloidalA    =  1 * astro::gpc;
 
