@@ -1,7 +1,7 @@
 #include <cmath>
 #include <cassert>
 #include <iostream>
-#include "hamunits.h"
+#include "units.h"
 #include "GaussianScalar.h"
 
 

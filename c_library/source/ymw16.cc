@@ -1,6 +1,6 @@
 #include <cassert>
 
-#include "hamunits.h"
+#include "units.h"
 #include "YMW.h"
 
 number YMW16::_at_position(const double &x, const double &y, const double &z, const YMW16 &p) const

@@ -1,7 +1,7 @@
 #include <cmath>
 #include <cassert>
 #include <iostream>
-#include "hamunits.h"
+#include "units.h"
 #include "RegularJF12.h"
 
 vector JF12MagneticField::_at_position(const double &x, const double &y, const double &z, const JF12MagneticField &p) const

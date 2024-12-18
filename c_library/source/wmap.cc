@@ -1,5 +1,5 @@
 #include <cmath>
-#include "hamunits.h"
+#include "units.h"
 #include "WMAP.h"
 
 #include "helpers.h"

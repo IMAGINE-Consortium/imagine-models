@@ -1,7 +1,7 @@
 #ifndef REGULAR_TRAMPOLINE_H
 #define REGULAR_TRAMPOLINE_H
 
-#include "hamunits.h"
+#include "units.h"
 #include "Field.h"
 
 #include "RegularField.h"

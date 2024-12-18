@@ -1,7 +1,7 @@
 #include <cmath>
 #include <cassert>
 #include <iostream>
-#include "hamunits.h"
+#include "units.h"
 #include "LogNormal.h"
 
 void LogNormalScalarField::_on_grid(double* val, const std::array<int, 3> &shp, const std::array<double, 3> &grid_zeropoint, const std::array<double, 3> &grid_increment, const int seed) {
