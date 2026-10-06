@@ -158,3 +158,11 @@ demos/cpp/example
 c_library/headers/autodiff.hh
 c_library/headers/fftw.hh
 extern/pybind11
+
+# CMake output from in-source builds
+CMakeFiles/
+CMakeCache.txt
+CTestTestfile.cmake
+cmake_install.cmake
+c_library/Makefile
+Testing/
