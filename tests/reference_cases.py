@@ -13,7 +13,7 @@ RTOL_REGULAR, ATOL_REGULAR = 1e-12, 1e-14
 RTOL_RANDOM, ATOL_RANDOM = 1e-9, 1e-12
 
 KNOWN_BAD_JACOBIAN = {"HanMagneticField": "B3", "StanevBSSMagneticField": "B4", "SunMagneticField": "B5"}
-NO_GRID_CASES = {"AxiSymmetricSpiral__default": "B14"}
+NO_GRID_CASES = {}
 BROKEN_DERIVATIVE_CASES = {"TFMagneticField__Dd1_C0": "B15", "TFMagneticField__Dd1_C1": "B15",
                            "UFMagneticField__expX": "B16", "SVT22__default": "B17"}
 

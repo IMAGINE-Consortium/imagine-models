@@ -101,3 +101,23 @@ def test_parameter_update():
     assert umf.bx == -3.2
 
     assert umf.at_position(2.4, 2.1, -.2) == (-3.2, 0., 0.)
+
+
+def test_python_subclasses():
+    class Linear(img.RegularScalarField):
+        def at_position(self, x, y, z):
+            return x + 2 * y + 3 * z
+
+    class Constant(img.RegularVectorField):
+        def at_position(self, x, y, z):
+            return [1., 2., 3.]
+
+    class Missing(img.RegularVectorField):
+        pass
+
+    assert np.array_equal(Linear().evaluate(img.IrregularGrid([1., 2.], [0.], [1.])).ravel(), [4., 5.])
+    field = Constant().evaluate(regular_grid)
+    assert field.shape == (3, 2, 3, 4)
+    assert np.all(field[2] == 3.)
+    with pytest.raises(RuntimeError):
+        Missing().evaluate(regular_grid)
