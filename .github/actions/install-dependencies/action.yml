@@ -22,9 +22,11 @@ runs:
       run: |
         brew install ninja
         if [ "${{ inputs.features }}" = "full" ]; then
-          brew install fftw eigen
+          brew install fftw eigen@3
+          echo "CMAKE_PREFIX_PATH=$(brew --prefix eigen@3):$(brew --prefix)" >> "$GITHUB_ENV"
+        else
+          echo "CMAKE_PREFIX_PATH=$(brew --prefix)" >> "$GITHUB_ENV"
         fi
-        echo "CMAKE_PREFIX_PATH=$(brew --prefix)" >> "$GITHUB_ENV"
     - name: autodiff
       if: inputs.features == 'full'
       shell: bash
