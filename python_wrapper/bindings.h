@@ -30,6 +30,20 @@ py::array_t<double> to_numpy(GridData<N> &&grid_data) {
   return py::array_t<double>(shape, owned->data.data(), owner);
 }
 
+template <typename F>
+py::array_t<double> map_positions(F &&f, const py::object &x, const py::object &y, const py::object &z) {
+    using DoubleArray = py::array_t<double, py::array::c_style | py::array::forcecast>;
+    py::tuple broadcast = py::module_::import("numpy").attr("broadcast_arrays")(x, y, z);
+    DoubleArray xs = broadcast[0].cast<DoubleArray>();
+    DoubleArray ys = broadcast[1].cast<DoubleArray>();
+    DoubleArray zs = broadcast[2].cast<DoubleArray>();
+    py::array_t<double> out(std::vector<py::ssize_t>(xs.shape(), xs.shape() + xs.ndim()));
+    double *o = out.mutable_data();
+    for (py::ssize_t i = 0; i < xs.size(); ++i)
+        o[i] = f(xs.data()[i], ys.data()[i], zs.data()[i]);
+    return out;
+}
+
 void bind_grids(py::module_ &m);
 void bind_regular_bases(py::module_ &m);
 void bind_archimedes(py::module_ &m);

@@ -6,6 +6,29 @@
 
 namespace imagine {
 
+void RandomVectorField::unit_random_numbers(std::array<FFTWWorkspace*, 3> ws, const RegularGrid &grid, const int seed) const {
+  auto gen_int = std::mt19937(seed);
+  std::uniform_int_distribution<int> uni(0, 1215752192);
+  const double norm = 1. / std::sqrt(3. * ws[0]->size());
+  for (int i = 0; i < 3; ++i) {
+    seed_complex_random_numbers(ws[i]->complex(), grid.shape, grid.increment, uni(gen_int));
+    ws[i]->backward();
+    double* val = ws[i]->real();
+    for (std::size_t s = 0; s < ws[i]->padded_size(); ++s)
+      val[s] *= norm;
+  }
+}
+
+VectorGridData RandomVectorField::random_numbers(const RegularGrid &grid, const int seed) const {
+  FFTWWorkspace w0(grid.shape), w1(grid.shape), w2(grid.shape);
+  std::array<FFTWWorkspace*, 3> ws{&w0, &w1, &w2};
+  unit_random_numbers(ws, grid, seed);
+  VectorGridData out(grid.shape);
+  for (int i = 0; i < 3; ++i)
+    ws[i]->copy_unpadded(out.component(i));
+  return out;
+}
+
 VectorGridData RandomVectorField::sample(const RegularGrid &grid, const int seed) const {
   FFTWWorkspace w0(grid.shape), w1(grid.shape), w2(grid.shape);
   std::array<FFTWWorkspace*, 3> ws{&w0, &w1, &w2};
@@ -16,113 +39,64 @@ VectorGridData RandomVectorField::sample(const RegularGrid &grid, const int seed
   return out;
 }
 
-VectorGridData RandomVectorField::random_numbers(const RegularGrid &grid, const int seed) const {
-    FFTWWorkspace w0(grid.shape), w1(grid.shape), w2(grid.shape);
-    std::array<FFTWWorkspace*, 3> ws{&w0, &w1, &w2};
-    VectorGridData out(grid.shape);
-    int gs = w0.size();
-    double sqrt_gs = std::sqrt(gs);
-    auto gen_int = std::mt19937(seed);
-    std::uniform_int_distribution<int> uni(0, 1215752192);
-
-    for (int i =0; i<3; ++i) {
-      int sub_seed = uni(gen_int); 
-      seed_complex_random_numbers(ws[i]->complex(), grid.shape, grid.increment, sub_seed);
-      ws[i]->backward();
-      double* val = ws[i]->real();
-      for (std::size_t s = 0; s < ws[i]->padded_size(); ++s)  {
-        val[s] /= sqrt_gs;  
-      }
-      ws[i]->copy_unpadded(out.component(i));
-    }
-    return out;
-}
-
 void RandomVectorField::_sample(std::array<FFTWWorkspace*, 3> ws, const RegularGrid &grid, const int seed) const {
 
   const std::array<int, 3> &shp = grid.shape;
   const std::array<double, 3> &inc = grid.increment;
   std::array<double*, 3> val{ws[0]->real(), ws[1]->real(), ws[2]->real()};
-  int gs = ws[0]->size();
-  std::size_t padded_size = ws[0]->padded_size();
-  auto gen_int = std::mt19937(seed);
-  std::uniform_int_distribution<int> uni(0, 1215752192);
-  double sqrt_gs = std::sqrt(gs);
 
-  // Step 1: draw random numbers with variance 1, possibly correlated
+  unit_random_numbers(ws, grid, seed);
 
-  for (int i =0; i<3; ++i) {
-    int sub_seed = uni(gen_int); 
-    seed_complex_random_numbers(ws[i]->complex(), shp, inc, sub_seed);
-    ws[i]->backward();
-  }
-  
-  // Step 2: apply spatial amplitude, possibly introduce anisotropy depending on regular field.
-  if (!no_profile) {
-    auto apply_profile = [&](std::array<double, 3> &b_rand_val, const double xx, const double yy, const double zz) {
-        
-      double sp = spatial_profile(xx, yy, zz);
-      // apply profile
-      b_rand_val[0] *= sp;
-      b_rand_val[1] *= sp;
-      b_rand_val[2] *= sp;
+  auto apply_profile = [&](std::array<double, 3> &b_rand_val, const double xx, const double yy, const double zz) {
 
+    double sp = rms(xx, yy, zz);
+    b_rand_val[0] *= sp;
+    b_rand_val[1] *= sp;
+    b_rand_val[2] *= sp;
 
-      if (apply_anisotropy) {
-        Vec3<double> b_reg_val = anisotropy_direction(xx, yy, zz);
-        double b_reg_x = static_cast<double>(b_reg_val[0]); 
-        double b_reg_y = static_cast<double>(b_reg_val[1]);
-        double b_reg_z = static_cast<double>(b_reg_val[2]);
+    if (apply_anisotropy) {
+      Vec3<double> b_reg_val = anisotropy_direction(xx, yy, zz);
+      double b_reg_x = b_reg_val[0];
+      double b_reg_y = b_reg_val[1];
+      double b_reg_z = b_reg_val[2];
 
-        double b_reg_length = std::sqrt(std::pow(b_reg_x, 2) + std::pow(b_reg_y, 2) + std::pow(b_reg_z, 2));
+      double b_reg_length = std::sqrt(std::pow(b_reg_x, 2) + std::pow(b_reg_y, 2) + std::pow(b_reg_z, 2));
 
-        if (b_reg_length > 1e-10) { // non zero regular field, -> prefered anisotropy
-          
-          b_reg_x /= b_reg_length;
-          b_reg_y /= b_reg_length;
-          b_reg_z /= b_reg_length;
-          const double rho2 = anisotropy_rho * anisotropy_rho;
-          const double rhonorm = 1. / std::sqrt(0.33333333 * rho2 + 0.66666667 / rho2);
-          double reg_dot_rand  = b_reg_x*b_rand_val[0] + b_reg_y*b_rand_val[1] + b_reg_z*b_rand_val[2];
+      if (b_reg_length > 1e-10) { // non zero regular field, -> prefered anisotropy
 
-          for (int ii=0; ii==3; ++ii) {
-            double b_rand_par = b_rand_val[ii] / reg_dot_rand;
-            double b_rand_perp = b_rand_val[ii]  - b_rand_par;
-            b_rand_val[ii] = (b_rand_par * anisotropy_rho + b_rand_perp / anisotropy_rho) * rhonorm;
-          } 
+        b_reg_x /= b_reg_length;
+        b_reg_y /= b_reg_length;
+        b_reg_z /= b_reg_length;
+        const double rho2 = anisotropy_rho * anisotropy_rho;
+        const double rhonorm = 1. / std::sqrt(0.33333333 * rho2 + 0.66666667 / rho2);
+        double reg_dot_rand  = b_reg_x*b_rand_val[0] + b_reg_y*b_rand_val[1] + b_reg_z*b_rand_val[2];
+
+        for (int ii=0; ii==3; ++ii) {
+          double b_rand_par = b_rand_val[ii] / reg_dot_rand;
+          double b_rand_perp = b_rand_val[ii]  - b_rand_par;
+          b_rand_val[ii] = (b_rand_par * anisotropy_rho + b_rand_perp / anisotropy_rho) * rhonorm;
         }
       }
-      return b_rand_val;
-    };
-    for_each_point(RegularGrid(ws[0]->padded_shape(), grid.reference_point, inc), [&](std::size_t idx, double xx, double yy, double zz) {
-      std::array<double, 3> b{val[0][idx], val[1][idx], val[2][idx]};
-      std::array<double, 3> eval = apply_profile(b, xx, yy, zz);
-      val[0][idx] = eval[0];
-      val[1][idx] = eval[1];
-      val[2][idx] = eval[2];
-    });
-  }
-  // Step 3 (optional): divergence cleaning using Gram Schmidt process
+    }
+    return b_rand_val;
+  };
+  for_each_point(RegularGrid(ws[0]->padded_shape(), grid.reference_point, inc), [&](std::size_t idx, double xx, double yy, double zz) {
+    std::array<double, 3> b{val[0][idx], val[1][idx], val[2][idx]};
+    std::array<double, 3> eval = apply_profile(b, xx, yy, zz);
+    val[0][idx] = eval[0];
+    val[1][idx] = eval[1];
+    val[2][idx] = eval[2];
+  });
+
   if (clean_divergence) {
-  
-    for (int i =0; i<3; ++i) {
+    for (int i = 0; i < 3; ++i)
       ws[i]->forward();
-    }
     divergence_cleaner(ws[0]->complex(), ws[1]->complex(), ws[2]->complex(), shp, inc);
-    
-    for (int i =0; i<3; ++i) {
+    const double norm = 1. / double(ws[0]->size());
+    for (int i = 0; i < 3; ++i) {
       ws[i]->backward();
-      for (std::size_t s = 0; s < padded_size; ++s)  {
-        (val[i])[s] /= (gs*sqrt_gs);  
-      }
-    }
-  }
-  else {
-    for (int i =0; i<3; ++i) {
-      double sqrt_gs = std::sqrt(gs);
-      for (std::size_t s = 0; s < padded_size; ++s)  {
-        (val[i])[s] /= sqrt_gs;  
-      }
+      for (std::size_t s = 0; s < ws[i]->padded_size(); ++s)
+        (val[i])[s] *= norm;
     }
   }
 }

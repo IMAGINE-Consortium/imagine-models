@@ -1,34 +1,23 @@
 #ifndef LOGNORMAL_H
 #define LOGNORMAL_H
 
-#include <functional>
-#include <cmath>
-#include <cassert>
-#include <iostream>
-
 #include "ImagineModelsRandom/RandomScalarField.h"
 
 namespace imagine {
 
 class LogNormalScalarField : public RandomScalarField {
   protected:
-    bool DEBUG = false;
-  public:
-    using RandomScalarField :: RandomScalarField;
+    double transform(const double &g, const double &x, const double &y, const double &z) const override;
 
-    double log_mean = 0;
-    double spectral_amplitude = 1.;
+  public:
+    double log_mu = 0.;
+    double log_sigma = 1.;
     double spectral_offset = 1.;
     double spectral_slope = 2.;
 
-    void _sample(FFTWWorkspace &ws, const RegularGrid &grid, const int seed, ScalarGridData &out) const override;
-
-    double calculate_fourier_sigma(const double &abs_k, const double &dk) const override;
-
-    double spatial_profile(const double &x, const double &y, const double &z) const override {
-        return 1.;
-    }; 
-
+    double spectrum(const double &abs_k) const override;
+    double mean(const double &x, const double &y, const double &z) const override;
+    double rms(const double &x, const double &y, const double &z) const override;
 };
 
 }
