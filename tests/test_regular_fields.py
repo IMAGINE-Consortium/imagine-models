@@ -121,3 +121,27 @@ def test_python_subclasses():
     assert np.all(field[2] == 3.)
     with pytest.raises(RuntimeError):
         Missing().evaluate(regular_grid)
+
+
+@pytest.mark.parametrize('model_string', regular_models + scalar_models)
+def test_at_positions(model_string):
+    mo = getattr(img, model_string)()
+    rng = np.random.default_rng(1)
+    x, y, z = rng.uniform(-15., 15., size=(3, 4, 5))
+    values = mo.at_positions(x, y, z)
+    expected = np.array([[np.asarray(mo.at_position(*p), dtype=float) for p in zip(*row)] for row in zip(x, y, z)])
+    expected = np.moveaxis(expected, -1, 0) if expected.ndim == 3 else expected
+    assert values.shape == ((3, 4, 5) if model_string in regular_models else (4, 5))
+    assert np.array_equal(values, expected, equal_nan=True)
+
+
+def test_at_positions_broadcasting():
+    mo = img.JF12RegularField()
+    line = np.linspace(-10., 10., 7)
+    values = mo.at_positions(line, 2., 0.1)
+    assert values.shape == (3, 7)
+    assert np.array_equal(values[:, 3], np.asarray(mo.at_position(0., 2., 0.1)))
+    assert mo.at_positions(1., 2., 3.).shape == (3,)
+    assert np.array_equal(img.AxiSymmetricSpiral().at_positions(line, 1., 0.)[:, 0], img.AxiSymmetricSpiral().at_position(-10., 1., 0.))
+    with pytest.raises(ValueError):
+        mo.at_positions(np.zeros(3), np.zeros(4), 0.)
