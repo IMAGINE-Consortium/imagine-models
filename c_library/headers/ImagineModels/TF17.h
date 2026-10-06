@@ -17,7 +17,7 @@ namespace imagine {
     X(B1_disk, 19.) /* muG; */                              \
     X(L_disk, 0) /* not relevant for: Ad1, Bd1 */           \
     X(phi_star_disk, -54.) /* deg ; */                      \
-    X(H_disk, 0.0055) /* kpc; // not relevant for: Dd1 */   \
+    X(H_disk, 0.055) /* kpc; // not relevant for: Dd1 */   \
     X(a_halo, 1.17) /* kp**-2; */                           \
     X(z1_halo, 0.) /* kpc */                                \
     X(B1_halo, 0.36) /* muG */                              \
@@ -32,10 +32,14 @@ IMAGINE_PARAMETERS(TFParameters, TF17_PARAMETERS)
 class TFMagneticField : public RegularVectorModel<TFMagneticField, TFParameters>
 {
 public:
-    std::string activeDiskModel = "Ad1";
-    const std::array<std::string, 3> possibleDiskModels{"Ad1", "Bd1", "Dd1"};
-    std::string activeHaloModel = "C0";
-    const std::array<std::string, 2> possibleHaloModels{"C0", "C1"};
+    const std::array<std::string, 3> available_disk_models{"Ad1", "Bd1", "Dd1"};
+    const std::array<std::string, 2> available_halo_models{"C0", "C1"};
+
+    explicit TFMagneticField(const std::string &disk_model = "Ad1", const std::string &halo_model = "C0") { set_model(disk_model, halo_model); }
+
+    void set_model(const std::string &disk_model, const std::string &halo_model);
+    const std::string &disk_model() const { return active_disk_model; }
+    const std::string &halo_model() const { return active_halo_model; }
 
     // security to avoid 0 division
     double epsilon = 1e-16;
@@ -58,10 +62,13 @@ public:
     template <typename T>
     T zscale(const double &z, const TFParameters<T> &p) const;
 
-    void set_params(std::string dtype, std::string htype);
 
     template <typename T>
     Vec3<T> field(const double &x, const double &y, const double &z, const TFParameters<T> &p) const;
+
+private:
+    std::string active_disk_model = "Ad1";
+    std::string active_halo_model = "C0";
 };
 
 }

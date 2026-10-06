@@ -14,7 +14,7 @@ RTOL_RANDOM, ATOL_RANDOM = 1e-9, 1e-12
 
 KNOWN_BAD_JACOBIAN = {}
 NO_GRID_CASES = {}
-BROKEN_DERIVATIVE_CASES = {"TFMagneticField__Dd1_C0": "B15", "TFMagneticField__Dd1_C1": "B15"}
+BROKEN_DERIVATIVE_CASES = {}
 
 
 def _positions():
@@ -57,9 +57,9 @@ def _regular_cases():
     cases["WMAPMagneticField__anti"] = ("WMAPMagneticField", {"b_anti": True})
     for disk in ["Ad1", "Bd1", "Dd1"]:
         for halo in ["C0", "C1"]:
-            cases[f"TFMagneticField__{disk}_{halo}"] = ("TFMagneticField", {"activeDiskModel": disk, "activeHaloModel": halo})
+            cases[f"TFMagneticField__{disk}_{halo}"] = ("TFMagneticField", {"set_model": [disk, halo]})
     for variant in ["base", "neCL", "expX", "spur", "cre10", "synCG", "twistX", "nebCor"]:
-        cases[f"UFMagneticField__{variant}"] = ("UFMagneticField", {"activeModel": variant, "set_parameters": variant})
+        cases[f"UFMagneticField__{variant}"] = ("UFMagneticField", {"set_model": [variant]})
     cases["AxiSymmetricSpiral__default"] = ("AxiSymmetricSpiral", {})
     return cases
 
@@ -80,8 +80,8 @@ RANDOM_CASES = _random_cases() if img.__has_random_fields__ else {}
 def make_model(name, settings):
     model = getattr(img, name)()
     for key, value in settings.items():
-        if key == "set_parameters":
-            model.set_parameters(value)
+        if key == "set_model":
+            model.set_model(*value)
         else:
             setattr(model, key, value)
     return model

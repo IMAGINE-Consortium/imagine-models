@@ -75,10 +75,8 @@ class UFMagneticField : public RegularVectorModel<UFMagneticField, UFParameters>
 {
 public:
   /// model variations (see Tab.2 of UF23 paper)
-  const std::array<std::string, 8> possibleModels{"base", "neCL", "expX", "spur", "cre10", "synCG", "twistX", "nebCor"};
+  const std::array<std::string, 8> available_models{"base", "neCL", "expX", "spur", "cre10", "synCG", "twistX", "nebCor"};
 
-  /// model type given in constructor
-  std::string activeModel = "base";
   /// maximum galacto-centric radius beyond which B=0
 
   double fMaxRadius = 20;
@@ -259,9 +257,14 @@ public:
      }}, 
     };
 
-  void set_parameters(const std::string &model_choice);
+  explicit UFMagneticField(const std::string &model = "base") { set_model(model); }
+
+  void set_model(const std::string &model);
+  const std::string &model() const { return active_model; }
 
 private:
+  /// model type given in constructor
+  std::string active_model = "base";
 
   /// major field components
   template <typename T>

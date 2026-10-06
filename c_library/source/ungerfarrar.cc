@@ -29,6 +29,9 @@ OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
+#include <algorithm>
+#include <stdexcept>
+
 #include "ImagineModels/UngerFarrar.h"
 #include "ImagineModels/helpers.h"
 #include "ImagineModels/units.h"
@@ -37,40 +40,13 @@ namespace imagine {
 
 
 
-void UFMagneticField::set_parameters(const std::string &model_choice)
+void UFMagneticField::set_model(const std::string &model)
 {
-  bool model_exists = std::find(possibleModels.begin(), possibleModels.end(), model_choice) != possibleModels.end();
-
-  if (model_exists) {
-    activeModel = model_choice;
-    std::map<std::string, double> model_parameters = all_parameters[model_choice];
-    parameters.fDiskB1        =  model_parameters["fDiskB1"];
-    parameters.fDiskB2        =  model_parameters["fDiskB2"];
-    parameters.fDiskB3        =  model_parameters["fDiskB3"];
-    parameters.fDiskH         =  model_parameters["fDiskH"];
-    parameters.fDiskPhase1    =  model_parameters["fDiskPhase1"];
-    parameters.fDiskPhase2    =  model_parameters["fDiskPhase2"];
-    parameters.fDiskPhase3    =  model_parameters["fDiskPhase3"];
-    parameters.fDiskPitch     =  model_parameters["fDiskPitch"];
-    parameters.fDiskW         =  model_parameters["fDiskW"];
-    parameters.fPoloidalB     =  model_parameters["fPoloidalB"];
-    parameters.fPoloidalP     =  model_parameters["fPoloidalP"];
-    parameters.fPoloidalR     =  model_parameters["fPoloidalR"];
-    parameters.fPoloidalW     =  model_parameters["fPoloidalW"];
-    parameters.fPoloidalZ     =  model_parameters["fPoloidalZ"];
-    parameters.fStriation     =  model_parameters["fStriation"];
-    parameters.fToroidalBN    =  model_parameters["fToroidalBN"];
-    parameters.fToroidalBS    =  model_parameters["fToroidalBS"];
-    parameters.fToroidalR     =  model_parameters["fToroidalR"];
-    parameters.fToroidalW     =  model_parameters["fToroidalW"];
-    parameters.fToroidalZ     =  model_parameters["fToroidalZ"];
-    
-    parameters.fSpurCenter    = model_parameters["fSpurCenter"];
-    parameters.fSpurLength    = model_parameters["fSpurLength"];
-    parameters.fSpurWidth     = model_parameters["fSpurWidth"];
-    parameters.fTwistingTime  = model_parameters["fTwistingTime"];
-  }
-  else throw std::runtime_error("unknown field model");
+  if (std::find(available_models.begin(), available_models.end(), model) == available_models.end())
+    throw std::invalid_argument("Unknown UF24 model '" + model + "'.");
+  active_model = model;
+  parameters = UFParameters<double>{};
+  set_parameter_map(all_parameters.at(model));
 }
 
 
@@ -94,7 +70,7 @@ Vec3<T> UFMagneticField::field(const double &x, const double &y, const double &z
 template <typename T>
 Vec3<T> UFMagneticField::GetDiskField(const double &x, const double &y, const double &z, const UFParameters<T> &p) const
 {
-  if (activeModel == "spur")
+  if (active_model == "spur")
     return GetSpurField(x, y, z, p);
   else
     return GetSpiralField(x, y, z, p);
@@ -104,7 +80,7 @@ Vec3<T> UFMagneticField::GetDiskField(const double &x, const double &y, const do
 template <typename T>
 Vec3<T> UFMagneticField::GetHaloField(const double &x, const double &y, const double &z, const UFParameters<T> &p) const
 {
-  if (activeModel == "twistX")
+  if (active_model == "twistX")
     return GetTwistedHaloField(x, y, z, p);
   else {
     Vec3<T> B_cart_halo{{0., 0., 0.}};
@@ -223,7 +199,7 @@ Vec3<T> UFMagneticField::GetPoloidalHaloField(const double x, const double y, co
 
   // Eq.(29) and Eq.(32)
   T radialDependence =
-    activeModel == "expX" ?
+    active_model == "expX" ?
     exp(-a/p.fPoloidalR) :
     //1 - Sigmoid<number>(a, p.fPoloidalR, p.fPoloidalW);
     1 - 1 / (1 + exp(-(a-p.fPoloidalR)/p.fPoloidalW));

@@ -145,3 +145,25 @@ def test_at_positions_broadcasting():
     assert np.array_equal(img.AxiSymmetricSpiral().at_positions(line, 1., 0.)[:, 0], img.AxiSymmetricSpiral().at_position(-10., 1., 0.))
     with pytest.raises(ValueError):
         mo.at_positions(np.zeros(3), np.zeros(4), 0.)
+
+
+def test_model_variants():
+    uf = img.UFMagneticField(model="expX")
+    assert uf.model == "expX"
+    assert uf.fPoloidalA == uf.all_parameters["expX"]["fPoloidalA"]
+    reference = uf.at_position(-8.5, 1., .3)
+    uf.set_model("spur")
+    uf.set_model("expX")
+    assert uf.at_position(-8.5, 1., .3) == reference
+    assert img.UFMagneticField().model == "base"
+    with pytest.raises(AttributeError):
+        uf.model = "base"
+    with pytest.raises(ValueError):
+        uf.set_model("unknown")
+
+    tf = img.TFMagneticField("Dd1", "C1")
+    assert (tf.disk_model, tf.halo_model) == ("Dd1", "C1")
+    assert np.isfinite(tf.at_position(5., 3., .5)).all()
+    assert img.TFMagneticField().H_disk == 0.055
+    with pytest.raises(ValueError):
+        tf.set_model("Xd1", "C0")

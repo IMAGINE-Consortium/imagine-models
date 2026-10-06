@@ -1,3 +1,6 @@
+#include <algorithm>
+#include <stdexcept>
+
 #include "ImagineModels/TF17.h"
 #include "ImagineModels/helpers.h"
 
@@ -38,7 +41,7 @@ Vec3<T> TFMagneticField::getDiskField(const double &r, const double &z, const do
     auto p_0 = p.p_0 * M_PI / 180;
     auto cot_p0 = cos(p_0) / sin(p_0);
 
-    if (activeDiskModel == "Ad1")
+    if (active_disk_model == "Ad1")
     { // ==========================================================
         if (r > p.r1_disk)
         {
@@ -59,7 +62,7 @@ Vec3<T> TFMagneticField::getDiskField(const double &r, const double &z, const do
             B_phi = sin(phi1_disk - phi) * B_amp;
         }
     }
-    else if (activeDiskModel == "Bd1")
+    else if (active_disk_model == "Bd1")
     { // ===================================================
         // for model Bd1, best fit for n = 2
         if (r > epsilon)
@@ -79,7 +82,7 @@ Vec3<T> TFMagneticField::getDiskField(const double &r, const double &z, const do
         }
         B_phi = azimuthalFieldComponent(r, z, B_r, B_z, cot_p0, p);
     }
-    else if (activeDiskModel == "Dd1")
+    else if (active_disk_model == "Dd1")
     { // ===================================================
         // for model Dd1, best fit for n = 0.5
         double z_sign = z >= 0 ? 1. : -1.;
@@ -127,11 +130,11 @@ Vec3<T> TFMagneticField::getHaloField(const double &r, const double &z, const do
     auto p_0 = p.p_0 * M_PI / 180;
     auto cot_p0 = cos(p_0) / sin(p_0);
 
-    if (activeHaloModel == "C0")
+    if (active_halo_model == "C0")
     { // m = 0
         B_z0 = p.B1_halo * exp(-r1_halo_r * r / p.L_halo);
     }
-    else if (activeHaloModel == "C1")
+    else if (active_halo_model == "C1")
     { // m = 1
         // simplication of the equation in the cosinus
         auto phi_prime = phi - shiftedWindingFunction<T>(r, z, cot_p0, p) - psd;
@@ -184,8 +187,13 @@ T TFMagneticField::zscale(const double &z, const TFParameters<T> &p) const
     return 1 + z * z / p.H_p / p.H_p;
 }
 
-void TFMagneticField::set_params(std::string dtype, std::string htype)
+void TFMagneticField::set_model(const std::string &dtype, const std::string &htype)
 {
+    if (std::find(available_disk_models.begin(), available_disk_models.end(), dtype) == available_disk_models.end())
+        throw std::invalid_argument("Unknown TF17 disk model '" + dtype + "'.");
+    if (std::find(available_halo_models.begin(), available_halo_models.end(), htype) == available_halo_models.end())
+        throw std::invalid_argument("Unknown TF17 halo model '" + htype + "'.");
+
     // disk parameters
 
     bool isAd1 = (dtype == "Ad1");
@@ -204,8 +212,8 @@ void TFMagneticField::set_params(std::string dtype, std::string htype)
     bool isDd1andC0 = (isDd1 && isC0);
     bool isDd1andC1 = (isDd1 && isC1);
 
-    activeDiskModel = dtype;
-    activeHaloModel = htype;
+    active_disk_model = dtype;
+    active_halo_model = htype;
 
     if (isAd1andC0)
     {
