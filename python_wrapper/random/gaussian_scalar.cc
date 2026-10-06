@@ -1,11 +1,8 @@
-#include <pybind11/pybind11.h>
-
+#include "../bindings.h"
 #include "ImagineModelsRandom/GaussianScalar.h"
 
-namespace py = pybind11;
-using namespace pybind11::literals;
-
-void GaussianScalar(py::module_ &m) {
+void bind_gaussian_scalar(py::module_ &m)
+{
     py::class_<GaussianScalarField, RandomScalarField>(m, "GaussianScalarField")
         .def(py::init<>())
 

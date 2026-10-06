@@ -1,20 +1,12 @@
-from _ImagineModels import RegularGrid, IrregularGrid, GridError, RegularVectorField, RegularScalarField, SVT22, JF12RegularField,  JaffeMagneticField, HelixMagneticField, UniformMagneticField, UniformDensityField, YMW16, SunMagneticField, HanMagneticField,WMAPMagneticField, TTMagneticField, HMRMagneticField, FauvetMagneticField, StanevBSSMagneticField, TFMagneticField, PshirkovMagneticField, ArchimedeanMagneticField, UFMagneticField
-    
-try: 
-    from _ImagineModels import RandomVectorField, RandomScalarField, JF12RandomField, ESRandomField, GaussianScalarField, LogNormalScalarField
-    __has_random_fields__ = True
-except ImportError:
-    __has_random_fields__ = False
-    
-try:  
-    _jf12 = JF12RegularField()
-    _ = _jf12.active_parameters
-    __has_autodiff__ = True
-except AttributeError:
-    __has_autodiff__ = False
-    
-    
-        
+from ._core import __version__, has_autodiff, has_fftw
+from ._core import RegularGrid, IrregularGrid, GridError, RegularVectorField, RegularScalarField, SVT22, JF12RegularField,  JaffeMagneticField, HelixMagneticField, UniformMagneticField, UniformDensityField, YMW16, SunMagneticField, HanMagneticField,WMAPMagneticField, TTMagneticField, HMRMagneticField, FauvetMagneticField, StanevBSSMagneticField, TFMagneticField, PshirkovMagneticField, ArchimedeanMagneticField, UFMagneticField
+
+if has_fftw:
+    from ._core import RandomVectorField, RandomScalarField, JF12RandomField, ESRandomField, GaussianScalarField, LogNormalScalarField
+
+__has_random_fields__ = has_fftw
+__has_autodiff__ = has_autodiff
+
 from .HelperFunctions.CoordinateConversions import cyl2cart, cart2cyl
 from .HelperFunctions.PlottingHelpers import plot_slice
 

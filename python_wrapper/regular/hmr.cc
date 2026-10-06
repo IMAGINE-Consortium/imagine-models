@@ -1,13 +1,9 @@
-#ifndef HARARIMOLLERACHROULETWRAPPER_H
-#define HARARIMOLLERACHROULETWRAPPER_H
-
+#include "../bindings.h"
 #include "ImagineModels/HarariMollerachRoulet.h"
-#include "model_bindings.h"
+#include "../model_bindings.h"
 
-void HarariMollerachRoulet(py::module_ &m)
+void bind_hmr(py::module_ &m)
 {
     bind_regular_model<HMRMagneticField>(m, "HMRMagneticField")
         .def_readwrite("b_r_max", &HMRMagneticField::b_r_max);
 }
-
-#endif

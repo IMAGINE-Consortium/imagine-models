@@ -1,28 +1,7 @@
-#ifndef GRID_BINDINGS_H
-#define GRID_BINDINGS_H
+#include "bindings.h"
 
-#include <pybind11/pybind11.h>
-#include <pybind11/numpy.h>
-#include <pybind11/stl.h>
-
-#include "ImagineModels/Grid.h"
-
-namespace py = pybind11;
-using namespace pybind11::literals;
-
-template <int N>
-py::array_t<double> to_numpy(GridData<N> &&grid_data) {
-  auto owned = new GridData<N>(std::move(grid_data));
-  py::capsule owner(owned, [](void *p) { delete static_cast<GridData<N> *>(p); });
-  std::vector<py::ssize_t> shape;
-  if (N > 1)
-    shape.push_back(N);
-  for (int s : owned->shape)
-    shape.push_back(s);
-  return py::array_t<double>(shape, owned->data.data(), owner);
-}
-
-void Grids(py::module_ &m) {
+void bind_grids(py::module_ &m)
+{
   py::class_<RegularGrid>(m, "RegularGrid")
       .def(py::init<const std::array<int, 3> &, const std::array<double, 3> &, const std::array<double, 3> &>(),
            py::arg("shape").noconvert(), "reference_point"_a, "increment"_a)
@@ -47,5 +26,3 @@ void Grids(py::module_ &m) {
 
   py::register_exception<GridException>(m, "GridError", PyExc_ValueError);
 }
-
-#endif

@@ -1,12 +1,8 @@
- #include <pybind11/pybind11.h>
-
+#include "../bindings.h"
 #include "ImagineModelsRandom/RandomJF12.h"
 
-namespace py = pybind11;
-using namespace pybind11::literals;
-
-void RandomJF12(py::module_ &m) {
-
+void bind_jf12_random(py::module_ &m)
+{
     py::class_<JF12RandomField, RandomVectorField>(m, "JF12RandomField")
         .def(py::init<>())
 

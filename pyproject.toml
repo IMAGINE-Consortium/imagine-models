@@ -1,11 +1,44 @@
 [build-system]
-requires = [
-    "setuptools>=42",
-    "wheel",
-    "ninja",
-    "cmake>=3.12",
+requires = ["scikit-build-core>=0.10"]
+build-backend = "scikit_build_core.build"
+
+[project]
+name = "ImagineModels"
+version = "0.2.0"
+description = "IMAGINE Model Library"
+readme = "README.md"
+requires-python = ">=3.8"
+license = {file = "COPYING"}
+authors = [{name = "Sebastian Hutschenreuter", email = "sebastian.hutschenreuter@univie.ac.at"}]
+dependencies = ["numpy>=1.22"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Topic :: Scientific/Engineering :: Astronomy",
+    "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
+    "Operating System :: MacOS",
+    "Operating System :: Unix",
+    "Programming Language :: Python",
+    "Programming Language :: C++",
+    "Intended Audience :: Science/Research",
 ]
-build-backend = "setuptools.build_meta"
+
+[project.optional-dependencies]
+test = ["pytest>=6.0"]
+plot = ["matplotlib"]
+
+[tool.scikit-build]
+cmake.version = ">=3.16"
+cmake.build-type = "Release"
+build-dir = "build/python/{wheel_tag}"
+wheel.packages = ["ImagineModels"]
+install.components = ["python"]
+sdist.exclude = ["c_library/extern", "c_library/Testing", "extern/pybind11/tests", "extern/pybind11/docs", "extern/pybind11/build"]
+
+[tool.scikit-build.cmake.define]
+BUILD_PYTHON_PACKAGE = "ON"
+BUILD_TESTING = "OFF"
+USE_AUTODIFF = {env = "USE_AUTODIFF", default = "ON"}
+USE_FFTW = {env = "USE_FFTW", default = "ON"}
 
 [tool.isort]
 profile = "black"
@@ -21,5 +54,3 @@ testpaths = ["tests"]
 test-command = "pytest {project}/tests"
 test-extras = ["test"]
 test-skip = ["*universal2:arm64"]
-# Setuptools bug causes collision between pypy and cpython artifacts
-before-build = "rm -rf {project}/build"

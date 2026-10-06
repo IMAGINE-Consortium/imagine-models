@@ -1,14 +1,5 @@
 import numpy as np
-import matplotlib.pyplot as plt
 
-try:
-    import cmasher as cm
-    has_cmasher =  True
-except ImportError:
-    has_cmasher = False
-    
-
-plt.ion()
 
 def plot_slice(array, slice_dim, shp, rfp, inc, vmin, vmax, vec_dim=0, show_cbar=True, show_labels=True, label=None,
                save_fig=False, field_name=None, quiver=False, amplitude=False, cut_index =None,  plot_earth=True, cmap=None):
@@ -32,6 +23,14 @@ def plot_slice(array, slice_dim, shp, rfp, inc, vmin, vmax, vec_dim=0, show_cbar
     :param plot_earth: adds a marker on Earth's position, default=False
     :param cmap: string to select a matplotlib colormap, the default
     """
+    import matplotlib.pyplot as plt
+    try:
+        import cmasher as cm
+        has_cmasher = True
+    except ImportError:
+        has_cmasher = False
+    plt.ion()
+
    #
     is_vector = False
     if isinstance(array, list): 

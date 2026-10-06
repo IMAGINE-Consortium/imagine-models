@@ -1,10 +1,8 @@
-#ifndef UNGERFARRARWRAPPER_H
-#define UNGERFARRARWRAPPER_H
-
+#include "../bindings.h"
 #include "ImagineModels/UngerFarrar.h"
-#include "model_bindings.h"
+#include "../model_bindings.h"
 
-void UF24(py::module_ &m)
+void bind_uf24(py::module_ &m)
 {
     bind_regular_model<UFMagneticField>(m, "UFMagneticField")
         .def_readwrite("activeModel", &UFMagneticField::activeModel)
@@ -14,5 +12,3 @@ void UF24(py::module_ &m)
             self.set_parameters(model_type); 
         });
 }
-
-#endif

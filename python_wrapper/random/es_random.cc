@@ -1,11 +1,8 @@
-#include <pybind11/pybind11.h>
-
+#include "../bindings.h"
 #include "ImagineModelsRandom/EnsslinSteininger.h"
 
-namespace py = pybind11;
-using namespace pybind11::literals;
-
-void EnsslinSteininger(py::module_ &m) {
+void bind_es_random(py::module_ &m)
+{
     py::class_<ESRandomField, RandomVectorField>(m, "ESRandomField")
         .def(py::init<>())
 
@@ -16,5 +13,4 @@ void EnsslinSteininger(py::module_ &m) {
 
         .def_readwrite("r0", &ESRandomField::r0)
         .def_readwrite("z0", &ESRandomField::z0);
-
 }

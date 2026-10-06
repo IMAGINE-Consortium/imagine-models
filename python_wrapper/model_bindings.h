@@ -6,13 +6,8 @@
 #include <tuple>
 #include <type_traits>
 
-#include <pybind11/pybind11.h>
-#include <pybind11/stl.h>
-
+#include "bindings.h"
 #include "ImagineModels/RegularModel.h"
-
-namespace py = pybind11;
-using namespace pybind11::literals;
 
 template <typename Model>
 auto bind_regular_model(py::module_ &m, const char *name) {

@@ -1,10 +1,8 @@
-#ifndef YMW16WRAPPER_H
-#define YMW16WRAPPER_H
-
+#include "../bindings.h"
 #include "ImagineModels/YMW.h"
-#include "model_bindings.h"
+#include "../model_bindings.h"
 
-void YMW(py::module_ &m)
+void bind_ymw16(py::module_ &m)
 {
     bind_regular_model<YMW16>(m, "YMW16")
         .def_readwrite("r_warp", &YMW16::t0_r_warp)
@@ -22,5 +20,3 @@ void YMW(py::module_ &m)
         .def_readwrite("do_local_bubble", &YMW16::do_local_bubble)
         .def_readwrite("do_loop", &YMW16::do_loop);
 }
-
-#endif

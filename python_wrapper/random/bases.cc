@@ -1,15 +1,8 @@
-#ifndef RANDOMFIELDBASES_H
-#define RANDOMFIELDBASES_H
-
-#include <pybind11/pybind11.h>
-
+#include "../bindings.h"
 #include "../random_trampoline.h"
-#include "../grid_bindings.h"
 
-namespace py = pybind11;
-using namespace pybind11::literals;
-
-void RandomFieldBases(py::module_ &m) {
+void bind_random_bases(py::module_ &m)
+{
     py::class_<RandomVectorField, PyRandomVectorField>(m, "RandomVectorField")
         .def(py::init<>())
         .def("sample", [](const RandomVectorField &self, const RegularGrid &grid, int seed) { return to_numpy(self.sample(grid, seed)); }, "grid"_a, "seed"_a)
@@ -24,5 +17,3 @@ void RandomFieldBases(py::module_ &m) {
         .def("profile", [](const RandomScalarField &self, const RegularGrid &grid) { return to_numpy(self.profile(grid)); }, "grid"_a)
         .def("profile", [](const RandomScalarField &self, const IrregularGrid &grid) { return to_numpy(self.profile(grid)); }, "grid"_a);
 }
-
-#endif

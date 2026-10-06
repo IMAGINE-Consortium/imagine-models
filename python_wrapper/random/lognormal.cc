@@ -1,11 +1,8 @@
-#include <pybind11/pybind11.h>
-
+#include "../bindings.h"
 #include "ImagineModelsRandom/LogNormal.h"
 
-namespace py = pybind11;
-using namespace pybind11::literals;
-
-void LogNormal(py::module_ &m) {
+void bind_lognormal(py::module_ &m)
+{
     py::class_<LogNormalScalarField, RandomScalarField>(m, "LogNormalScalarField")
         .def(py::init<>())
 
@@ -15,5 +12,4 @@ void LogNormal(py::module_ &m) {
 
         .def_readwrite("spectral_offset", &LogNormalScalarField::spectral_offset)
         .def_readwrite("spectral_slope", &LogNormalScalarField::spectral_slope);
-
 }

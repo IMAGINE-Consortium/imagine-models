@@ -11,6 +11,7 @@ endif()
 
 option(USE_AUTODIFF "Enable derivatives w.r.t. model parameters (requires autodiff and Eigen3)" ON)
 option(USE_FFTW "Enable random field models (requires FFTW3)" ON)
+option(IMAGINE_SHARED_LIBRARY "Build ImagineModels as a shared library" ON)
 
 set(IMAGINE_HAS_AUTODIFF 0)
 if(USE_AUTODIFF)
@@ -48,6 +49,9 @@ set(IM_HEADER_DIR ${CMAKE_CURRENT_SOURCE_DIR}/headers)
 set(IM_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/source)
 set(IM_GENERATED_DIR ${CMAKE_CURRENT_BINARY_DIR}/generated)
 
+set(IMAGINE_HAS_AUTODIFF ${IMAGINE_HAS_AUTODIFF} CACHE INTERNAL "")
+set(IMAGINE_HAS_FFTW ${IMAGINE_HAS_FFTW} CACHE INTERNAL "")
+
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/config.h.in ${IM_GENERATED_DIR}/ImagineModels/config.h @ONLY)
 
 set(IM_SRC_FILES
@@ -81,7 +85,12 @@ if(IMAGINE_HAS_FFTW)
     )
 endif()
 
-add_library(ImagineModels SHARED ${IM_SRC_FILES})
+if(IMAGINE_SHARED_LIBRARY)
+    add_library(ImagineModels SHARED ${IM_SRC_FILES})
+else()
+    add_library(ImagineModels STATIC ${IM_SRC_FILES})
+    set_target_properties(ImagineModels PROPERTIES POSITION_INDEPENDENT_CODE ON)
+endif()
 add_library(ImagineModels::ImagineModels ALIAS ImagineModels)
 
 target_compile_features(ImagineModels PUBLIC cxx_std_17)

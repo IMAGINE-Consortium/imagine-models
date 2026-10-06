@@ -1,10 +1,8 @@
-#ifndef TF17WRAPPER_H
-#define TF17WRAPPER_H
-
+#include "../bindings.h"
 #include "ImagineModels/TF17.h"
-#include "model_bindings.h"
+#include "../model_bindings.h"
 
-void TF17(py::module_ &m)
+void bind_tf17(py::module_ &m)
 {
     bind_regular_model<TFMagneticField>(m, "TFMagneticField")
         .def_readwrite("activeDiskModel", &TFMagneticField::activeDiskModel)
@@ -15,5 +13,3 @@ void TF17(py::module_ &m)
             self.set_params(dtype, htype); 
         });
 }
-
-#endif
