@@ -32,5 +32,5 @@ runs:
       shell: bash
       run: |
         git clone --depth 1 --branch v1.1.2 https://github.com/autodiff/autodiff.git "$RUNNER_TEMP/autodiff"
-        cmake -S "$RUNNER_TEMP/autodiff" -B "$RUNNER_TEMP/autodiff/build" -DAUTODIFF_BUILD_TESTS=OFF -DAUTODIFF_BUILD_PYTHON=OFF -DAUTODIFF_BUILD_EXAMPLES=OFF -DAUTODIFF_BUILD_DOCS=OFF
-        sudo cmake --install "$RUNNER_TEMP/autodiff/build"
+        cmake -S "$RUNNER_TEMP/autodiff" -B "$RUNNER_TEMP/autodiff-build" -DAUTODIFF_BUILD_TESTS=OFF -DAUTODIFF_BUILD_PYTHON=OFF -DAUTODIFF_BUILD_EXAMPLES=OFF -DAUTODIFF_BUILD_DOCS=OFF
+        sudo cmake --install "$RUNNER_TEMP/autodiff-build"
