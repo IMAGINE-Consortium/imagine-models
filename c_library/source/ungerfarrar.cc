@@ -223,7 +223,7 @@ Vec3<T> UFMagneticField::GetPoloidalHaloField(const double x, const double y, co
 
   // Eq.(29) and Eq.(32)
   T radialDependence =
-    activeModel == "base" ?
+    activeModel == "expX" ?
     exp(-a/p.fPoloidalR) :
     //1 - Sigmoid<number>(a, p.fPoloidalR, p.fPoloidalW);
     1 - 1 / (1 + exp(-(a-p.fPoloidalR)/p.fPoloidalW));
