@@ -57,7 +57,7 @@ def test_jacobian(case):
     model = rc.make_model(meta["model"], meta["settings"])
     if not rc.has_jacobian(model):
         pytest.skip("ImagineModels was built without autodiff")
-    actual = np.array([rc.jacobian(model, p) for p in data["jacobian_positions"]])
+    actual = np.array([rc.jacobian(model, p, meta["jacobian_columns"]) for p in data["jacobian_positions"]])
     _assert_close(actual, data["jacobian"], rc.RTOL_REGULAR, rc.ATOL_REGULAR)
 
 

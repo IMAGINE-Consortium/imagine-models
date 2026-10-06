@@ -105,8 +105,12 @@ def has_jacobian(model):
     return img.__has_autodiff__ and hasattr(model, "derivative")
 
 
-def jacobian(model, position):
-    return np.atleast_2d(np.asarray(model.derivative(*position), dtype=float))
+def jacobian(model, position, columns):
+    jac = np.atleast_2d(np.asarray(model.derivative(*position), dtype=float))
+    if hasattr(model, "parameter_names"):
+        names = list(model.parameter_names)
+        jac = jac[:, [names.index(c) for c in columns]]
+    return jac
 
 
 def sample(model, grid, seed):
@@ -132,7 +136,9 @@ _SOURCE_FILES = {"ArchimedeanMagneticField": "archimedes.cc", "FauvetMagneticFie
                  "UFMagneticField": "ungerfarrar.cc", "WMAPMagneticField": "wmap.cc", "YMW16": "ymw16.cc"}
 
 
-def jacobian_column_labels(name):
+def jacobian_column_labels(name, model):
+    if hasattr(model, "parameter_names"):
+        return list(model.parameter_names)
     if name == "UniformMagneticField":
         return ["bx", "by", "bz"]
     if name == "UniformDensityField":

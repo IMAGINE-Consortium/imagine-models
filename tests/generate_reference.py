@@ -26,9 +26,10 @@ def regular(case, name, settings, commit):
     meta = {"case": case, "model": name, "settings": settings, "commit": commit,
             "defaults": rc.parameter_defaults(model)}
     if rc.has_jacobian(model):
+        columns = rc.jacobian_column_labels(name, model)
         arrays["jacobian_positions"] = rc.JACOBIAN_POSITIONS
-        arrays["jacobian"] = np.array([rc.jacobian(model, p) for p in rc.JACOBIAN_POSITIONS])
-        meta["jacobian_columns"] = rc.jacobian_column_labels(name)
+        arrays["jacobian"] = np.array([rc.jacobian(model, p, columns) for p in rc.JACOBIAN_POSITIONS])
+        meta["jacobian_columns"] = columns
         meta["jacobian_known_bad"] = rc.KNOWN_BAD_JACOBIAN.get(name)
     _write(case, arrays, meta)
 
