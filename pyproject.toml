@@ -29,7 +29,6 @@ plot = ["matplotlib"]
 [tool.scikit-build]
 cmake.version = ">=3.16"
 cmake.build-type = "Release"
-build-dir = "build/python/{wheel_tag}"
 wheel.packages = ["ImagineModels"]
 install.components = ["python"]
 sdist.exclude = ["c_library/extern", "c_library/Testing", "extern/pybind11/tests", "extern/pybind11/docs", "extern/pybind11/build"]
