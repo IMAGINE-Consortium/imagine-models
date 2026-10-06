@@ -12,8 +12,10 @@
 #include <memory>
 #include <initializer_list>
 
-#include "exceptions.h"
-#include "Field.h"
+#include "ImagineModels/exceptions.h"
+#include "ImagineModels/Field.h"
+
+namespace imagine {
 
 
 
@@ -64,6 +66,8 @@ public:
 };
 
 //include the random field method implementations (at this position, due to the use of templates)
-#include "random.tpp"
+#include "ImagineModelsRandom/random.tpp"
+
+}
 
 #endif /* RANDOMFIELD_H */

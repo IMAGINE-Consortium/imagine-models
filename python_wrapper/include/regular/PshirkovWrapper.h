@@ -3,7 +3,7 @@
 
 #include <pybind11/pybind11.h>
 
-#include "Pshirkov.h"
+#include "ImagineModels/Pshirkov.h"
 
 void Pshirkov(py::module_ &m)
 {
@@ -29,7 +29,7 @@ void Pshirkov(py::module_ &m)
         .def_readwrite("z11_H", &PshirkovMagneticField::z11_H)
         .def_readwrite("z12_H", &PshirkovMagneticField::z12_H)
 
-#if autodiff_FOUND
+#if IMAGINE_HAS_AUTODIFF
         .def_readwrite("active_diff", &PshirkovMagneticField::active_diff)
         .def_readonly("all_diff", &PshirkovMagneticField::all_diff)
 

@@ -3,7 +3,7 @@
 
 #include <pybind11/pybind11.h>
 
-#include "SVT22.h"
+#include "ImagineModels/SVT22.h"
 
 void SVT22(py::module_ &m)
 {
@@ -17,7 +17,7 @@ void SVT22(py::module_ &m)
         .def_readwrite("z_cut", &SVT22MagneticField::z_cut)
 
 
-#if autodiff_FOUND
+#if IMAGINE_HAS_AUTODIFF
         .def_readwrite("active_diff", &SVT22MagneticField::active_diff)
         .def_readonly("all_diff", &SVT22MagneticField::all_diff)
 

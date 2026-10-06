@@ -1,6 +1,6 @@
 #include <pybind11/pybind11.h>
 
-#include "EnsslinSteininger.h"
+#include "ImagineModelsRandom/EnsslinSteininger.h"
 
 namespace py = pybind11;
 using namespace pybind11::literals;

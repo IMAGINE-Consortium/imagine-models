@@ -6,13 +6,16 @@
 #include <pybind11/functional.h>
 #include <pybind11/stl_bind.h>
 
-#if autodiff_FOUND
+#include "ImagineModels/ImagineModels.h"
+
+#if IMAGINE_HAS_AUTODIFF
   #include <pybind11/eigen.h>
   #include "include/autodiff_wrapper.h"
 #endif
 
 namespace py = pybind11;
 using namespace pybind11::literals;
+using namespace imagine;
 
 #include "include/FieldBases.h"
 
@@ -38,7 +41,7 @@ using namespace pybind11::literals;
 #include "include/regular/SVT22Wrapper.h"
 
 
-#if FFTW_FOUND
+#if IMAGINE_HAS_FFTW
 #include "include/random/RandomFieldBases.h"
 #include "include/random/RandomJF12Wrapper.h"
 #include "include/random/EnsslinSteiningerWrapper.h"
@@ -67,7 +70,7 @@ void Fauvet(py::module_ &);
 void YMW(py::module_ &);
 void SVT22(py::module_ &);
 
-#if FFTW_FOUND
+#if IMAGINE_HAS_FFTW
 void RandomFieldBases(py::module_ &);
 
 void RandomJF12(py::module_ &);
@@ -100,7 +103,7 @@ PYBIND11_MODULE(_ImagineModels, m)
   WMAP(m);
   Fauvet(m);
   SVT22(m);
-#if FFTW_FOUND
+#if IMAGINE_HAS_FFTW
   RandomFieldBases(m);
   RandomJF12(m);
   EnsslinSteininger(m);

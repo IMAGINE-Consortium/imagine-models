@@ -1,10 +1,15 @@
+#ifndef LOGNORMAL_H
+#define LOGNORMAL_H
+
 #include <functional>
 #include <cmath>
 #include <cassert>
 #include <iostream>
 
-#include "Field.h"
-#include "RandomScalarField.h"
+#include "ImagineModels/Field.h"
+#include "ImagineModelsRandom/RandomScalarField.h"
+
+namespace imagine {
 
 class LogNormalScalarField : public RandomScalarField {
   protected:
@@ -26,3 +31,7 @@ class LogNormalScalarField : public RandomScalarField {
     }; 
 
 };
+
+}
+
+#endif

@@ -6,14 +6,16 @@
 #include <cassert>
 #include <iostream>
 
-#include "RegularField.h"
+#include "ImagineModels/RegularField.h"
+
+namespace imagine {
 
 class JF12MagneticField : public RegularVectorField
 {
 protected:
   vector _at_position(const double &x, const double &y, const double &z, const JF12MagneticField &p) const;
 
-#if autodiff_FOUND
+#if IMAGINE_HAS_AUTODIFF
   Eigen::MatrixXd _jac(const double &x, const double &y, const double &z, JF12MagneticField &p) const;
 #endif
 
@@ -63,7 +65,7 @@ public:
   number rpc_X = 4.8;
   number r0_X = 2.9;
   
-#if autodiff_FOUND
+#if IMAGINE_HAS_AUTODIFF
   const std::set<std::string> all_diff{"b_arm_1", "b_arm_2", "b_arm_3", "b_arm_4", "b_arm_5", "b_arm_6", "b_arm_7", "b_ring", "h_disk", "w_disk", "Bn", "Bs", "rn", "rs", "wh", "z0", "B0_X", "Xtheta_const", "rpc_X", "r0_X"};
   std::set<std::string> active_diff{"b_arm_1", "b_arm_2", "b_arm_3", "b_arm_4", "b_arm_5", "b_arm_6", "b_arm_7", "b_ring", "h_disk", "w_disk", "Bn", "Bs", "rn", "rs", "wh", "z0", "B0_X", "Xtheta_const", "rpc_X", "r0_X"};
 
@@ -78,5 +80,7 @@ public:
     return _at_position(x, y, z, *this);
   }
 };
+
+}
 
 #endif

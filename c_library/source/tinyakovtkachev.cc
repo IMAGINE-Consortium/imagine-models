@@ -1,7 +1,9 @@
 #include <cmath>
 
-#include "TinyakovTkachev.h"
-#include "helpers.h"
+#include "ImagineModels/TinyakovTkachev.h"
+#include "ImagineModels/helpers.h"
+
+namespace imagine {
 
 vector TTMagneticField::_at_position(const double &x, const double &y, const double &z, const TTMagneticField &p) const
 {
@@ -60,7 +62,7 @@ vector TTMagneticField::_at_position(const double &x, const double &y, const dou
     return B_vec3;
 }
 
-#if autodiff_FOUND
+#if IMAGINE_HAS_AUTODIFF
 
 Eigen::MatrixXd TTMagneticField::_jac(const double &x, const double &y, const double &z, TTMagneticField &p) const
 {
@@ -72,3 +74,5 @@ Eigen::MatrixXd TTMagneticField::_jac(const double &x, const double &y, const do
 }
 
 #endif
+
+}

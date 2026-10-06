@@ -3,7 +3,7 @@
 
 #include <pybind11/pybind11.h>
 
-#include "Uniform.h"
+#include "ImagineModels/Uniform.h"
 
 namespace py = pybind11;
 using namespace pybind11::literals;
@@ -18,7 +18,7 @@ void Uniform(py::module_ &m)
         .def_readwrite("bx", &UniformMagneticField::bx)
         .def_readwrite("by", &UniformMagneticField::by)
         .def_readwrite("bz", &UniformMagneticField::bz)
-#if autodiff_FOUND
+#if IMAGINE_HAS_AUTODIFF
         .def_readwrite("active_diff", &UniformMagneticField::active_diff)
         .def_readonly("all_diff", &UniformMagneticField::all_diff)
 
@@ -41,7 +41,7 @@ void Uniform(py::module_ &m)
 
         .def_readwrite("n0", &UniformDensityField::n0)
 
-#if autodiff_FOUND
+#if IMAGINE_HAS_AUTODIFF
         .def_readwrite("active_diff", &UniformDensityField::active_diff)
         .def_readonly("all_diff", &UniformDensityField::all_diff)
 

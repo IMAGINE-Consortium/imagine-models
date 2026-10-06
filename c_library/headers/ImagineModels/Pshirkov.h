@@ -4,15 +4,17 @@
 #include <functional>
 #include <cmath>
 
-#include "Field.h"
-#include "RegularField.h"
+#include "ImagineModels/Field.h"
+#include "ImagineModels/RegularField.h"
+
+namespace imagine {
 
 class PshirkovMagneticField : public RegularVectorField
 {
 protected:
     vector _at_position(const double &xx, const double &yy, const double &zz, const PshirkovMagneticField &p) const;
 
-#if autodiff_FOUND
+#if IMAGINE_HAS_AUTODIFF
     Eigen::MatrixXd _jac(const double &xx, const double &yy, const double &zz, PshirkovMagneticField &p) const;
 #endif
 
@@ -42,7 +44,7 @@ public:
 	number z12_H = 0.4; // halo vertical thickness off the disk, kpc
 
 
-    #if autodiff_FOUND
+    #if IMAGINE_HAS_AUTODIFF
         const std::set<std::string> all_diff{"pitch", "d", "R_sun", "z0_D", "B0_D", "z0_H", "R0_H", "B0_Hn", "B0_Hs", "z11_H", "z12_H"};
         std::set<std::string> active_diff{"pitch", "d", "R_sun","z0_D", "B0_D", "z0_H", "R0_H", "B0_Hn", "B0_Hs", "z11_H", "z12_H"};
     #endif
@@ -52,12 +54,14 @@ public:
         return _at_position(x, y, z, *this);
     }
 
-#if autodiff_FOUND
+#if IMAGINE_HAS_AUTODIFF
     Eigen::MatrixXd derivative(const double &x, const double &y, const double &z)
     {
         return _jac(x, y, z, *this);
     }
 #endif
 };
+
+}
 
 #endif

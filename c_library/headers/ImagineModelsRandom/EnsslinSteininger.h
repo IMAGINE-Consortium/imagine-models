@@ -1,9 +1,14 @@
+#ifndef ENSSLINSTEININGER_H
+#define ENSSLINSTEININGER_H
+
 #include <functional>
 #include <cmath>
 #include <cassert>
 #include <iostream>
 
-#include "RandomVectorField.h"
+#include "ImagineModelsRandom/RandomVectorField.h"
+
+namespace imagine {
 
 
 class ESRandomField : public RandomVectorField {
@@ -28,3 +33,7 @@ class ESRandomField : public RandomVectorField {
     double spatial_profile(const double &x, const double &y, const double &z) const override; 
 
 };
+
+}
+
+#endif

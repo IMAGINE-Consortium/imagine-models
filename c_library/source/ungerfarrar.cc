@@ -29,9 +29,11 @@ OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#include "UngerFarrar.h"
-#include "helpers.h"
-#include "units.h"
+#include "ImagineModels/UngerFarrar.h"
+#include "ImagineModels/helpers.h"
+#include "ImagineModels/units.h"
+
+namespace imagine {
 
 
 
@@ -371,7 +373,7 @@ vector UFMagneticField::GetSpiralField(const double x, const double y, const dou
   return Cyl2Cart<vector>(bCyl, cosPhi, sinPhi);
 }
 
-#if autodiff_FOUND
+#if IMAGINE_HAS_AUTODIFF
 
 Eigen::MatrixXd UFMagneticField::_jac(const double &x, const double &y, const double &z, UFMagneticField &p) const
 {
@@ -385,3 +387,5 @@ Eigen::MatrixXd UFMagneticField::_jac(const double &x, const double &y, const do
 }
 
 #endif
+
+}

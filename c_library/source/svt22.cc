@@ -1,8 +1,10 @@
 #include <cmath>
 #include <cassert>
 #include <iostream>
-#include "units.h"
-#include "SVT22.h"
+#include "ImagineModels/units.h"
+#include "ImagineModels/SVT22.h"
+
+namespace imagine {
 
 vector SVT22MagneticField::_at_position(const double &x, const double &y, const double &z, const SVT22MagneticField &p) const
 {
@@ -47,7 +49,7 @@ vector SVT22MagneticField::_at_position(const double &x, const double &y, const 
   return B_cart;
 }
 
-#if autodiff_FOUND
+#if IMAGINE_HAS_AUTODIFF
 
 Eigen::MatrixXd SVT22MagneticField::_jac(const double &x, const double &y, const double &z, SVT22MagneticField &p) const
 {
@@ -60,3 +62,5 @@ Eigen::MatrixXd SVT22MagneticField::_jac(const double &x, const double &y, const
 }
 
 #endif
+
+}

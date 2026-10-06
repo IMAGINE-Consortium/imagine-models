@@ -3,7 +3,7 @@
 
 #include <pybind11/pybind11.h>
 
-#include "UngerFarrar.h"
+#include "ImagineModels/UngerFarrar.h"
 
 void UF24(py::module_ &m)
 {
@@ -42,7 +42,7 @@ void UF24(py::module_ &m)
         .def_readonly("possibleModels", &UFMagneticField::possibleModels)
         .def_readonly("all_parameters", &UFMagneticField::all_parameters)
 
-#if autodiff_FOUND
+#if IMAGINE_HAS_AUTODIFF
         .def_readwrite("active_diff", &UFMagneticField::active_diff)
         .def_readonly("all_diff", &UFMagneticField::all_diff)
 

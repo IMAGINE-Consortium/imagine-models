@@ -3,7 +3,7 @@
 
 #include <pybind11/pybind11.h>
 
-#include "Archimedes.h"
+#include "ImagineModels/Archimedes.h"
 
 void Archimedes(py::module_ &m)
 {
@@ -17,7 +17,7 @@ void Archimedes(py::module_ &m)
         .def_readwrite("v_w", &ArchimedeanMagneticField::v_w)
         .def_readwrite("B_0", &ArchimedeanMagneticField::B_0)
 
-#if autodiff_FOUND
+#if IMAGINE_HAS_AUTODIFF
         .def_readwrite("active_diff", &ArchimedeanMagneticField::active_diff)
         .def_readonly("all_diff", &ArchimedeanMagneticField::all_diff)
 

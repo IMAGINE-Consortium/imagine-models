@@ -1,8 +1,10 @@
 #include <cmath>
-#include "units.h"
-#include "StanevBSS.h"
+#include "ImagineModels/units.h"
+#include "ImagineModels/StanevBSS.h"
 
-#include "helpers.h"
+#include "ImagineModels/helpers.h"
+
+namespace imagine {
 
 // https://arxiv.org/abs/astro-ph/9607086, implementation from Hammurabi (old). Implemented is the bisymmetric model
 vector StanevBSSMagneticField::_at_position(const double &x, const double &y, const double &z, const StanevBSSMagneticField &p) const
@@ -42,7 +44,7 @@ vector StanevBSSMagneticField::_at_position(const double &x, const double &y, co
     return B_vec3;
 }
 
-#if autodiff_FOUND
+#if IMAGINE_HAS_AUTODIFF
 
 Eigen::MatrixXd StanevBSSMagneticField::_jac(const double &x, const double &y, const double &z, StanevBSSMagneticField &p) const
 {
@@ -54,3 +56,5 @@ Eigen::MatrixXd StanevBSSMagneticField::_jac(const double &x, const double &y, c
 }
 
 #endif
+
+}

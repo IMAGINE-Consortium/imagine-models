@@ -4,15 +4,17 @@
 #include <functional>
 #include <cmath>
 
-#include "Field.h"
-#include "RegularField.h"
+#include "ImagineModels/Field.h"
+#include "ImagineModels/RegularField.h"
+
+namespace imagine {
 
 class HelixMagneticField : public RegularVectorField
 {
 protected:
     vector _at_position(const double &xx, const double &yy, const double &zz, const HelixMagneticField &p) const;
 
-#if autodiff_FOUND
+#if IMAGINE_HAS_AUTODIFF
     Eigen::MatrixXd _jac(const double &xx, const double &yy, const double &zz, HelixMagneticField &p) const;
 #endif
 
@@ -24,7 +26,7 @@ public:
     number ampy = 1.;
     number ampz = 1.;
 
-    #if autodiff_FOUND
+    #if IMAGINE_HAS_AUTODIFF
         const std::set<std::string> all_diff{"ampx", "ampy", "ampz"};
         std::set<std::string> active_diff{"ampx", "ampy", "ampz"};
     #endif
@@ -38,7 +40,7 @@ public:
         return _at_position(x, y, z, *this);
     }
 
-#if autodiff_FOUND
+#if IMAGINE_HAS_AUTODIFF
     Eigen::MatrixXd derivative(const double &x, const double &y, const double &z)
     {
         return _jac(x, y, z, *this);
@@ -62,5 +64,7 @@ public:
             }
 
 */
+
+}
 
 #endif

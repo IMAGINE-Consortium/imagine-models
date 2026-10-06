@@ -1,8 +1,10 @@
 #include <cmath>
 #include <cassert>
 #include <iostream>
-#include "units.h"
-#include "GaussianScalar.h"
+#include "ImagineModels/units.h"
+#include "ImagineModelsRandom/GaussianScalar.h"
+
+namespace imagine {
 
 
 /*
@@ -28,4 +30,6 @@ void GaussianScalarField::_on_grid(double* val, const std::array<int, 3> &shp, c
 double GaussianScalarField::calculate_fourier_sigma(const double &abs_k, const double &dk) const {
   double var = simple_spectrum(abs_k, dk, spectral_offset, spectral_slope);
   return std::sqrt(var);
+}
+
 }

@@ -3,7 +3,7 @@
 
 #include <pybind11/pybind11.h>
 
-#include "WMAP.h"
+#include "ImagineModels/WMAP.h"
 
 namespace py = pybind11;
 using namespace pybind11::literals;
@@ -25,7 +25,7 @@ void WMAP(py::module_ &m) {
         .def_readwrite("b_psi1", &WMAPMagneticField::b_psi1)
         .def_readwrite("b_xsi0", &WMAPMagneticField::b_xsi0)
         .def_readwrite("b_anti", &WMAPMagneticField::anti)
-#if autodiff_FOUND
+#if IMAGINE_HAS_AUTODIFF
         .def_readwrite("active_diff", &WMAPMagneticField::active_diff)
         .def_readonly("all_diff", &WMAPMagneticField::all_diff)
 

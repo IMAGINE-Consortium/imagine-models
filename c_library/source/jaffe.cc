@@ -1,8 +1,10 @@
 #include <cmath>
 #include <vector>
 #include <iostream>
-#include "units.h"
-#include "Jaffe.h"
+#include "ImagineModels/units.h"
+#include "ImagineModels/Jaffe.h"
+
+namespace imagine {
 
 vector JaffeMagneticField::_at_position(const double &x, const double &y, const double &z, const JaffeMagneticField &p) const
 {
@@ -327,7 +329,7 @@ number JaffeMagneticField::halo_scaling(const double &z, const JaffeMagneticFiel
                cosh(z / p.halo_z0));
 }
 
-#if autodiff_FOUND
+#if IMAGINE_HAS_AUTODIFF
 
 Eigen::MatrixXd JaffeMagneticField::_jac(const double &x, const double &y, const double &z, JaffeMagneticField &p) const
 {
@@ -344,3 +346,5 @@ Eigen::MatrixXd JaffeMagneticField::_jac(const double &x, const double &y, const
 }
 
 #endif
+
+}

@@ -1,8 +1,10 @@
 #include <cmath>
-#include "units.h"
-#include "WMAP.h"
+#include "ImagineModels/units.h"
+#include "ImagineModels/WMAP.h"
 
-#include "helpers.h"
+#include "ImagineModels/helpers.h"
+
+namespace imagine {
 
 
 // https://iopscience.iop.org/article/10.1086/513699, implementation from Hammurabi (old)
@@ -39,7 +41,7 @@ vector WMAPMagneticField::_at_position(const double &x, const double &y, const d
     return B_vec3;
 }
 
-#if autodiff_FOUND
+#if IMAGINE_HAS_AUTODIFF
 
 Eigen::MatrixXd WMAPMagneticField::_jac(const double &x, const double &y, const double &z, WMAPMagneticField &p) const
 {
@@ -51,3 +53,5 @@ Eigen::MatrixXd WMAPMagneticField::_jac(const double &x, const double &y, const 
 }
 
 #endif
+
+}

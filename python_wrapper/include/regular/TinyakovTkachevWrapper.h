@@ -3,7 +3,7 @@
 
 #include <pybind11/pybind11.h>
 
-#include "TinyakovTkachev.h"
+#include "ImagineModels/TinyakovTkachev.h"
 
 namespace py = pybind11;
 using namespace pybind11::literals;
@@ -21,7 +21,7 @@ void TinyakovTkachev(py::module_ &m)
         .def_readwrite("b_d", &TTMagneticField::b_d)
         .def_readwrite("b_z0", &TTMagneticField::b_z0)
         .def_readwrite("b_p", &TTMagneticField::b_p)
-#if autodiff_FOUND
+#if IMAGINE_HAS_AUTODIFF
         .def_readwrite("active_diff", &TTMagneticField::active_diff)
         .def_readonly("all_diff", &TTMagneticField::all_diff)
 

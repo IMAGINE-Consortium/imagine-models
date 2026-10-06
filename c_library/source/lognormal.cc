@@ -1,8 +1,10 @@
 #include <cmath>
 #include <cassert>
 #include <iostream>
-#include "units.h"
-#include "LogNormal.h"
+#include "ImagineModels/units.h"
+#include "ImagineModelsRandom/LogNormal.h"
+
+namespace imagine {
 
 void LogNormalScalarField::_on_grid(double* val, const std::array<int, 3> &shp, const std::array<double, 3> &grid_zeropoint, const std::array<double, 3> &grid_increment, const int seed) {
 
@@ -24,4 +26,6 @@ void LogNormalScalarField::_on_grid(double* val, const std::array<int, 3> &shp, 
 double LogNormalScalarField::calculate_fourier_sigma(const double &abs_k, const double &dk) const {
   double sigma = simple_spectrum(abs_k, dk, spectral_offset, spectral_slope);
   return sigma;
+}
+
 }

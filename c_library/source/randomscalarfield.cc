@@ -1,7 +1,9 @@
 #include <cmath>
 #include <iostream>
 
-#include "RandomScalarField.h"
+#include "ImagineModelsRandom/RandomScalarField.h"
+
+namespace imagine {
 
 RandomScalarField::RandomScalarField(std::array<int, 3>  shape, std::array<double, 3>  reference_point, std::array<double, 3>  increment) : RandomField<number, double*>(shape, reference_point, increment) {
   //accumulate wisdom
@@ -141,4 +143,6 @@ void RandomScalarField::_on_grid(double* val, const std::array<int, 3> &shp, con
     (val)[s] /= sqrt_gs;  
   }
   remove_padding(val, shp, pad);
+}
+
 }

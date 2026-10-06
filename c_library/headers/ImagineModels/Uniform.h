@@ -4,8 +4,10 @@
 #include <functional>
 #include <cmath>
 
-#include "Field.h"
-#include "RegularField.h"
+#include "ImagineModels/Field.h"
+#include "ImagineModels/RegularField.h"
+
+namespace imagine {
 
 class UniformMagneticField : public RegularVectorField
 {
@@ -15,7 +17,7 @@ protected:
         return vector{{p.bx, p.by, p.bz}};
     }
 
-#if autodiff_FOUND
+#if IMAGINE_HAS_AUTODIFF
     Eigen::MatrixXd _jac(const double &x, const double &y, const double &z, UniformMagneticField &p) const
     {
         return Eigen::MatrixXd::Identity(3, 3);
@@ -27,7 +29,7 @@ public:
     number bx = 0.;
     number by = 0.;
     number bz = 0.;
-#if autodiff_FOUND
+#if IMAGINE_HAS_AUTODIFF
     const std::set<std::string> all_diff{"bx", "by", "bz"};
     std::set<std::string> active_diff{"bx", "by", "bz"};
 
@@ -51,7 +53,7 @@ protected:
         return p.n0;
     }
 
-#if autodiff_FOUND
+#if IMAGINE_HAS_AUTODIFF
     Eigen::MatrixXd _jac(const double &x, const double &y, const double &z, UniformDensityField &p) const
     {
         return Eigen::MatrixXd::Identity(1, 1);
@@ -62,7 +64,7 @@ public:
 
     number n0 = 0.;
 
-#if autodiff_FOUND
+#if IMAGINE_HAS_AUTODIFF
     const std::set<std::string> all_diff{"n0"};
     std::set<std::string> active_diff{"n0"};
 
@@ -76,5 +78,7 @@ public:
         return _at_position(x, y, z, *this);
     }
 };
+
+}
 
 #endif

@@ -1,6 +1,8 @@
 #include <cmath>
-#include "units.h"
-#include "Pshirkov.h"
+#include "ImagineModels/units.h"
+#include "ImagineModels/Pshirkov.h"
+
+namespace imagine {
 
 vector PshirkovMagneticField::_at_position(const double &x, const double &y, const double &z, const PshirkovMagneticField &p) const
 {
@@ -68,7 +70,7 @@ vector PshirkovMagneticField::_at_position(const double &x, const double &y, con
 	return b;
 }
 
-#if autodiff_FOUND
+#if IMAGINE_HAS_AUTODIFF
 
 Eigen::MatrixXd PshirkovMagneticField::_jac(const double &x, const double &y, const double &z, PshirkovMagneticField &p) const
 {
@@ -80,3 +82,5 @@ Eigen::MatrixXd PshirkovMagneticField::_jac(const double &x, const double &y, co
 }
 
 #endif
+
+}

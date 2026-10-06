@@ -1,12 +1,12 @@
 #ifndef RANDOM_TRAMPOLINE_H
 #define RANDOM_TRAMPOLINE_H
 
-#include "units.h"
-#include "Field.h"
+#include "ImagineModels/units.h"
+#include "ImagineModels/Field.h"
 
-#include "RandomField.h"
-#include "RandomVectorField.h"
-#include "RandomScalarField.h"
+#include "ImagineModelsRandom/RandomField.h"
+#include "ImagineModelsRandom/RandomVectorField.h"
+#include "ImagineModelsRandom/RandomScalarField.h"
 
 
 #include <iostream>

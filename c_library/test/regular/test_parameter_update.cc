@@ -4,7 +4,9 @@
 #include <map>
 #include <memory>
 
-#include "RegularModels.h"
+#include "ImagineModels/RegularModels.h"
+
+using namespace imagine;
 
 void test_parameter_update() {
     UniformMagneticField umf = UniformMagneticField();

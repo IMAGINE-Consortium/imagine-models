@@ -1,9 +1,14 @@
+#ifndef GAUSSIANSCALAR_H
+#define GAUSSIANSCALAR_H
+
 #include <functional>
 #include <cmath>
 #include <cassert>
 #include <iostream>
 
-#include "RandomScalarField.h"
+#include "ImagineModelsRandom/RandomScalarField.h"
+
+namespace imagine {
 
 class GaussianScalarField : public RandomScalarField {
   protected:
@@ -28,3 +33,7 @@ class GaussianScalarField : public RandomScalarField {
     }; 
 
 };
+
+}
+
+#endif

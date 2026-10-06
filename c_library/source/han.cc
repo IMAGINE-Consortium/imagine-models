@@ -1,6 +1,8 @@
-#include "Han.h"
+#include "ImagineModels/Han.h"
 
-#include "helpers.h"
+#include "ImagineModels/helpers.h"
+
+namespace imagine {
 
 // J. L. Han et al 2018 ApJS 234 11
 vector HanMagneticField::_at_position(const double &x, const double &y, const double &z, const HanMagneticField &p) const
@@ -51,7 +53,7 @@ vector HanMagneticField::_at_position(const double &x, const double &y, const do
   return B_vec3;
 }
 
-#if autodiff_FOUND
+#if IMAGINE_HAS_AUTODIFF
 
 Eigen::MatrixXd HanMagneticField::_jac(const double &x, const double &y, const double &z, HanMagneticField &p) const
 {
@@ -63,3 +65,5 @@ Eigen::MatrixXd HanMagneticField::_jac(const double &x, const double &y, const d
 }
 
 #endif
+
+}

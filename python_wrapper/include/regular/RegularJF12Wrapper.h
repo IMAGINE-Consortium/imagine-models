@@ -3,7 +3,7 @@
 
 #include <pybind11/pybind11.h>
 
-#include "RegularJF12.h"
+#include "ImagineModels/RegularJF12.h"
 
 void RegularJF12(py::module_ &m)
 {
@@ -34,7 +34,7 @@ void RegularJF12(py::module_ &m)
         .def_readwrite("Xtheta_const", &JF12MagneticField::Xtheta_const)
         .def_readwrite("rpc_X", &JF12MagneticField::rpc_X)
         .def_readwrite("r0_X", &JF12MagneticField::r0_X)
-#if autodiff_FOUND
+#if IMAGINE_HAS_AUTODIFF
         .def_readwrite("active_diff", &JF12MagneticField::active_diff)
         .def_readonly("all_diff", &JF12MagneticField::all_diff)
 

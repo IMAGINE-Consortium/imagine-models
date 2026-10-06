@@ -1,5 +1,7 @@
-#include "TF17.h"
-#include "helpers.h"
+#include "ImagineModels/TF17.h"
+#include "ImagineModels/helpers.h"
+
+namespace imagine {
 
 // Terral, Ferriere 2017 - Constraints from Faraday rotation on the magnetic field structure in the galactic halo, DOI: 10.1051/0004-6361/201629572, arXiv:1611.10222, implementation adapted from CRPRopa
 
@@ -21,7 +23,7 @@ vector TFMagneticField::_at_position(const double &x, const double &y, const dou
     return B_cart;
 }
 
-#if autodiff_FOUND
+#if IMAGINE_HAS_AUTODIFF
 
 Eigen::MatrixXd TFMagneticField::_jac(const double &x, const double &y, const double &z, TFMagneticField &p) const
 {
@@ -210,7 +212,7 @@ void TFMagneticField::set_params(std::string dtype, std::string htype)
     activeDiskModel = dtype;
     activeHaloModel = htype;
 
-#if autodiff_FOUND
+#if IMAGINE_HAS_AUTODIFF
     if (isAd1andC0)
     {
         active_diff = {"a_disk", "r1_disk", "B1_disk", "phi_star_disk", "H_disk", "a_halo", "z1_halo", "B1_halo", "L_halo", "p_0", "H_p", "L_p"};
@@ -297,4 +299,6 @@ void TFMagneticField::set_params(std::string dtype, std::string htype)
                                        : 1.2;
 
     L_p = 50;
+}
+
 }

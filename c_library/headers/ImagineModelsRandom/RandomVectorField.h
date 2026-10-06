@@ -12,9 +12,11 @@
 #include <memory>
 #include <initializer_list>
 
-#include "exceptions.h"
-#include "RandomField.h"
-#include "RegularField.h"
+#include "ImagineModels/exceptions.h"
+#include "ImagineModelsRandom/RandomField.h"
+#include "ImagineModels/RegularField.h"
+
+namespace imagine {
 
 
 class RandomVectorField : public RandomField<vector, std::array<double*, 3>>  {
@@ -81,5 +83,7 @@ public:
   double* profile_on_grid(const std::array<int, 3> &shp, const std::array<double, 3> &rfp, const std::array<double, 3> &inc);
 };
 
+
+}
 
 #endif /* RANDOMVECTORFIELD_H */

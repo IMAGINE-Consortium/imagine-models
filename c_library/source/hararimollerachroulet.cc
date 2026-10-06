@@ -1,8 +1,10 @@
 #include <cmath>
-#include "units.h"
-#include "HarariMollerachRoulet.h"
+#include "ImagineModels/units.h"
+#include "ImagineModels/HarariMollerachRoulet.h"
 
-#include "helpers.h"
+#include "ImagineModels/helpers.h"
+
+namespace imagine {
 
 vector HMRMagneticField::_at_position(const double &x, const double &y, const double &z, const HMRMagneticField &p) const
 {
@@ -34,7 +36,7 @@ vector HMRMagneticField::_at_position(const double &x, const double &y, const do
   return B_vec3;
 }
 
-#if autodiff_FOUND
+#if IMAGINE_HAS_AUTODIFF
 
 Eigen::MatrixXd HMRMagneticField::_jac(const double &x, const double &y, const double &z, HMRMagneticField &p) const
 {
@@ -46,3 +48,5 @@ Eigen::MatrixXd HMRMagneticField::_jac(const double &x, const double &y, const d
 }
 
 #endif
+
+}

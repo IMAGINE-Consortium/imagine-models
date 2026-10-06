@@ -5,8 +5,10 @@
 #include <functional>
 #include <cmath>
 
-#include "Field.h"
-#include "RegularField.h"
+#include "ImagineModels/Field.h"
+#include "ImagineModels/RegularField.h"
+
+namespace imagine {
 
 //simple archimdeean sprial, implementation based on CRPropa
 
@@ -16,7 +18,7 @@ class ArchimedeanMagneticField : public RegularVectorField  {
 
     vector _at_position(const double &x, const double &y, const double &z, const ArchimedeanMagneticField &p) const;
 
-#if autodiff_FOUND
+#if IMAGINE_HAS_AUTODIFF
     Eigen::MatrixXd _jac(const double &x, const double &y, const double &z, ArchimedeanMagneticField &p) const;
 #endif
     public:
@@ -28,7 +30,7 @@ class ArchimedeanMagneticField : public RegularVectorField  {
         number B_0 = 1.;
 
 
-#if autodiff_FOUND
+#if IMAGINE_HAS_AUTODIFF
     const std::set<std::string> all_diff{"R_0", "Omega", "v_w", "B_0"};
     std::set<std::string> active_diff{"R_0", "Omega", "v_w", "B_0"};
 
@@ -42,4 +44,6 @@ class ArchimedeanMagneticField : public RegularVectorField  {
         }
  };
 
- #endif
+}
+
+#endif

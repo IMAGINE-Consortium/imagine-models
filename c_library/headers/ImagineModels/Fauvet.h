@@ -4,8 +4,10 @@
 #include <functional>
 #include <cmath>
 
-#include "Field.h"
-#include "RegularField.h"
+#include "ImagineModels/Field.h"
+#include "ImagineModels/RegularField.h"
+
+namespace imagine {
 
 // Fauvet magnetic field
 
@@ -14,7 +16,7 @@ class FauvetMagneticField : public RegularVectorField
 protected:
     vector _at_position(const double &x, const double &y, const double &z, const FauvetMagneticField &p) const;
 
-#if autodiff_FOUND
+#if IMAGINE_HAS_AUTODIFF
     Eigen::MatrixXd _jac(const double &x, const double &y, const double &z, FauvetMagneticField &p) const;
 #endif
 
@@ -36,7 +38,7 @@ public:
     number h_z1a = .2; // kpc
     number h_z1b = .4; // kpc
 
-#if autodiff_FOUND
+#if IMAGINE_HAS_AUTODIFF
     const std::set<std::string> all_diff{"b_b0", "b_z0", "b_r0", "b_p", "b_chi0", "h_b0", "h_z0", "h_r0", "h_z1a", "h_z1b"};
     std::set<std::string> active_diff{"b_b0", "b_z0", "b_r0", "b_p", "b_chi0", "h_b0", "h_z0", "h_r0", "h_z1a", "h_z1b"};
 
@@ -51,5 +53,7 @@ public:
         return _at_position(x, y, z, *this);
     }
 };
+
+}
 
 #endif

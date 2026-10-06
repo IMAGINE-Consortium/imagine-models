@@ -1,8 +1,10 @@
 #include <cmath>
 #include <cassert>
 #include <iostream>
-#include "units.h"
-#include "EnsslinSteininger.h"
+#include "ImagineModels/units.h"
+#include "ImagineModelsRandom/EnsslinSteininger.h"
+
+namespace imagine {
 
 
 double ESRandomField::calculate_fourier_sigma(const double &abs_k, const double &dk) const {
@@ -58,3 +60,5 @@ void ESRandomField::_on_grid(std::array<double*, 3> val, const std::array<int, 3
 
 }
 */
+
+}

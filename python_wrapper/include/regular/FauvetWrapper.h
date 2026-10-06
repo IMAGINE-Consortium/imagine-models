@@ -3,7 +3,7 @@
 
 #include <pybind11/pybind11.h>
 
-#include "Fauvet.h"
+#include "ImagineModels/Fauvet.h"
 
 namespace py = pybind11;
 using namespace pybind11::literals;
@@ -28,7 +28,7 @@ void Fauvet(py::module_ &m)
         .def_readwrite("h_z0", &FauvetMagneticField::h_z0)
         .def_readwrite("h_z1a", &FauvetMagneticField::h_z1a)
         .def_readwrite("h_z1b", &FauvetMagneticField::h_z1b)
-#if autodiff_FOUND
+#if IMAGINE_HAS_AUTODIFF
         .def_readwrite("active_diff", &FauvetMagneticField::active_diff)
         .def_readonly("all_diff", &FauvetMagneticField::all_diff)
 

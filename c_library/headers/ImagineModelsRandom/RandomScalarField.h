@@ -12,8 +12,10 @@
 #include <memory>
 #include <initializer_list>
 
-#include "exceptions.h"
-#include "RandomField.h"
+#include "ImagineModels/exceptions.h"
+#include "ImagineModelsRandom/RandomField.h"
+
+namespace imagine {
 
 class RandomScalarField : public RandomField<number, double*>  {
 protected:
@@ -54,5 +56,7 @@ public:
   
   double* profile_on_grid(const std::array<int, 3> &shp, const std::array<double, 3> &rfp, const std::array<double, 3> &inc);
 };
+
+}
 
 #endif /* RANDOMSCALARFIELD_H */

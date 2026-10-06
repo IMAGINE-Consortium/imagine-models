@@ -3,7 +3,7 @@
 
 #include <pybind11/pybind11.h>
 
-#include "TF17.h"
+#include "ImagineModels/TF17.h"
 
 void TF17(py::module_ &m)
 {
@@ -34,7 +34,7 @@ void TF17(py::module_ &m)
         .def_readonly("possibleDiskModels", &TFMagneticField::possibleDiskModels)
         .def_readonly("possibleHaloModels", &TFMagneticField::possibleHaloModels)
 
-#if autodiff_FOUND
+#if IMAGINE_HAS_AUTODIFF
         .def_readwrite("active_diff", &TFMagneticField::active_diff)
         .def_readonly("all_diff", &TFMagneticField::all_diff)
 

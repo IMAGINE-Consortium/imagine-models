@@ -4,8 +4,10 @@
 #include <functional>
 #include <cmath>
 
-#include "Field.h"
-#include "RegularField.h"
+#include "ImagineModels/Field.h"
+#include "ImagineModels/RegularField.h"
+
+namespace imagine {
 
 // Tinyakov and Tkachev (TT) https://arxiv.org/abs/astro-ph/0111305, implementation of https://arxiv.org/pdf/astro-ph/0510444.pdf (Kachelriess et al.)
 class TTMagneticField : public RegularVectorField
@@ -13,7 +15,7 @@ class TTMagneticField : public RegularVectorField
 protected:
     vector _at_position(const double &x, const double &y, const double &z, const TTMagneticField &p) const;
 
-#if autodiff_FOUND
+#if IMAGINE_HAS_AUTODIFF
     Eigen::MatrixXd _jac(const double &x, const double &y, const double &z, TTMagneticField &p) const;
 #endif
 public:
@@ -28,7 +30,7 @@ public:
     number b_z0 = 1.5;   // kpc, called h in original publication
     number b_p = -8;     // degree
 
-#if autodiff_FOUND
+#if IMAGINE_HAS_AUTODIFF
     const std::set<std::string> all_diff{"b_Rsun", "b_b0", "b_d", "b_z0", "b_p"};
     std::set<std::string> active_diff{"b_Rsun", "b_b0", "b_d", "b_z0", "b_p"};
 
@@ -43,5 +45,7 @@ public:
         return _at_position(x, y, z, *this);
     }
 };
+
+}
 
 #endif

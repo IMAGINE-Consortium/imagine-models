@@ -5,8 +5,10 @@
 #include <functional>
 #include <cmath>
 
-#include "Field.h"
-#include "RegularField.h"
+#include "ImagineModels/Field.h"
+#include "ImagineModels/RegularField.h"
+
+namespace imagine {
 
 //J. L. Han et al 2018 ApJS 234 11
 
@@ -16,7 +18,7 @@ class HanMagneticField : public RegularVectorField  {
 
     vector _at_position(const double &x, const double &y, const double &z, const HanMagneticField &p) const;
 
-#if autodiff_FOUND
+#if IMAGINE_HAS_AUTODIFF
     Eigen::MatrixXd _jac(const double &x, const double &y, const double &z, HanMagneticField &p) const;
 #endif
     public:
@@ -35,7 +37,7 @@ class HanMagneticField : public RegularVectorField  {
         double R_min = 3.;
         double R_max = 15.;
         std::array<double, 7> R_s{3.0, 4.1, 4.9, 6.1, 7.5, 8.5, 10.5};
-#if autodiff_FOUND
+#if IMAGINE_HAS_AUTODIFF
     const std::set<std::string> all_diff{"B_p", "A", "H", "B_s1", "B_s2", "B_s3", "B_s4", "B_s5", "B_s6"};
     std::set<std::string> active_diff{"B_p", "A", "H", "B_s1", "B_s2", "B_s3", "B_s4", "B_s5", "B_s6"};
 
@@ -49,4 +51,6 @@ class HanMagneticField : public RegularVectorField  {
         }
  };
 
- #endif
+}
+
+#endif

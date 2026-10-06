@@ -4,8 +4,10 @@
 #include <functional>
 #include <cmath>
 
-#include "Field.h"
-#include "RegularField.h"
+#include "ImagineModels/Field.h"
+#include "ImagineModels/RegularField.h"
+
+namespace imagine {
 
 // Harari, Mollerach, Roulet (HMR) see https://arxiv.org/abs/astro-ph/9906309, implementation of https://arxiv.org/pdf/astro-ph/0510444.pdf
 
@@ -14,7 +16,7 @@ class HMRMagneticField : public RegularVectorField
 protected:
     vector _at_position(const double &x, const double &y, const double &z, const HMRMagneticField &p) const;
 
-#if autodiff_FOUND
+#if IMAGINE_HAS_AUTODIFF
     Eigen::MatrixXd _jac(const double &x, const double &y, const double &z, HMRMagneticField &p) const;
 #endif
 public:
@@ -29,7 +31,7 @@ public:
     number b_p = -10;          // degree
     number b_epsilon0 = 10.55; // kpc
 
-#if autodiff_FOUND
+#if IMAGINE_HAS_AUTODIFF
     const std::set<std::string> all_diff{"b_Rsun", "b_z1", "b_z2", "b_r1", "b_p", "b_epsilon0"};
     std::set<std::string> active_diff{"b_Rsun", "b_z1", "b_z2", "b_r1", "b_p", "b_epsilon0"};
     Eigen::MatrixXd derivative(const double &x, const double &y, const double &z)
@@ -43,5 +45,7 @@ public:
         return _at_position(x, y, z, *this);
     }
 };
+
+}
 
 #endif

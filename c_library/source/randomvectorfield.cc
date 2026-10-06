@@ -1,7 +1,9 @@
 #include <cmath>
 #include <iostream>
 
-#include "RandomVectorField.h"
+#include "ImagineModelsRandom/RandomVectorField.h"
+
+namespace imagine {
 
 // Non trivial constructor
 RandomVectorField::RandomVectorField(std::array<int, 3>  shape, std::array<double, 3>  reference_point, std::array<double, 3>  increment) : RandomField(shape, reference_point, increment) {
@@ -263,3 +265,5 @@ void RandomVectorField::divergence_cleaner(fftw_complex* bx, fftw_complex* by, f
         } // j
       } // i
     }
+
+}

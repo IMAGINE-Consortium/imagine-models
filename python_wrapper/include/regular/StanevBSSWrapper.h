@@ -3,7 +3,7 @@
 
 #include <pybind11/pybind11.h>
 
-#include "StanevBSS.h"
+#include "ImagineModels/StanevBSS.h"
 
 namespace py = pybind11;
 using namespace pybind11::literals;
@@ -24,7 +24,7 @@ void StanevBSS(py::module_ &m)
         .def_readwrite("b_z02", &StanevBSSMagneticField::b_z02)
         .def_readwrite("b_z0_border", &StanevBSSMagneticField::b_z0_border)
         .def_readwrite("b_p", &StanevBSSMagneticField::b_p)
-#if autodiff_FOUND
+#if IMAGINE_HAS_AUTODIFF
         .def_readwrite("active_diff", &StanevBSSMagneticField::active_diff)
         .def_readonly("all_diff", &StanevBSSMagneticField::all_diff)
 

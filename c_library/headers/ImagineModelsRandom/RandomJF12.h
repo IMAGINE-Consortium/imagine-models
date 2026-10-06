@@ -7,8 +7,10 @@
 #include <cassert>
 #include <iostream>
 
-#include "RandomVectorField.h"
-#include "RegularJF12.h"
+#include "ImagineModelsRandom/RandomVectorField.h"
+#include "ImagineModels/RegularJF12.h"
+
+namespace imagine {
 
 class JF12RandomField : public RandomVectorField {
   protected:
@@ -56,5 +58,7 @@ class JF12RandomField : public RandomVectorField {
 
     vector anisotropy_direction(const double &x, const double &y, const double &z) const; 
 };
+
+}
 
 #endif

@@ -4,8 +4,10 @@
 #include <functional>
 #include <cmath>
 
-#include "Field.h"
-#include "RegularField.h"
+#include "ImagineModels/Field.h"
+#include "ImagineModels/RegularField.h"
+
+namespace imagine {
 
 // WMAP magnetic field
 
@@ -14,7 +16,7 @@ class WMAPMagneticField : public RegularVectorField
 protected:
     vector _at_position(const double &x, const double &y, const double &z, const WMAPMagneticField &p) const;
 
-#if autodiff_FOUND
+#if IMAGINE_HAS_AUTODIFF
     Eigen::MatrixXd _jac(const double &x, const double &y, const double &z, WMAPMagneticField &p) const;
 #endif
 public:
@@ -33,7 +35,7 @@ public:
 
     bool anti = false;
 
-#if autodiff_FOUND
+#if IMAGINE_HAS_AUTODIFF
     const std::set<std::string> all_diff{"b_Rsun", "b_b0", "b_z0", "b_r0", "b_psi0", "b_psi1", "b_xsi0"};
     std::set<std::string> active_diff{"b_Rsun", "b_b0", "b_z0", "b_r0", "b_psi0", "b_psi1", "b_xsi0"};
 
@@ -48,5 +50,7 @@ public:
         return _at_position(x, y, z, *this);
     }
 };
+
+}
 
 #endif

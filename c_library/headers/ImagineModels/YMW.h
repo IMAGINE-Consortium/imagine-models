@@ -7,15 +7,17 @@
 #include <functional>
 #include <cassert>
 
-#include "Field.h"
-#include "RegularField.h"
+#include "ImagineModels/Field.h"
+#include "ImagineModels/RegularField.h"
+
+namespace imagine {
 
 class YMW16 : public RegularScalarField
 {
 protected:
   number _at_position(const double &x, const double &y, const double &z, const YMW16 &p) const;
 
-#if autodiff_FOUND
+#if IMAGINE_HAS_AUTODIFF
   Eigen::VectorXd _jac(const double &x, const double &y, const double &z, YMW16 &p) const;
 #endif
 public:
@@ -122,7 +124,7 @@ public:
   number t7_wli = 0.015; // kpc, loop width
   number t7_detthetali = 30.0; //degree, extent of cap
   number t7_thetali = 40.0; // degree, angle between the direction of the center of the spherical cap and the +x direction
-#if autodiff_FOUND
+#if IMAGINE_HAS_AUTODIFF
   const std::set<std::string> all_diff{
       "r0", "t1_ad", "t1_bd", "t1_n1", "t1_h1", "t2_a2", "t2_b2", "t2_n2", "t2_k2",
       "t3_b2s", "t3_ka", "t3_aa", "t3_ncn", "t3_wcn", "t3_thetacn", "t3_nsg", "t3_wsg", "t3_thetasg",
@@ -161,5 +163,7 @@ public:
     return _at_position(x, y, z, *this);
   }
 };
+
+}
 
 #endif

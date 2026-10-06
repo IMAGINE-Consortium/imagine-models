@@ -3,7 +3,7 @@
 
 #include <pybind11/pybind11.h>
 
-#include "Han.h"
+#include "ImagineModels/Han.h"
 
 void Han2018(py::module_ &m)
 {
@@ -22,7 +22,7 @@ void Han2018(py::module_ &m)
         .def_readwrite("B_s5", &HanMagneticField::B_s5)
         .def_readwrite("B_s6", &HanMagneticField::B_s6)
 
-#if autodiff_FOUND
+#if IMAGINE_HAS_AUTODIFF
         .def_readwrite("active_diff", &HanMagneticField::active_diff)
         .def_readonly("all_diff", &HanMagneticField::all_diff)
 

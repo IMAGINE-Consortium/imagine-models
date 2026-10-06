@@ -4,8 +4,10 @@
 #include <functional>
 #include <cmath>
 
-#include "Field.h"
-#include "RegularField.h"
+#include "ImagineModels/Field.h"
+#include "ImagineModels/RegularField.h"
+
+namespace imagine {
 
 // Terral, Ferriere 2017 - Constraints from Faraday rotation on the magnetic field structure in the galactic halo, DOI: 10.1051/0004-6361/201629572, arXiv:1611.10222, implementation adapted from CRPRopa
 
@@ -14,7 +16,7 @@ class TFMagneticField : public RegularVectorField
 protected:
     vector _at_position(const double &x, const double &y, const double &z, const TFMagneticField &p) const;
 
-#if autodiff_FOUND
+#if IMAGINE_HAS_AUTODIFF
     Eigen::MatrixXd _jac(const double &x, const double &y, const double &z, TFMagneticField &p) const;
 #endif
 public:
@@ -49,7 +51,7 @@ public:
     // security to avoid 0 division
     double epsilon = 1e-16;
 
-#if autodiff_FOUND
+#if IMAGINE_HAS_AUTODIFF
     const std::set<std::string> all_diff{"a_disk", "z1_disk", "r1_disk", "B1_disk", "L_disk", "phi_star_disk", "H_disk", "a_halo", "z1_halo", "B1_halo", "L_halo", "phi_star_halo", "p_0", "H_p", "L_p"};
     std::set<std::string> active_diff{"a_disk", "r1_disk", "B1_disk", "phi_star_disk", "H_disk", "a_halo", "z1_halo", "B1_halo", "L_halo", "p_0", "H_p", "L_p"};
 
@@ -77,5 +79,7 @@ public:
 
     void set_params(std::string dtype, std::string htype);
 };
+
+}
 
 #endif

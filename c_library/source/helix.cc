@@ -1,6 +1,8 @@
 #include <cmath>
-#include "units.h"
-#include "Helix.h"
+#include "ImagineModels/units.h"
+#include "ImagineModels/Helix.h"
+
+namespace imagine {
 
 vector HelixMagneticField::_at_position(const double &x, const double &y, const double &z, const HelixMagneticField &p) const
 {
@@ -17,7 +19,7 @@ vector HelixMagneticField::_at_position(const double &x, const double &y, const 
   return b;
 }
 
-#if autodiff_FOUND
+#if IMAGINE_HAS_AUTODIFF
 
 Eigen::MatrixXd HelixMagneticField::_jac(const double &x, const double &y, const double &z, HelixMagneticField &p) const
 {
@@ -29,3 +31,5 @@ Eigen::MatrixXd HelixMagneticField::_jac(const double &x, const double &y, const
 }
 
 #endif
+
+}

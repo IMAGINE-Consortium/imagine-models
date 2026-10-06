@@ -5,15 +5,17 @@
 #include <vector>
 #include <iostream>
 
-#include "Field.h"
-#include "RegularField.h"
+#include "ImagineModels/Field.h"
+#include "ImagineModels/RegularField.h"
+
+namespace imagine {
 
 class JaffeMagneticField : public RegularVectorField
 {
 protected:
     vector _at_position(const double &x, const double &y, const double &z, const JaffeMagneticField &p) const;
 
-#if autodiff_FOUND
+#if IMAGINE_HAS_AUTODIFF
     Eigen::MatrixXd _jac(const double &x, const double &y, const double &z, JaffeMagneticField &p) const;
 #endif
 
@@ -59,7 +61,7 @@ public:
     number comp_r = 12;  // radial cutoff scale, kpc
     number comp_p = 3;   // cutoff power
 
-#if autodiff_FOUND
+#if IMAGINE_HAS_AUTODIFF
     const std::set<std::string> all_diff{"disk_amp", "disk_z0", "halo_amp", "halo_z0", "r_inner", "r_scale", "r_peak",
                                          "ring_amp", "ring_r", "bar_amp", "bar_a", "bar_b", "bar_phi0",
                                          "arm_r0", "arm_z0", "arm_phi1", "arm_phi2", "arm_phi3", "arm_phi4",
@@ -98,5 +100,7 @@ public:
 
     number halo_scaling(const double &z, const JaffeMagneticField &p) const;
 };
+
+}
 
 #endif

@@ -1,8 +1,10 @@
 #include <cmath>
 #include <cassert>
 #include <iostream>
-#include "units.h"
-#include "RandomJF12.h"
+#include "ImagineModels/units.h"
+#include "ImagineModelsRandom/RandomJF12.h"
+
+namespace imagine {
 
 
 double JF12RandomField::calculate_fourier_sigma(const double &abs_k, const double &dk) const {
@@ -137,3 +139,5 @@ void JF12RandomField::_on_grid(std::array<double*, 3> val, const std::array<int,
 
   //std::cout << "afterdivergence " << (val[0])[0] <<" " << (val[0])[5] << " "  << (val[0])[10] << std::endl;
 }*/
+
+}

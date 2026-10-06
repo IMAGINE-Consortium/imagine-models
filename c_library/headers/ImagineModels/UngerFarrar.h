@@ -37,15 +37,17 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <cassert>
 #include <iostream>
 
-#include "RegularField.h"
-#include "units.h"
+#include "ImagineModels/RegularField.h"
+#include "ImagineModels/units.h"
+
+namespace imagine {
 
 class UFMagneticField : public RegularVectorField
 {
 protected:
   vector _at_position(const double &x, const double &y, const double &z, const UFMagneticField &p) const;
 
-#if autodiff_FOUND
+#if IMAGINE_HAS_AUTODIFF
   Eigen::MatrixXd _jac(const double &x, const double &y, const double &z, UFMagneticField &p) const;
 #endif
 
@@ -274,7 +276,7 @@ public:
   void set_parameters(const std::string &model_choice);
 
 
-#if autodiff_FOUND
+#if IMAGINE_HAS_AUTODIFF
   const std::set<std::string> all_diff{"fDiskB1", "fDiskB2", "fDiskB3", "fDiskH", "fDiskPhase1", "fDiskPhase2", "fDiskPhase3", "fDiskPitch", "fDiskW", "fPoloidalA", "fPoloidalB", "fPoloidalP", "fPoloidalR", "fPoloidalW", "fPoloidalZ", "fSpurCenter", "fSpurLength", "fSpurWidth", "fStriation", "fToroidalBN", "fToroidalBS", "fToroidalR", "fToroidalW", "fToroidalZ", "fTwistingTime"};
   std::set<std::string> active_diff{"fDiskB1", "fDiskB2", "fDiskB3", "fDiskH", "fDiskPhase1", "fDiskPhase2", "fDiskPhase3", "fDiskPitch", "fDiskW", "fPoloidalA", "fPoloidalB", "fPoloidalP", "fPoloidalR", "fPoloidalW", "fPoloidalZ", "fSpurCenter", "fSpurLength", "fSpurWidth", "fStriation", "fToroidalBN", "fToroidalBS", "fToroidalR", "fToroidalW", "fToroidalZ", "fTwistingTime"};
 
@@ -304,5 +306,7 @@ private:
 
   
 };
+
+}
 
 #endif

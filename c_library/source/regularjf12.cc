@@ -1,8 +1,10 @@
 #include <cmath>
 #include <cassert>
 #include <iostream>
-#include "units.h"
-#include "RegularJF12.h"
+#include "ImagineModels/units.h"
+#include "ImagineModels/RegularJF12.h"
+
+namespace imagine {
 
 vector JF12MagneticField::_at_position(const double &x, const double &y, const double &z, const JF12MagneticField &p) const
 {
@@ -156,7 +158,7 @@ vector JF12MagneticField::_at_position(const double &x, const double &y, const d
   return B_cart;
 }
 
-#if autodiff_FOUND
+#if IMAGINE_HAS_AUTODIFF
 
 Eigen::MatrixXd JF12MagneticField::_jac(const double &x, const double &y, const double &z, JF12MagneticField &p) const
 {
@@ -172,3 +174,5 @@ Eigen::MatrixXd JF12MagneticField::_jac(const double &x, const double &y, const 
 }
 
 #endif
+
+}

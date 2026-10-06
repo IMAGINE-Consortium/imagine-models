@@ -4,6 +4,8 @@
 #include <cmath>
 #include <array>
 
+namespace imagine {
+
 template<typename V>
 V Cyl2Cart(const double phi, V& invec) {
 	V outvec{{0., 0., 0.}};
@@ -78,6 +80,8 @@ template<typename out, typename in1, typename in2>
     return std::acos(std::cos(phi1)*std::cos(phi0) + std::sin(phi1)*std::sin(phi0));
   }
 
+
+}
 
 #endif
 

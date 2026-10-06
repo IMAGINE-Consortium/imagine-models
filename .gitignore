@@ -9,8 +9,6 @@ Playground/
 test/cpp/test
 demos/cpp/example
 c_library/build
-c_library/include/config/fftw.hh
-c_library/include/config/autodiff.hh
 python_wrapper/playground*
 YouriJF12
 *.out

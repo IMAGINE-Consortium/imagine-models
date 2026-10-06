@@ -1,4 +1,6 @@
-#include "Archimedes.h"
+#include "ImagineModels/Archimedes.h"
+
+namespace imagine {
 
 // J. L. Han et al 2018 ApJS 234 11
 vector ArchimedeanMagneticField::_at_position(const double &x, const double &y, const double &z, const ArchimedeanMagneticField &p) const
@@ -42,7 +44,7 @@ vector ArchimedeanMagneticField::_at_position(const double &x, const double &y, 
 
 }
 
-#if autodiff_FOUND
+#if IMAGINE_HAS_AUTODIFF
 
 Eigen::MatrixXd ArchimedeanMagneticField::_jac(const double &x, const double &y, const double &z, ArchimedeanMagneticField &p) const
 {
@@ -55,4 +57,4 @@ Eigen::MatrixXd ArchimedeanMagneticField::_jac(const double &x, const double &y,
 
 #endif
 
-
+}

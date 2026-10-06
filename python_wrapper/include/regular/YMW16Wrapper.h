@@ -3,7 +3,7 @@
 
 #include <pybind11/pybind11.h>
 
-#include "YMW.h"
+#include "ImagineModels/YMW.h"
 
 namespace py = pybind11;
 using namespace pybind11::literals;
@@ -75,7 +75,7 @@ void YMW(py::module_ &m) {
         .def_readwrite("t7_wli", &YMW16::t7_wli)
         .def_readwrite("t7_detthetali", &YMW16::t7_detthetali)
         .def_readwrite("t7_thetali", &YMW16::t7_thetali)
-#if autodiff_FOUND
+#if IMAGINE_HAS_AUTODIFF
         .def_readwrite("active_diff", &YMW16::active_diff)
         .def_readonly("all_diff", &YMW16::all_diff)
 

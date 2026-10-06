@@ -1,10 +1,10 @@
 #ifndef REGULAR_TRAMPOLINE_H
 #define REGULAR_TRAMPOLINE_H
 
-#include "units.h"
-#include "Field.h"
+#include "ImagineModels/units.h"
+#include "ImagineModels/Field.h"
 
-#include "RegularField.h"
+#include "ImagineModels/RegularField.h"
 
 #include <iostream>
 

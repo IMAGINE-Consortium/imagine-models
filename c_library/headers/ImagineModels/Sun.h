@@ -5,8 +5,10 @@
 #include <functional>
 #include <cmath>
 
-#include "Field.h"
-#include "RegularField.h"
+#include "ImagineModels/Field.h"
+#include "ImagineModels/RegularField.h"
+
+namespace imagine {
 
 //Sun et al. A&A V.477 2008 ASS+RING model magnetic field
 
@@ -16,7 +18,7 @@ class SunMagneticField : public RegularVectorField  {
 
     vector _at_position(const double &x, const double &y, const double &z, const SunMagneticField &p) const;
 
-#if autodiff_FOUND
+#if IMAGINE_HAS_AUTODIFF
     Eigen::MatrixXd _jac(const double &x, const double &y, const double &z, SunMagneticField &p) const;
 #endif
     public:
@@ -36,7 +38,7 @@ class SunMagneticField : public RegularVectorField  {
         number bH_z1a = 0.2;
         number bH_z1b = 0.4;
 
-#if autodiff_FOUND
+#if IMAGINE_HAS_AUTODIFF
     const std::set<std::string> all_diff{"b_Rsun", "b_B0", "b_R0", "b_z0", "b_Rc", "b_Bc", "b_p", "bH_B0", "bH_R0", "bH_z0",  "bH_z1a", "bH_z1b"};
     std::set<std::string> active_diff{"b_Rsun", "b_B0", "b_R0", "b_z0", "b_Rc", "b_Bc", "b_p", "bH_B0", "bH_R0", "bH_z0",  "bH_z1a", "bH_z1b"};
 
@@ -50,4 +52,6 @@ class SunMagneticField : public RegularVectorField  {
         }
  };
 
- #endif
+}
+
+#endif

@@ -3,7 +3,7 @@
 
 #include <pybind11/pybind11.h>
 
-#include "Jaffe.h"
+#include "ImagineModels/Jaffe.h"
 
 namespace py = pybind11;
 using namespace pybind11::literals;
@@ -53,7 +53,7 @@ void Jaffe(py::module_ &m)
         .def_readwrite("comp_d", &JaffeMagneticField::comp_d)
         .def_readwrite("comp_r", &JaffeMagneticField::comp_r)
         .def_readwrite("comp_p", &JaffeMagneticField::comp_p)
-#if autodiff_FOUND
+#if IMAGINE_HAS_AUTODIFF
         .def_readwrite("active_diff", &JaffeMagneticField::active_diff)
         .def_readonly("all_diff", &JaffeMagneticField::all_diff)
 

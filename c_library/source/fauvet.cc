@@ -1,7 +1,9 @@
 #include <cmath>
-#include "units.h"
-#include "Fauvet.h"
-#include "helpers.h"
+#include "ImagineModels/units.h"
+#include "ImagineModels/Fauvet.h"
+#include "ImagineModels/helpers.h"
+
+namespace imagine {
 
 // ??????, implementation from Hammurabi (old)
 
@@ -45,7 +47,7 @@ vector FauvetMagneticField::_at_position(const double &x, const double &y, const
     return B_vec3;
 }
 
-#if autodiff_FOUND
+#if IMAGINE_HAS_AUTODIFF
 
 Eigen::MatrixXd FauvetMagneticField::_jac(const double &x, const double &y, const double &z, FauvetMagneticField &p) const
 {
@@ -58,3 +60,4 @@ Eigen::MatrixXd FauvetMagneticField::_jac(const double &x, const double &y, cons
 
 #endif
 
+}

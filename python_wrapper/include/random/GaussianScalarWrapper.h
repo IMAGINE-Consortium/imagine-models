@@ -1,6 +1,6 @@
 #include <pybind11/pybind11.h>
 
-#include "GaussianScalar.h"
+#include "ImagineModelsRandom/GaussianScalar.h"
 
 namespace py = pybind11;
 using namespace pybind11::literals;

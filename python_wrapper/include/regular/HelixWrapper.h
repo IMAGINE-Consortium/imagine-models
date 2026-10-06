@@ -3,7 +3,7 @@
 
 #include <pybind11/pybind11.h>
 
-#include "Helix.h"
+#include "ImagineModels/Helix.h"
 
 namespace py = pybind11;
 using namespace pybind11::literals;
@@ -21,7 +21,7 @@ void Helix(py::module_ &m)
         .def_readwrite("ampz", &HelixMagneticField::ampz)
         .def_readwrite("rmin", &HelixMagneticField::rmin)
         .def_readwrite("rmax", &HelixMagneticField::rmax)
-#if autodiff_FOUND
+#if IMAGINE_HAS_AUTODIFF
         .def_readwrite("active_diff", &HelixMagneticField::active_diff)
         .def_readonly("all_diff", &HelixMagneticField::all_diff)
 

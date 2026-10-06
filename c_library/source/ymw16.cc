@@ -1,7 +1,9 @@
 #include <cassert>
 
-#include "units.h"
-#include "YMW.h"
+#include "ImagineModels/units.h"
+#include "ImagineModels/YMW.h"
+
+namespace imagine {
 
 number YMW16::_at_position(const double &x, const double &y, const double &z, const YMW16 &p) const
 {
@@ -89,7 +91,7 @@ number YMW16::_at_position(const double &x, const double &y, const double &z, co
              weight_gum * ne_comp[5]) +
         (weight_localbubble) * (ne_comp[6]);
     // assert(std::isfinite(ne));
-    #if !autodiff_FOUND
+    #if !IMAGINE_HAS_AUTODIFF
     if (std::isnan(ne)) {
       std::cout << "Found nan at: (x,y,z): ()" << x << ", " << y << ", " << z << ")" << std::endl;
       if (std::isnan(ne_comp[1])) {
@@ -336,7 +338,7 @@ number YMW16::nps(const double &xx, const double &yy, const double &zz, const YM
          exp(-pow(theta / p.t7_detthetali, 2));
 }
 
-#if autodiff_FOUND
+#if IMAGINE_HAS_AUTODIFF
 
 Eigen::VectorXd YMW16::_jac(const double &x, const double &y, const double &z, YMW16 &p) const
 {
@@ -357,3 +359,5 @@ Eigen::VectorXd YMW16::_jac(const double &x, const double &y, const double &z, Y
 }
 
 #endif
+
+}

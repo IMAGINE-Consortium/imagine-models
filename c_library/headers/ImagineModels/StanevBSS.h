@@ -5,8 +5,10 @@
 #include <functional>
 #include <cmath>
 
-#include "Field.h"
-#include "RegularField.h"
+#include "ImagineModels/Field.h"
+#include "ImagineModels/RegularField.h"
+
+namespace imagine {
 
 
 // StanevBSS (HMR) see https://arxiv.org/abs/astro-ph/9607086
@@ -16,7 +18,7 @@ class StanevBSSMagneticField : public RegularVectorField  {
 protected:
     vector _at_position(const double &x, const double &y, const double &z, const StanevBSSMagneticField &p) const;
 
-#if autodiff_FOUND
+#if IMAGINE_HAS_AUTODIFF
     Eigen::MatrixXd _jac(const double &x, const double &y, const double &z, StanevBSSMagneticField &p) const;
 #endif
     public:
@@ -34,7 +36,7 @@ protected:
 
         number b_phi0 = M_PI; // radians
     
-#if autodiff_FOUND
+#if IMAGINE_HAS_AUTODIFF
     const std::set<std::string> all_diff{"b_Rsun", "b_b0", "b_z0", "b_r0", "b_p", "b_phi0"};
     std::set<std::string> active_diff{"b_Rsun", "b_b0", "b_z0", "b_r0", "b_p", "b_phi0"};
 
@@ -50,4 +52,6 @@ protected:
     }
  };
 
- #endif
+}
+
+#endif

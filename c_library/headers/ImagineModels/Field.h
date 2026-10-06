@@ -8,12 +8,18 @@
 #include <iostream>
 #include <memory>
 
-#include "exceptions.h"
+#include "ImagineModels/config.h"
+#include "ImagineModels/exceptions.h"
 
-#if autodiff_FOUND
+#if IMAGINE_HAS_AUTODIFF
     #include <autodiff/forward/real.hpp>
     #include <autodiff/forward/dual.hpp>
     #include <autodiff/forward/real/eigen.hpp>
+#endif
+
+namespace imagine {
+
+#if IMAGINE_HAS_AUTODIFF
     namespace ad = autodiff;
     typedef ad::real number;
     typedef ad::VectorXreal vector;
@@ -186,5 +192,7 @@ public:
     }
   }
 };
+
+}
 
 #endif

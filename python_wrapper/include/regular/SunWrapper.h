@@ -3,7 +3,7 @@
 
 #include <pybind11/pybind11.h>
 
-#include "Sun.h"
+#include "ImagineModels/Sun.h"
 
 void Sun2008(py::module_ &m)
 {
@@ -25,7 +25,7 @@ void Sun2008(py::module_ &m)
         .def_readwrite("bH_z1a", &SunMagneticField::bH_z1a)
         .def_readwrite("bH_z1b", &SunMagneticField::bH_z1b)
         .def_readwrite("bH_R0", &SunMagneticField::bH_R0)
-#if autodiff_FOUND
+#if IMAGINE_HAS_AUTODIFF
         .def_readwrite("active_diff", &SunMagneticField::active_diff)
         .def_readonly("all_diff", &SunMagneticField::all_diff)
 

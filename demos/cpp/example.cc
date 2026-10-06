@@ -1,4 +1,6 @@
-#include "RegularModels.h"
+#include "ImagineModels/RegularModels.h"
+
+using namespace imagine;
 //#include <ImagineModelsRandom/RandomModels.h>
 
 #include <cassert>
@@ -17,7 +19,7 @@ void print_pos(std::map <std::string, std::array<double, 3>> pd,
         auto position_iter = pd.begin();
         std::cout << "The model " << model_iter->first << " is evaluated: \n\n";
         while (position_iter != pd.end()) {
-          std::array<double, 3> mval = (*(model_iter->second)).at_position((position_iter->second)[0], (position_iter->second)[1],(position_iter->second)[2]);
+          vector mval = (*(model_iter->second)).at_position((position_iter->second)[0], (position_iter->second)[1],(position_iter->second)[2]);
 
           std::cout << "Position: ";
           for (size_t l = 0; l < (position_iter->second).size(); l++) {

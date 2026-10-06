@@ -1,8 +1,10 @@
 #include <cmath>
-#include "units.h"
-#include "Sun.h"
+#include "ImagineModels/units.h"
+#include "ImagineModels/Sun.h"
 
-#include "helpers.h"
+#include "ImagineModels/helpers.h"
+
+namespace imagine {
 
 // Sun et al. A&A V.477 2008 ASS+RING model magnetic field
 vector SunMagneticField::_at_position(const double &x, const double &y, const double &z, const SunMagneticField &p) const
@@ -85,7 +87,7 @@ vector SunMagneticField::_at_position(const double &x, const double &y, const do
   return B_vec3;
 }
 
-#if autodiff_FOUND
+#if IMAGINE_HAS_AUTODIFF
 
 Eigen::MatrixXd SunMagneticField::_jac(const double &x, const double &y, const double &z, SunMagneticField &p) const
 {
@@ -97,3 +99,5 @@ Eigen::MatrixXd SunMagneticField::_jac(const double &x, const double &y, const d
 }
 
 #endif
+
+}

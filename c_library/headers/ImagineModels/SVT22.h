@@ -6,14 +6,16 @@
 #include <cassert>
 #include <iostream>
 
-#include "RegularField.h"
+#include "ImagineModels/RegularField.h"
+
+namespace imagine {
 
 class SVT22MagneticField : public RegularVectorField
 {
 protected:
   vector _at_position(const double &x, const double &y, const double &z, const SVT22MagneticField &p) const;
 
-#if autodiff_FOUND
+#if IMAGINE_HAS_AUTODIFF
   Eigen::MatrixXd _jac(const double &x, const double &y, const double &z, SVT22MagneticField &p) const;
 #endif
 
@@ -28,7 +30,7 @@ public:
     number r_cut = 5;
     number z_cut = 6;
  
-#if autodiff_FOUND
+#if IMAGINE_HAS_AUTODIFF
 
   const std::set<std::string> all_diff{"B_val", "r_cut", "z_cut"};
   std::set<std::string> active_diff{"B_val", "r_cut", "z_cut"};
@@ -44,5 +46,7 @@ public:
     return _at_position(x, y, z, *this);
   }
 };
+
+}
 
 #endif

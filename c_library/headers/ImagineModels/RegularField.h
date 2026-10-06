@@ -9,8 +9,10 @@
 #include <algorithm>
 #include <set>
 
-#include "exceptions.h"
-#include "Field.h"
+#include "ImagineModels/exceptions.h"
+#include "ImagineModels/Field.h"
+
+namespace imagine {
 
 class RegularScalarField : public Field<number, double *>
 {
@@ -44,7 +46,7 @@ public:
 
   // Fields
   const int ndim = 1;
-#if autodiff_FOUND
+#if IMAGINE_HAS_AUTODIFF
   const std::set<std::string> all_diff;
   std::set<std::string> active_diff;
 #endif
@@ -89,7 +91,7 @@ public:
     return grid_eval;
   }
 
-#if autodiff_FOUND
+#if IMAGINE_HAS_AUTODIFF
 
   Eigen::VectorXd _filter_diff(Eigen::VectorXd inp) const
   {
@@ -150,7 +152,7 @@ public:
 
   const int ndim = 3;
 
-#if autodiff_FOUND
+#if IMAGINE_HAS_AUTODIFF
   const std::set<std::string> all_diff;
   std::set<std::string> active_diff;
 #endif
@@ -196,7 +198,7 @@ public:
     return grid_eval;
   }
 
-#if autodiff_FOUND
+#if IMAGINE_HAS_AUTODIFF
 
   Eigen::MatrixXd _filter_diff(Eigen::MatrixXd inp) const
   {
@@ -218,5 +220,7 @@ public:
 
 #endif
 };
+
+}
 
 #endif

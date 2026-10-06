@@ -1,6 +1,6 @@
  #include <pybind11/pybind11.h>
 
-#include "RandomJF12.h"
+#include "ImagineModelsRandom/RandomJF12.h"
 
 namespace py = pybind11;
 using namespace pybind11::literals;
