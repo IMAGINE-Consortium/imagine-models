@@ -1,80 +1,42 @@
 #ifndef UNIFORM_H
 #define UNIFORM_H
 
-#include <functional>
-#include <cmath>
+#include "ImagineModels/RegularModel.h"
 
-#include "Field.h"
-#include "RegularField.h"
+namespace imagine {
 
-class UniformMagneticField : public RegularVectorField
+#define UNIFORM_MAGNETIC_PARAMETERS(X) \
+    X(bx, 0.)                          \
+    X(by, 0.)                          \
+    X(bz, 0.)
+
+IMAGINE_PARAMETERS(UniformMagneticParameters, UNIFORM_MAGNETIC_PARAMETERS)
+
+class UniformMagneticField : public RegularVectorModel<UniformMagneticField, UniformMagneticParameters>
 {
-protected:
-    vector _at_position(const double &x, const double &y, const double &z, const UniformMagneticField &p) const
-    {
-        return vector{{p.bx, p.by, p.bz}};
-    }
-
-#if autodiff_FOUND
-    Eigen::MatrixXd _jac(const double &x, const double &y, const double &z, UniformMagneticField &p) const
-    {
-        return Eigen::MatrixXd::Identity(3, 3);
-    }
-#endif
 public:
-    using RegularVectorField ::RegularVectorField;
-
-    number bx = 0.;
-    number by = 0.;
-    number bz = 0.;
-#if autodiff_FOUND
-    const std::set<std::string> all_diff{"bx", "by", "bz"};
-    std::set<std::string> active_diff{"bx", "by", "bz"};
-
-    Eigen::MatrixXd derivative(const double &x, const double &y, const double &z)
+    template <typename T>
+    Vec3<T> field(const double &x, const double &y, const double &z, const UniformMagneticParameters<T> &p) const
     {
-        return _jac(x, y, z, *this);
-    }
-#endif
-    vector at_position(const double &x, const double &y, const double &z) const
-    {
-        return _at_position(x, y, z, *this);
+        return {p.bx, p.by, p.bz};
     }
 };
 
+#define UNIFORM_DENSITY_PARAMETERS(X) \
+    X(n0, 0.)
 
-class UniformDensityField : public RegularScalarField
+IMAGINE_PARAMETERS(UniformDensityParameters, UNIFORM_DENSITY_PARAMETERS)
+
+class UniformDensityField : public RegularScalarModel<UniformDensityField, UniformDensityParameters>
 {
-protected:
-    number _at_position(const double &x, const double &y, const double &z, const UniformDensityField &p) const
+public:
+    template <typename T>
+    T field(const double &x, const double &y, const double &z, const UniformDensityParameters<T> &p) const
     {
         return p.n0;
     }
-
-#if autodiff_FOUND
-    Eigen::MatrixXd _jac(const double &x, const double &y, const double &z, UniformDensityField &p) const
-    {
-        return Eigen::MatrixXd::Identity(1, 1);
-    }
-#endif
-public:
-    using RegularScalarField ::RegularScalarField;
-
-    number n0 = 0.;
-
-#if autodiff_FOUND
-    const std::set<std::string> all_diff{"n0"};
-    std::set<std::string> active_diff{"n0"};
-
-    Eigen::MatrixXd derivative(const double &x, const double &y, const double &z)
-    {
-        return _jac(x, y, z, *this);
-    }
-#endif
-    number at_position(const double &x, const double &y, const double &z) const
-    {
-        return _at_position(x, y, z, *this);
-    }
 };
+
+}
 
 #endif

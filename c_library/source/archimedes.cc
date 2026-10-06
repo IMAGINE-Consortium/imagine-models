@@ -1,10 +1,13 @@
-#include "Archimedes.h"
+#include "ImagineModels/Archimedes.h"
+
+namespace imagine {
 
 // J. L. Han et al 2018 ApJS 234 11
-vector ArchimedeanMagneticField::_at_position(const double &x, const double &y, const double &z, const ArchimedeanMagneticField &p) const
+template <typename T>
+Vec3<T> ArchimedeanMagneticField::field(const double &x, const double &y, const double &z, const ArchimedeanParameters<T> &p) const
 {
 
-    vector B_cart{{0., 0., 0.}};
+    Vec3<T> B_cart{{0., 0., 0.}};
     const double r = sqrt(x * x + y * y + z * z);
 
 	double theta = atan2(sqrt(x * x + y * y), z);
@@ -42,17 +45,7 @@ vector ArchimedeanMagneticField::_at_position(const double &x, const double &y, 
 
 }
 
-#if autodiff_FOUND
 
-Eigen::MatrixXd ArchimedeanMagneticField::_jac(const double &x, const double &y, const double &z, ArchimedeanMagneticField &p) const
-{
-  vector out;
-  Eigen::MatrixXd _deriv = ad::jacobian([&](double _x, double _y, double _z, ArchimedeanMagneticField &_p)
-                                        { return _p._at_position(_x, _y, _z, _p); },
-                                        ad::wrt(p.R_0, p.Omega, p.v_w, p.B_0), ad::at(x, y, z, p), out);
-  return _filter_diff(_deriv);
+IMAGINE_INSTANTIATE_VECTOR_MODEL(ArchimedeanMagneticField)
+
 }
-
-#endif
-
-

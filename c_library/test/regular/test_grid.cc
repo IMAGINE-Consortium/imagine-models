@@ -4,90 +4,70 @@
 #include <map>
 #include <memory>
 
-#include "RegularModels.h"
+#include "ImagineModels/RegularModels.h"
 
-#define assertm(exp, msg) assert(((void)msg, exp))
+using namespace imagine;
+
+#define check(exp) do { if (!(exp)) { std::cerr << "check failed: " #exp " (" __FILE__ ":" << __LINE__ << ")" << std::endl; std::exit(1); } } while (0)
 
 
-void _check_array_equality_from_pointer(std::array<double*, 3> a, std::array<double*, 3> b , size_t &n) {
-    for (int d = 0; d < 3; ++d) {
-        std::vector<double>  arr_a(a[d], a[d] + n);
-        std::vector<double>  arr_b(b[d], b[d] + n);
-        assert (arr_a == arr_b); 
-    }
-
+IrregularGrid as_irregular(const RegularGrid &g) {
+    std::vector<double> x, y, z;
+    for (int i = 0; i < g.shape[0]; ++i) x.push_back(g.reference_point[0] + i * g.increment[0]);
+    for (int j = 0; j < g.shape[1]; ++j) y.push_back(g.reference_point[1] + j * g.increment[1]);
+    for (int k = 0; k < g.shape[2]; ++k) z.push_back(g.reference_point[2] + k * g.increment[2]);
+    return IrregularGrid(x, y, z);
 }
 
+void test_grid(const std::map<std::string, std::shared_ptr<RegularVectorField>> &models, const RegularGrid &regular, const IrregularGrid &irregular) {
+    for (const auto &[name, model] : models) {
+        VectorGridData eval_regular = model->evaluate(regular);
+        VectorGridData eval_as_irregular = model->evaluate(as_irregular(regular));
+        check(eval_regular.shape == regular.shape);
+        check(eval_regular.data == eval_as_irregular.data);
 
-
-
-void test_grid(std::map <std::string, std::shared_ptr<RegularVectorField>> models_no_grid, 
-               std::map <std::string, std::shared_ptr<RegularVectorField>> models_regular_grid, 
-               std::map <std::string, std::shared_ptr<RegularVectorField>> models_irregular_grid, 
-               std::array<int, 3> shape, std::array<double, 3> refpoint, std::array<double, 3> increment, 
-               std::vector<double> grid_x, std::vector<double> grid_y, std::vector<double> grid_z
-              ) {
-    auto model_iter = models_no_grid.begin();
-
-    
-
-
-    while (model_iter != models_no_grid.end()) { 
-        std::array<double*, 3> eval_irregular = (*models_irregular_grid[model_iter->first]).on_grid(); 
-        std::array<double*, 3> eval_regular = (*models_regular_grid[model_iter->first]).on_grid(); 
-        std::array<double*, 3> eval_no_grid_regular = (*models_no_grid[model_iter->first]).on_grid(shape, refpoint, increment); 
-        std::array<double*, 3> eval_no_grid_irregular = (*models_no_grid[model_iter->first]).on_grid(grid_x, grid_y, grid_z); 
-        size_t irreg_n = grid_x.size()*grid_y.size()*grid_z.size();
-        size_t reg_n = shape[0]*shape[1]*shape[2];
-        // std::array<double*, 3> eval_no_grid = (*models_no_grid[model_iter->first]).on_grid(); should raise an exception
-
-        _check_array_equality_from_pointer(eval_irregular, eval_no_grid_irregular, irreg_n);
-        _check_array_equality_from_pointer(eval_regular, eval_no_grid_regular, reg_n);
-        ++model_iter;
+        VectorGridData eval_irregular = model->evaluate(irregular);
+        check(eval_irregular.shape == irregular.shape());
+        size_t idx = 0;
+        for (double x : irregular.x)
+            for (double y : irregular.y)
+                for (double z : irregular.z) {
+                    Vec3<double> v = model->at_position(x, y, z);
+                    for (int c = 0; c < 3; ++c)
+                        check(eval_irregular(c, idx) == static_cast<double>(v[c]));
+                    ++idx;
+                }
     }
-
 }
 
-     
+void test_scalar_grid(const RegularGrid &regular) {
+    YMW16 ymw;
+    ScalarGridData eval_regular = ymw.evaluate(regular);
+    ScalarGridData eval_as_irregular = ymw.evaluate(as_irregular(regular));
+    check(eval_regular.data == eval_as_irregular.data);
+}
+
+void test_invalid_grids() {
+    bool thrown = false;
+    try { RegularGrid({4, 0, 2}, {0., 0., 0.}, {1., 1., 1.}); } catch (const GridException &) { thrown = true; }
+    check(thrown);
+    thrown = false;
+    try { IrregularGrid({1., 2.}, {}, {0.}); } catch (const GridException &) { thrown = true; }
+    check(thrown);
+}
 
 
 int main() {
+    const IrregularGrid irregular({2., 4., 0., 1., .4}, {4., 6., 0.1, 0., .2}, {-0.2, 0.8, 0.2, 0., 1.});
+    const RegularGrid regular({4, 3, 2}, {-4., 0.1, -0.3}, {2.1, 0.3, 1.});
 
+    std::map<std::string, std::shared_ptr<RegularVectorField>> models;
+    models["JF12"] = std::make_shared<JF12MagneticField>();
+    models["Jaffe"] = std::make_shared<JaffeMagneticField>();
+    models["Helix"] = std::make_shared<HelixMagneticField>();
+    models["UF24"] = std::make_shared<UFMagneticField>();
 
-    // Define a irregular grid in Galactic cartesian coordinates (units are kpc)
-    const std::vector<double> grid_x {{2., 4., 0., 1., .4}};
-    const std::vector<double> grid_y {{4., 6., 0.1, 0., .2}};
-    const std::vector<double> grid_z {{-0.2, 0.8, 0.2, 0., 1.}};
-
-
-    // Define a regular grid in Galactic cartesian coordinates (units are kpc)
-    const std::array<int, 3> shape {{4, 3, 2}};
-    const std::array<double, 3> refpoint {{-4., 0.1, -0.3}};
-    const std::array<double, 3> increment {{2.1, 0.3, 1.}};
-
-
-    // Dictionaries
-    // using pointer here since RegularField is abstract
-    std::map <std::string, std::shared_ptr<RegularVectorField>> models_w_empty_constructor;
-    std::map <std::string, std::shared_ptr<RegularVectorField>> models_w_regular_constructor;
-    std::map <std::string, std::shared_ptr<RegularVectorField>> models_w_irregular_constructor;
-
-    models_w_empty_constructor["JF12"] = std::shared_ptr<JF12MagneticField> (new JF12MagneticField());
-    //models_w_empty_constructor["Jaffe"] = std::shared_ptr<JaffeMagneticField> (new JaffeMagneticField());
-    models_w_empty_constructor["Helix"] = std::shared_ptr<HelixMagneticField> (new HelixMagneticField());
-
-    models_w_regular_constructor["JF12"] = std::shared_ptr<JF12MagneticField> (new JF12MagneticField(shape, refpoint, increment));
-    //models_w_regular_constructor["Jaffe"] = std::shared_ptr<JaffeMagneticField> (new JaffeMagneticField(shape, refpoint, increment));
-    models_w_regular_constructor["Helix"] = std::shared_ptr<HelixMagneticField> (new HelixMagneticField(shape, refpoint, increment));
-
-    models_w_irregular_constructor["JF12"] = std::shared_ptr<JF12MagneticField> (new JF12MagneticField(grid_x, grid_y, grid_z));
-    //models_w_irregular_constructor["Jaffe"] = std::shared_ptr<JaffeMagneticField> (new JaffeMagneticField(grid_x, grid_y, grid_z));
-    models_w_irregular_constructor["Helix"] = std::shared_ptr<HelixMagneticField> (new HelixMagneticField(grid_x, grid_y, grid_z));
-
-
-
-    test_grid(models_w_empty_constructor, models_w_regular_constructor, models_w_irregular_constructor, shape, refpoint, increment, grid_x, grid_y, grid_z);
+    test_grid(models, regular, irregular);
+    test_scalar_grid(regular);
+    test_invalid_grids();
 }
-
-
-

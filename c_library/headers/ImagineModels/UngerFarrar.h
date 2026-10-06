@@ -37,21 +37,42 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <cassert>
 #include <iostream>
 
-#include "RegularField.h"
-#include "units.h"
+#include "ImagineModels/RegularModel.h"
+#include "ImagineModels/units.h"
 
-class UFMagneticField : public RegularVectorField
+namespace imagine {
+
+#define UF_PARAMETERS(X)                               \
+    X(fPoloidalA, 1 * astro::gpc)                      \
+    X(fDiskB1, 1.0878565e+00 * astro::microgauss)      \
+    X(fDiskB2, 2.6605034e+00 * astro::microgauss)      \
+    X(fDiskB3, 3.1166311e+00 * astro::microgauss)      \
+    X(fDiskH, 7.9408965e-01 * astro::kpc)              \
+    X(fDiskPhase1, 2.6316589e+02 * num::rad)           \
+    X(fDiskPhase2, 9.7782269e+01 * num::rad)           \
+    X(fDiskPhase3, 3.5112281e+01 * num::rad)           \
+    X(fDiskPitch, 1.0106900e+01 * num::rad)            \
+    X(fDiskW, 1.0720909e-01 * astro::kpc)              \
+    X(fPoloidalB, 9.7775487e-01 * astro::microgauss)   \
+    X(fPoloidalP, 1.4266186e+00 * astro::kpc)          \
+    X(fPoloidalR, 7.2925417e+00 * astro::kpc)          \
+    X(fPoloidalW, 1.1188158e-01 * astro::kpc)          \
+    X(fPoloidalZ, 4.4597373e+00 * astro::kpc)          \
+    X(fStriation, 3.4557571e-01)                       \
+    X(fToroidalBN, 3.2556760e+00 * astro::microgauss)  \
+    X(fToroidalBS, -3.0914569e+00 * astro::microgauss) \
+    X(fToroidalR, 1.0193815e+01 * astro::kpc)          \
+    X(fToroidalW, 1.6936993e+00 * astro::kpc)          \
+    X(fToroidalZ, 4.0242749e+00 * astro::kpc)          \
+    X(fSpurCenter, 0)                                  \
+    X(fSpurLength, 0)                                  \
+    X(fSpurWidth, 0)                                   \
+    X(fTwistingTime, 0)
+
+IMAGINE_PARAMETERS(UFParameters, UF_PARAMETERS)
+
+class UFMagneticField : public RegularVectorModel<UFMagneticField, UFParameters>
 {
-protected:
-  vector _at_position(const double &x, const double &y, const double &z, const UFMagneticField &p) const;
-
-#if autodiff_FOUND
-  Eigen::MatrixXd _jac(const double &x, const double &y, const double &z, UFMagneticField &p) const;
-#endif
-
-public:
-  using RegularVectorField ::RegularVectorField;
-
 public:
   /// model variations (see Tab.2 of UF23 paper)
   const std::array<std::string, 8> possibleModels{"base", "neCL", "expX", "spur", "cre10", "synCG", "twistX", "nebCor"};
@@ -62,35 +83,7 @@ public:
 
   double fMaxRadius = 20;
 
-  number fPoloidalA    =  1 * astro::gpc;
-
   /// model parameters, see Table 3 of UF23 paper
-
-  number fDiskB1        =  1.0878565e+00 * astro::microgauss;
-  number fDiskB2        =  2.6605034e+00 * astro::microgauss;
-  number fDiskB3        =  3.1166311e+00 * astro::microgauss;
-  number fDiskH         =  7.9408965e-01 * astro::kpc;
-  number fDiskPhase1    =  2.6316589e+02 * num::rad;
-  number fDiskPhase2    =  9.7782269e+01 * num::rad;
-  number fDiskPhase3    =  3.5112281e+01 * num::rad;
-  number fDiskPitch     =  1.0106900e+01 * num::rad;
-  number fDiskW         =  1.0720909e-01 * astro::kpc;
-  number fPoloidalB     =  9.7775487e-01 * astro::microgauss;
-  number fPoloidalP     =  1.4266186e+00 * astro::kpc;
-  number fPoloidalR     =  7.2925417e+00 * astro::kpc;
-  number fPoloidalW     =  1.1188158e-01 * astro::kpc;
-  number fPoloidalZ     =  4.4597373e+00 * astro::kpc;
-  number fStriation     =  3.4557571e-01;
-  number fToroidalBN    =  3.2556760e+00 * astro::microgauss;
-  number fToroidalBS    = -3.0914569e+00 * astro::microgauss;
-  number fToroidalR     =  1.0193815e+01 * astro::kpc;
-  number fToroidalW     =  1.6936993e+00 * astro::kpc;
-  number fToroidalZ     =  4.0242749e+00 * astro::kpc;
-  
-  number fSpurCenter = 0;
-  number fSpurLength = 0;
-  number fSpurWidth = 0;
-  number fTwistingTime = 0;
 
   std::map<std::string, std::map<std::string, double>> all_parameters = 
     {{"base", {
@@ -266,43 +259,39 @@ public:
      }}, 
     };
 
-  vector at_position(const double &x, const double &y, const double &z) const
-  {
-    return _at_position(x, y, z, *this);
-  }
-
   void set_parameters(const std::string &model_choice);
-
-
-#if autodiff_FOUND
-  const std::set<std::string> all_diff{"fDiskB1", "fDiskB2", "fDiskB3", "fDiskH", "fDiskPhase1", "fDiskPhase2", "fDiskPhase3", "fDiskPitch", "fDiskW", "fPoloidalA", "fPoloidalB", "fPoloidalP", "fPoloidalR", "fPoloidalW", "fPoloidalZ", "fSpurCenter", "fSpurLength", "fSpurWidth", "fStriation", "fToroidalBN", "fToroidalBS", "fToroidalR", "fToroidalW", "fToroidalZ", "fTwistingTime"};
-  std::set<std::string> active_diff{"fDiskB1", "fDiskB2", "fDiskB3", "fDiskH", "fDiskPhase1", "fDiskPhase2", "fDiskPhase3", "fDiskPitch", "fDiskW", "fPoloidalA", "fPoloidalB", "fPoloidalP", "fPoloidalR", "fPoloidalW", "fPoloidalZ", "fSpurCenter", "fSpurLength", "fSpurWidth", "fStriation", "fToroidalBN", "fToroidalBS", "fToroidalR", "fToroidalW", "fToroidalZ", "fTwistingTime"};
-
-  Eigen::MatrixXd derivative(const double &x, const double &y, const double &z)
-  {
-    return _jac(x, y, z, *this);
-  }
-#endif
 
 private:
 
   /// major field components
-  vector GetDiskField(const double &x, const double &y, const double &z, const UFMagneticField &p) const;
-  vector GetHaloField(const double &x, const double &y, const double &z, const UFMagneticField &p) const;
+  template <typename T>
+  Vec3<T> GetDiskField(const double &x, const double &y, const double &z, const UFParameters<T> &p) const;
+  template <typename T>
+  Vec3<T> GetHaloField(const double &x, const double &y, const double &z, const UFParameters<T> &p) const;
 
   /// sub-components depending on model type
   /// -- Sec. 5.2.2
-  vector GetSpiralField(const double x, const double y, const double z, const UFMagneticField &p) const;
+  template <typename T>
+  Vec3<T> GetSpiralField(const double x, const double y, const double z, const UFParameters<T> &p) const;
   /// -- Sec. 5.2.3
-  vector GetSpurField(const double x, const double y, const double z, const UFMagneticField &p) const;
+  template <typename T>
+  Vec3<T> GetSpurField(const double x, const double y, const double z, const UFParameters<T> &p) const;
   /// -- Sec. 5.3.1
-  vector GetToroidalHaloField(const double x, const double y, const double z, const UFMagneticField &p) const;
+  template <typename T>
+  Vec3<T> GetToroidalHaloField(const double x, const double y, const double z, const UFParameters<T> &p) const;
   /// -- Sec. 5.3.2
-  vector GetPoloidalHaloField(const double x, const double y, const double z, const UFMagneticField &p) const;
+  template <typename T>
+  Vec3<T> GetPoloidalHaloField(const double x, const double y, const double z, const UFParameters<T> &p) const;
   /// -- Sec. 5.3.3
-  vector GetTwistedHaloField(const double x, const double y, const double z, const UFMagneticField &p) const;
+  template <typename T>
+  Vec3<T> GetTwistedHaloField(const double x, const double y, const double z, const UFParameters<T> &p) const;
 
-  
+public:
+
+  template <typename T>
+  Vec3<T> field(const double &x, const double &y, const double &z, const UFParameters<T> &p) const;
 };
+
+}
 
 #endif

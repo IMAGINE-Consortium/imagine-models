@@ -3,6 +3,8 @@
 
 #include <cmath>
 
+namespace imagine {
+
 namespace num {
   // numerical constants 
 const double pi = 3.141592653589793238462643383279502884197;
@@ -80,5 +82,7 @@ const double re = (2.81794092e-13 * cm); ///< classical electron radius
 
 const double GV = (GeV / qe); ///< rigidity for cosmic-rays
 } // namespace cgs
+
+}
 
 #endif

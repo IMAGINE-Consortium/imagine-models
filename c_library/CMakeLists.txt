@@ -1,23 +1,60 @@
 cmake_minimum_required(VERSION 3.16)
 
-project(ImagineModels VERSION 0.2 DESCRIPTION "A library for Galactic models.")
+project(ImagineModels VERSION 0.2 DESCRIPTION "A library for Galactic models." LANGUAGES CXX)
 
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_SHARED_LIBRARY_SUFFIX ".so")
+include(GNUInstallDirs)
+include(CMakePackageConfigHelpers)
 
-set(IM_INCLUDE_DIR ${PROJECT_SOURCE_DIR}/headers/)
-INCLUDE_DIRECTORIES ( "/usr/local/include/eigen3 " )
-set(IM_SOURCE_DIR ${PROJECT_SOURCE_DIR}/source)
+if(CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR)
+    include(CTest)
+endif()
 
+option(USE_AUTODIFF "Enable derivatives w.r.t. model parameters (requires autodiff and Eigen3)" ON)
+option(USE_FFTW "Enable random field models (requires FFTW3)" ON)
+option(IMAGINE_SHARED_LIBRARY "Build ImagineModels as a shared library" ON)
 
-set(INCLUDE_INSTALL_DIR
-"${CMAKE_INSTALL_INCLUDEDIR}/ImagineModels")
-# CACHE PATH "The directory relative to CMAKE_INSTALL_PREFIX where ImagineModel header files are installed"
+set(IMAGINE_HAS_AUTODIFF 0)
+if(USE_AUTODIFF)
+    find_package(autodiff QUIET)
+    find_package(Eigen3 QUIET NO_MODULE)
+    if(autodiff_FOUND AND Eigen3_FOUND)
+        set(IMAGINE_HAS_AUTODIFF 1)
+        message(STATUS "ImagineModels: autodiff and Eigen3 found, derivatives enabled.")
+    else()
+        message(STATUS "ImagineModels: autodiff or Eigen3 not found, derivatives disabled.")
+    endif()
+else()
+    message(STATUS "ImagineModels: derivatives disabled (USE_AUTODIFF=OFF).")
+endif()
 
+set(IMAGINE_HAS_FFTW 0)
+set(FINDFFTW_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../extern/findFFTW)
+if(USE_FFTW)
+    if(NOT EXISTS ${FINDFFTW_DIR}/FindFFTW.cmake)
+        message(FATAL_ERROR "The findFFTW submodule was not initialized! Please run 'git submodule update --init'.")
+    endif()
+    list(APPEND CMAKE_MODULE_PATH ${FINDFFTW_DIR})
+    find_package(FFTW QUIET COMPONENTS DOUBLE_LIB)
+    if(FFTW_FOUND)
+        set(IMAGINE_HAS_FFTW 1)
+        message(STATUS "ImagineModels: FFTW found (${FFTW_DOUBLE_LIB}), random fields enabled.")
+    else()
+        message(STATUS "ImagineModels: FFTW not found, random fields disabled.")
+    endif()
+else()
+    message(STATUS "ImagineModels: random fields disabled (USE_FFTW=OFF).")
+endif()
+
+set(IM_HEADER_DIR ${CMAKE_CURRENT_SOURCE_DIR}/headers)
+set(IM_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/source)
+set(IM_GENERATED_DIR ${CMAKE_CURRENT_BINARY_DIR}/generated)
+
+set(IMAGINE_HAS_AUTODIFF ${IMAGINE_HAS_AUTODIFF} CACHE INTERNAL "")
+set(IMAGINE_HAS_FFTW ${IMAGINE_HAS_FFTW} CACHE INTERNAL "")
+
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/config.h.in ${IM_GENERATED_DIR}/ImagineModels/config.h @ONLY)
 
 set(IM_SRC_FILES
-  #  ${IM_SOURCE_DIR}/helpers.cc
     ${IM_SOURCE_DIR}/helix.cc
     ${IM_SOURCE_DIR}/jaffe.cc
     ${IM_SOURCE_DIR}/regularjf12.cc
@@ -31,14 +68,14 @@ set(IM_SRC_FILES
     ${IM_SOURCE_DIR}/stanevbss.cc
     ${IM_SOURCE_DIR}/fauvet.cc
     ${IM_SOURCE_DIR}/tinyakovtkachev.cc
-    ${IM_SOURCE_DIR}/hararimollerachroulet.cc  
-    ${IM_SOURCE_DIR}/svt22.cc   
-    ${IM_SOURCE_DIR}/ungerfarrar.cc   
+    ${IM_SOURCE_DIR}/hararimollerachroulet.cc
+    ${IM_SOURCE_DIR}/svt22.cc
+    ${IM_SOURCE_DIR}/ungerfarrar.cc
 )
 
-if(FFTW_FOUND)
-    set(IM_SRC_FILES
-        ${IM_SRC_FILES}
+if(IMAGINE_HAS_FFTW)
+    list(APPEND IM_SRC_FILES
+        ${IM_SOURCE_DIR}/randomfield.cc
         ${IM_SOURCE_DIR}/randomscalarfield.cc
         ${IM_SOURCE_DIR}/randomvectorfield.cc
         ${IM_SOURCE_DIR}/gaussianscalar.cc
@@ -48,17 +85,26 @@ if(FFTW_FOUND)
     )
 endif()
 
-add_library(ImagineModels SHARED ${IM_SRC_FILES})
-target_include_directories(ImagineModels PUBLIC ${IM_INCLUDE_DIR}/ImagineModels)
-
-if (FFTW_FOUND)
-    target_include_directories(ImagineModels PUBLIC ${IM_INCLUDE_DIR}/ImagineModelsRandom)
+if(IMAGINE_SHARED_LIBRARY)
+    add_library(ImagineModels SHARED ${IM_SRC_FILES})
+else()
+    add_library(ImagineModels STATIC ${IM_SRC_FILES})
+    set_target_properties(ImagineModels PROPERTIES POSITION_INDEPENDENT_CODE ON)
 endif()
-target_link_libraries(ImagineModels PUBLIC ${LIBRARIES})
-if (autodiff_FOUND) 
-    target_include_directories(ImagineModels PUBLIC /usr/local/include/autodiff)
-    target_include_directories(ImagineModels PUBLIC /usr/include/eigen3)
-    target_link_libraries(ImagineModels PUBLIC autodiff::autodiff)
+add_library(ImagineModels::ImagineModels ALIAS ImagineModels)
+
+target_compile_features(ImagineModels PUBLIC cxx_std_17)
+target_include_directories(ImagineModels PUBLIC
+    $<BUILD_INTERFACE:${IM_HEADER_DIR}>
+    $<BUILD_INTERFACE:${IM_GENERATED_DIR}>
+    $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
+)
+
+if(IMAGINE_HAS_AUTODIFF)
+    target_link_libraries(ImagineModels PUBLIC autodiff::autodiff Eigen3::Eigen)
+endif()
+if(IMAGINE_HAS_FFTW)
+    target_link_libraries(ImagineModels PUBLIC FFTW::Double)
 endif()
 
 set_target_properties(ImagineModels PROPERTIES
@@ -66,17 +112,48 @@ set_target_properties(ImagineModels PROPERTIES
     SOVERSION ${PROJECT_VERSION}
 )
 
-enable_testing()
-set(TESTSOURCES grid parameter_update positions)
-foreach(test ${TESTSOURCES})
-    set(test_name ${test}_ctest)
-    add_executable(${test_name} "${PROJECT_SOURCE_DIR}/test/regular/test_${test}.cc")
-    target_link_libraries(${test_name} ImagineModels ${LIBRARIES})
-    add_test(${test_name} ${test_name})
-endforeach()
+if(BUILD_TESTING)
+    foreach(test grid parameter_update positions)
+        add_executable(${test}_ctest ${CMAKE_CURRENT_SOURCE_DIR}/test/regular/test_${test}.cc)
+        target_link_libraries(${test}_ctest PRIVATE ImagineModels)
+        add_test(NAME ${test}_ctest COMMAND ${test}_ctest)
+    endforeach()
+endif()
 
-configure_file(${PROJECT_SOURCE_DIR}/ImagineModels.pc.in ${CMAKE_BINARY_DIR}/ImagineModels.pc @ONLY)
+set(IM_CMAKE_INSTALL_DIR ${CMAKE_INSTALL_LIBDIR}/cmake/ImagineModels)
 
-install(TARGETS ImagineModels LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
-install(FILES ${CMAKE_BINARY_DIR}/ImagineModels.pc DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/pkgconfig)
+install(TARGETS ImagineModels EXPORT ImagineModelsTargets
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+)
+install(DIRECTORY ${IM_HEADER_DIR}/ImagineModels DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+install(FILES ${IM_GENERATED_DIR}/ImagineModels/config.h DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/ImagineModels)
+if(IMAGINE_HAS_FFTW)
+    install(DIRECTORY ${IM_HEADER_DIR}/ImagineModelsRandom DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+    install(FILES ${FINDFFTW_DIR}/FindFFTW.cmake DESTINATION ${IM_CMAKE_INSTALL_DIR})
+endif()
 
+install(EXPORT ImagineModelsTargets NAMESPACE ImagineModels:: DESTINATION ${IM_CMAKE_INSTALL_DIR})
+configure_package_config_file(${CMAKE_CURRENT_SOURCE_DIR}/cmake/ImagineModelsConfig.cmake.in
+    ${CMAKE_CURRENT_BINARY_DIR}/ImagineModelsConfig.cmake
+    INSTALL_DESTINATION ${IM_CMAKE_INSTALL_DIR}
+)
+write_basic_package_version_file(${CMAKE_CURRENT_BINARY_DIR}/ImagineModelsConfigVersion.cmake
+    COMPATIBILITY SameMinorVersion
+)
+install(FILES
+    ${CMAKE_CURRENT_BINARY_DIR}/ImagineModelsConfig.cmake
+    ${CMAKE_CURRENT_BINARY_DIR}/ImagineModelsConfigVersion.cmake
+    DESTINATION ${IM_CMAKE_INSTALL_DIR}
+)
+
+set(IM_PC_REQUIRES "")
+if(IMAGINE_HAS_AUTODIFF)
+    string(APPEND IM_PC_REQUIRES " eigen3")
+endif()
+if(IMAGINE_HAS_FFTW)
+    string(APPEND IM_PC_REQUIRES " fftw3")
+endif()
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/ImagineModels.pc.in ${CMAKE_CURRENT_BINARY_DIR}/ImagineModels.pc @ONLY)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/ImagineModels.pc DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)

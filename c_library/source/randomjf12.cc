@@ -1,8 +1,10 @@
 #include <cmath>
 #include <cassert>
 #include <iostream>
-#include "units.h"
-#include "RandomJF12.h"
+#include "ImagineModels/units.h"
+#include "ImagineModelsRandom/RandomJF12.h"
+
+namespace imagine {
 
 
 double JF12RandomField::calculate_fourier_sigma(const double &abs_k, const double &dk) const {
@@ -10,7 +12,7 @@ double JF12RandomField::calculate_fourier_sigma(const double &abs_k, const doubl
   return std::sqrt(var);
 }
 
-vector JF12RandomField::anisotropy_direction(const double &x, const double &y, const double &z) const {
+Vec3<double> JF12RandomField::anisotropy_direction(const double &x, const double &y, const double &z) const {
   return regular_base.at_position(x, y, z); 
 }
 
@@ -75,7 +77,7 @@ void JF12RandomField::_on_grid(std::array<double*, 3> val, const std::array<int,
       b_rand_val[1] *= sp;
       b_rand_val[2] *= sp;
       
-      vector b_reg_val = regular_base.at_position(xx, yy, zz); 
+      Vec3<double> b_reg_val = regular_base.at_position(xx, yy, zz); 
       
       double b_reg_x = static_cast<double>(b_reg_val[0]); 
       double b_reg_y = static_cast<double>(b_reg_val[1]);
@@ -137,3 +139,5 @@ void JF12RandomField::_on_grid(std::array<double*, 3> val, const std::array<int,
 
   //std::cout << "afterdivergence " << (val[0])[0] <<" " << (val[0])[5] << " "  << (val[0])[10] << std::endl;
 }*/
+
+}

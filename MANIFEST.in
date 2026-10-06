@@ -1,5 +1,0 @@
-include README.md extern/pybind11/LICENSE
-graft extern/pybind11/include
-graft extern/pybind11/tools
-graft ImagineModels
-global-include CMakeLists.txt *.cmake

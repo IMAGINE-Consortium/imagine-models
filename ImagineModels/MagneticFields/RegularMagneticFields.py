@@ -65,10 +65,6 @@ class AxiSymmetricSpiral(RegularVectorField):
         self.z0 = z0
         super().__init__()
 
-    def evaluate_grid(self, grid_x, grid_y, grid_z):
-        # This will not work, still need to wrap "evaluate_function_on_grid"
-        return self._evaluate_grid(grid_x, grid_y, grid_z, self.at_position)
-
     def at_position(self, x, y, z):
         rho, z, phi = cart2cyl([x, y, z])
         b_amp = self.b0_of_r(rho, z)

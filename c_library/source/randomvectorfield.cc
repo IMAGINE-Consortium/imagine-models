@@ -1,136 +1,50 @@
 #include <cmath>
 #include <iostream>
+#include <random>
 
-#include "RandomVectorField.h"
+#include "ImagineModelsRandom/RandomVectorField.h"
 
-// Non trivial constructor
-RandomVectorField::RandomVectorField(std::array<int, 3>  shape, std::array<double, 3>  reference_point, std::array<double, 3>  increment) : RandomField(shape, reference_point, increment) {
-    int newshp2;
-    if (shape[2] % 2) {
-      newshp2 = shape[2] + 1;
-    }
-    else {
-      newshp2 = shape[2] + 2;
-    }
-    double* val_temp = (double*) fftw_alloc_real(shape[0]*shape[1]*newshp2);
-    fftw_complex* val_temp_comp = reinterpret_cast<fftw_complex*>(val_temp);
-    fftw_plan r2c_temp = fftw_plan_dft_r2c_3d(shape[0], shape[1], shape[2], val_temp, val_temp_comp, FFTW_MEASURE);
-    fftw_plan c2r_temp = fftw_plan_dft_c2r_3d(shape[0], shape[1], shape[2], val_temp_comp, val_temp,  FFTW_MEASURE);
-    const char *filename = "ImagineModelsRandomVectorField";
-    int fftw_export_wisdom_to_filename(*filename);
-    has_fftw_wisdom = true;
-    fftw_free(val_temp);
-    fftw_destroy_plan(c2r_temp);
-    fftw_destroy_plan(r2c_temp); // plans are destroyed but wisdom is saved!
+namespace imagine {
+
+VectorGridData RandomVectorField::sample(const RegularGrid &grid, const int seed) const {
+  FFTWWorkspace w0(grid.shape), w1(grid.shape), w2(grid.shape);
+  std::array<FFTWWorkspace*, 3> ws{&w0, &w1, &w2};
+  _sample(ws, grid, seed);
+  VectorGridData out(grid.shape);
+  for (int i = 0; i < 3; ++i)
+    ws[i]->copy_unpadded(out.component(i));
+  return out;
 }
 
-RandomVectorField::~RandomVectorField() {
-  destroy_plans();
-  fftw_forget_wisdom();
-  #ifdef _OPENMP
-    fftw_cleanup_threads();
-  #else
-    fftw_cleanup();
-  #endif
-};
-
-std::array<double*, 3> RandomVectorField::allocate_memory(std::array<int, 3> shp) {
-    std::array<double*, 3> grid_eval;
-    int newshp2;
-    if (shp[2] % 2) {
-      newshp2 = shp[2] + 1;
-    }
-    else {
-      newshp2 = shp[2] + 2;
-    }
-    for (int i=0; i < ndim; ++i) {
-      grid_eval[i] = (double*) fftw_alloc_real(shp[0]*shp[1]*newshp2);
-      }
-    return grid_eval;  
-}
-
-void RandomVectorField::free_memory(std::array<double*, 3> grid_eval) {
-    for (int i=0; i < ndim; ++i) { 
-      fftw_free(grid_eval[i]);
-    }
-}
-
-
-std::array<fftw_complex*, 3> RandomVectorField::construct_plans(std::array<double*, 3> grid_eval, std::array<int, 3> shp) {
-    std::array<fftw_complex*, 3> grid_eval_comp;
-      for (int i=0; i < ndim; ++i) {
-        grid_eval_comp[i] = reinterpret_cast<fftw_complex*>(grid_eval[i]);
-        r2c[i] = fftw_plan_dft_r2c_3d(shp[0], shp[1], shp[2], grid_eval[i], grid_eval_comp[i], FFTW_ESTIMATE);
-        c2r[i] = fftw_plan_dft_c2r_3d(shp[0], shp[1], shp[2], grid_eval_comp[i], grid_eval[i],  FFTW_ESTIMATE);
-      }
-      created_fftw_plans = true;
-    return grid_eval_comp;
-}
-
-void RandomVectorField::destroy_plans() {
-    if (created_fftw_plans) {
-      for (int i=0; i < ndim; ++i) {
-        fftw_destroy_plan(c2r[i]);
-        fftw_destroy_plan(r2c[i]);
-      }
-    }
-}
-
-std::array<double*, 3> RandomVectorField::on_grid(const std::array<int, 3> &shp, const std::array<double, 3> &rpt, const std::array<double, 3> &inc, const int seed) {
-    std::array<double*, 3> grid_eval = allocate_memory(shp);
-    _on_grid(grid_eval, shp, rpt, inc, seed);
-    return grid_eval;
-  }
-
-std::array<double*, 3> RandomVectorField::on_grid(const int seed) {
-  if (not initialized_with_grid) 
-    throw GridException();
-  std::array<double*, 3> grid_eval = allocate_memory(internal_shape);
-  const char *filename = "ImagineModelsRandomVectorField";
-  int fftw_import_wisdom_from_filename(*filename);
-  _on_grid(grid_eval, internal_shape, internal_ref_point, internal_increment, seed);
-  return grid_eval;
-}
-
-double* RandomVectorField::profile_on_grid(const std::array<int, 3> &shp, const std::array<double, 3> &rfp, const std::array<double, 3> &inc) {
-  double* grid_eval;
-  size_t arr_sz = shp[0]*shp[1]*shp[2];
-  grid_eval = new double[arr_sz];
-  evaluate_function_on_grid<number, double*>(grid_eval, shp, rfp, inc,
-                                    [this](double xx, double yy, double zz)
-                                    { return spatial_profile(xx, yy, zz); });
-  return grid_eval;
-} 
-std::array<double*, 3> RandomVectorField::random_numbers_on_grid(const std::array<int, 3> &shp, const std::array<double, 3> &inc, const int seed) {
-    std::array<double*, 3> val = allocate_memory(shp);
-    std::array<fftw_complex*, 3> val_comp = construct_plans(val, shp); 
-    int gs = grid_size(shp);
+VectorGridData RandomVectorField::random_numbers(const RegularGrid &grid, const int seed) const {
+    FFTWWorkspace w0(grid.shape), w1(grid.shape), w2(grid.shape);
+    std::array<FFTWWorkspace*, 3> ws{&w0, &w1, &w2};
+    VectorGridData out(grid.shape);
+    int gs = w0.size();
     double sqrt_gs = std::sqrt(gs);
     auto gen_int = std::mt19937(seed);
     std::uniform_int_distribution<int> uni(0, 1215752192);
-    std::array<int, 3> padded_shp = {shp[0],  shp[1],  2*(shp[2]/2 + 1)}; 
-    int padded_size = grid_size(padded_shp);
-    int pad =  padded_shp[2] - shp[2];
 
     for (int i =0; i<3; ++i) {
       int sub_seed = uni(gen_int); 
-      seed_complex_random_numbers(val_comp[i], shp, inc, sub_seed);
-      fftw_execute(c2r[i]);
-      for (int s = 0; s < padded_size; ++s)  {
-        (val[i])[s] /= sqrt_gs;  
+      seed_complex_random_numbers(ws[i]->complex(), grid.shape, grid.increment, sub_seed);
+      ws[i]->backward();
+      double* val = ws[i]->real();
+      for (std::size_t s = 0; s < ws[i]->padded_size(); ++s)  {
+        val[s] /= sqrt_gs;  
       }
-      remove_padding(val[i], shp, pad);
+      ws[i]->copy_unpadded(out.component(i));
     }
-    return val;
+    return out;
 }
 
-void RandomVectorField::_on_grid(std::array<double*, 3> val, const std::array<int, 3> &shp, const std::array<double, 3> &rpt, const std::array<double, 3> &inc, const int seed) {
+void RandomVectorField::_sample(std::array<FFTWWorkspace*, 3> ws, const RegularGrid &grid, const int seed) const {
 
-  std::array<fftw_complex*, 3> val_comp = construct_plans(val, shp); 
-  std::array<int, 3> padded_shp = {shp[0],  shp[1],  2*(shp[2]/2 + 1)}; 
-  int gs = grid_size(shp);   
-  int padded_size = grid_size(padded_shp);
-  int pad =  padded_shp[2] - shp[2];
+  const std::array<int, 3> &shp = grid.shape;
+  const std::array<double, 3> &inc = grid.increment;
+  std::array<double*, 3> val{ws[0]->real(), ws[1]->real(), ws[2]->real()};
+  int gs = ws[0]->size();
+  std::size_t padded_size = ws[0]->padded_size();
   auto gen_int = std::mt19937(seed);
   std::uniform_int_distribution<int> uni(0, 1215752192);
   double sqrt_gs = std::sqrt(gs);
@@ -139,12 +53,8 @@ void RandomVectorField::_on_grid(std::array<double*, 3> val, const std::array<in
 
   for (int i =0; i<3; ++i) {
     int sub_seed = uni(gen_int); 
-    seed_complex_random_numbers(val_comp[i], shp, inc, sub_seed);
-    fftw_execute(c2r[i]);
-    //for (int s = 0; s < padded_size; ++s)  {
-    //    (val[i])[s] /= sqrt_gs;  
-    //  }
-    //remove_padding(val[i], shp, pad);
+    seed_complex_random_numbers(ws[i]->complex(), shp, inc, sub_seed);
+    ws[i]->backward();
   }
   
   // Step 2: apply spatial amplitude, possibly introduce anisotropy depending on regular field.
@@ -159,7 +69,7 @@ void RandomVectorField::_on_grid(std::array<double*, 3> val, const std::array<in
 
 
       if (apply_anisotropy) {
-        vector b_reg_val = anisotropy_direction(xx, yy, zz);
+        Vec3<double> b_reg_val = anisotropy_direction(xx, yy, zz);
         double b_reg_x = static_cast<double>(b_reg_val[0]); 
         double b_reg_y = static_cast<double>(b_reg_val[1]);
         double b_reg_z = static_cast<double>(b_reg_val[2]);
@@ -184,31 +94,35 @@ void RandomVectorField::_on_grid(std::array<double*, 3> val, const std::array<in
       }
       return b_rand_val;
     };
-    apply_function_to_field<std::array<double*, 3>, std::array<double, 3>>(val, padded_shp, rpt, inc, apply_profile);
+    for_each_point(RegularGrid(ws[0]->padded_shape(), grid.reference_point, inc), [&](std::size_t idx, double xx, double yy, double zz) {
+      std::array<double, 3> b{val[0][idx], val[1][idx], val[2][idx]};
+      std::array<double, 3> eval = apply_profile(b, xx, yy, zz);
+      val[0][idx] = eval[0];
+      val[1][idx] = eval[1];
+      val[2][idx] = eval[2];
+    });
   }
   // Step 3 (optional): divergence cleaning using Gram Schmidt process
   if (clean_divergence) {
   
     for (int i =0; i<3; ++i) {
-      fftw_execute(r2c[i]);
+      ws[i]->forward();
     }
-    divergence_cleaner(val_comp[0], val_comp[1], val_comp[2], shp, inc);
+    divergence_cleaner(ws[0]->complex(), ws[1]->complex(), ws[2]->complex(), shp, inc);
     
     for (int i =0; i<3; ++i) {
-      fftw_execute(c2r[i]);
-      for (int s = 0; s < padded_size; ++s)  {
+      ws[i]->backward();
+      for (std::size_t s = 0; s < padded_size; ++s)  {
         (val[i])[s] /= (gs*sqrt_gs);  
       }
-      remove_padding(val[i], shp, pad);
     }
   }
   else {
     for (int i =0; i<3; ++i) {
       double sqrt_gs = std::sqrt(gs);
-      for (int s = 0; s < padded_size; ++s)  {
+      for (std::size_t s = 0; s < padded_size; ++s)  {
         (val[i])[s] /= sqrt_gs;  
       }
-      remove_padding(val[i], shp, pad);
     }
   }
 }
@@ -263,3 +177,5 @@ void RandomVectorField::divergence_cleaner(fftw_complex* bx, fftw_complex* by, f
         } // j
       } // i
     }
+
+}

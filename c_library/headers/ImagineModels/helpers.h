@@ -4,6 +4,8 @@
 #include <cmath>
 #include <array>
 
+namespace imagine {
+
 template<typename V>
 V Cyl2Cart(const double phi, V& invec) {
 	V outvec{{0., 0., 0.}};
@@ -49,10 +51,10 @@ V Cart2Cyl(V& invec, const double cosphi, const double sinphi) {
  }
 
 template<typename V>
- vector addVector(std::initializer_list<vector> vs) {
+ V addVector(std::initializer_list<V> vs) {
     V outvec{{0., 0., 0.}}; 
 	
-	for (vector v : vs) {
+	for (const V &v : vs) {
 		outvec[0] += v[0];
 		outvec[1] += v[1];
 		outvec[2] += v[2];
@@ -78,6 +80,8 @@ template<typename out, typename in1, typename in2>
     return std::acos(std::cos(phi1)*std::cos(phi0) + std::sin(phi1)*std::sin(phi0));
   }
 
+
+}
 
 #endif
 

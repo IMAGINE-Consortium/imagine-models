@@ -6,43 +6,26 @@
 #include <cassert>
 #include <iostream>
 
-#include "RegularField.h"
+#include "ImagineModels/RegularModel.h"
 
-class SVT22MagneticField : public RegularVectorField
+namespace imagine {
+
+#define SVT22_PARAMETERS(X) \
+    X(B_val, 3.72)          \
+    X(r_cut, 5)             \
+    X(z_cut, 6)
+
+IMAGINE_PARAMETERS(SVT22Parameters, SVT22_PARAMETERS)
+
+class SVT22MagneticField : public RegularVectorModel<SVT22MagneticField, SVT22Parameters>
 {
-protected:
-  vector _at_position(const double &x, const double &y, const double &z, const SVT22MagneticField &p) const;
-
-#if autodiff_FOUND
-  Eigen::MatrixXd _jac(const double &x, const double &y, const double &z, SVT22MagneticField &p) const;
-#endif
-
 public:
-  using RegularVectorField ::RegularVectorField;
+    bool do_halo = true;
 
-  bool do_halo = true;
-
-
-//// SVT22 model
-    number B_val = 3.72;
-    number r_cut = 5;
-    number z_cut = 6;
- 
-#if autodiff_FOUND
-
-  const std::set<std::string> all_diff{"B_val", "r_cut", "z_cut"};
-  std::set<std::string> active_diff{"B_val", "r_cut", "z_cut"};
-
-  Eigen::MatrixXd derivative(const double &x, const double &y, const double &z)
-  {
-    return _jac(x, y, z, *this);
-  }
-#endif
-
-  vector at_position(const double &x, const double &y, const double &z) const
-  {
-    return _at_position(x, y, z, *this);
-  }
+    template <typename T>
+    Vec3<T> field(const double &x, const double &y, const double &z, const SVT22Parameters<T> &p) const;
 };
+
+}
 
 #endif
