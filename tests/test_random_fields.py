@@ -159,3 +159,26 @@ def test_divergence_cleaning_preserves_total_power(model_string):
     rms2 = (model.rms(stat_grid) ** 2).sum()
     ratios = [(model.sample(stat_grid, seed) ** 2).sum() / rms2 for seed in seeds]
     _within(ratios, 1.)
+
+
+class VerticalAnisotropy(ConstantRandomField):
+    def anisotropy_direction(self, x, y, z):
+        return [0., 0., 3.]
+
+
+@pytest.mark.parametrize('rho', [1., 2., 0.5])
+def test_anisotropy(rho):
+    model = VerticalAnisotropy(rms=2.)
+    model.clean_divergence = False
+    model.anisotropy_rho = rho
+    samples = [model.sample(stat_grid, seed) for seed in seeds]
+    _within([(b ** 2).sum(axis=0).mean() for b in samples], 4.)
+    _within([(b[2] ** 2).mean() / (b ** 2).sum(axis=0).mean() for b in samples], rho ** 4 / (rho ** 4 + 2.))
+    model.apply_anisotropy = False
+    _within([(b[2] ** 2).mean() / (b ** 2).sum(axis=0).mean() for b in [model.sample(stat_grid, seed) for seed in seeds]], 1. / 3.)
+
+
+def test_jf12_anisotropy_follows_regular_field():
+    model = img.JF12RandomField()
+    regular = img.JF12RegularField()
+    assert np.allclose(model.anisotropy_direction(-8.5, 1., .2), regular.at_position(-8.5, 1., .2))
