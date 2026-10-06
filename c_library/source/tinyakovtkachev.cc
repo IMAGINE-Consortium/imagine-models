@@ -14,7 +14,7 @@ Vec3<T> TTMagneticField::field(const double &x, const double &y, const double &z
     double phi = atan2(y, x);
 
     Vec3<T> B_vec3{{0, 0, 0}};
-    if (r > b_r_max)
+    if (r > b_r_max || r == 0.)
     {
         return B_vec3;
     }
