@@ -51,10 +51,10 @@ V Cart2Cyl(V& invec, const double cosphi, const double sinphi) {
  }
 
 template<typename V>
- vector addVector(std::initializer_list<vector> vs) {
+ V addVector(std::initializer_list<V> vs) {
     V outvec{{0., 0., 0.}}; 
 	
-	for (vector v : vs) {
+	for (const V &v : vs) {
 		outvec[0] += v[0];
 		outvec[1] += v[1];
 		outvec[2] += v[2];

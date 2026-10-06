@@ -69,7 +69,7 @@ void RandomVectorField::_sample(std::array<FFTWWorkspace*, 3> ws, const RegularG
 
 
       if (apply_anisotropy) {
-        vector b_reg_val = anisotropy_direction(xx, yy, zz);
+        Vec3<double> b_reg_val = anisotropy_direction(xx, yy, zz);
         double b_reg_x = static_cast<double>(b_reg_val[0]); 
         double b_reg_y = static_cast<double>(b_reg_val[1]);
         double b_reg_z = static_cast<double>(b_reg_val[2]);

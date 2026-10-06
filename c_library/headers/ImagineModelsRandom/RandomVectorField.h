@@ -15,8 +15,8 @@ public:
 
   double anisotropy_rho = 1.;
 
-  vector anisotropy_direction(const double &x, const double &y, const double &z) const {
-    vector a{{0., 0., 0.}};
+  Vec3<double> anisotropy_direction(const double &x, const double &y, const double &z) const {
+    Vec3<double> a{{0., 0., 0.}};
     return a;
   }
 

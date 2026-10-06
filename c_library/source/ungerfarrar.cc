@@ -44,41 +44,42 @@ void UFMagneticField::set_parameters(const std::string &model_choice)
   if (model_exists) {
     activeModel = model_choice;
     std::map<std::string, double> model_parameters = all_parameters[model_choice];
-    fDiskB1        =  model_parameters["fDiskB1"];
-    fDiskB2        =  model_parameters["fDiskB2"];
-    fDiskB3        =  model_parameters["fDiskB3"];
-    fDiskH         =  model_parameters["fDiskH"];
-    fDiskPhase1    =  model_parameters["fDiskPhase1"];
-    fDiskPhase2    =  model_parameters["fDiskPhase2"];
-    fDiskPhase3    =  model_parameters["fDiskPhase3"];
-    fDiskPitch     =  model_parameters["fDiskPitch"];
-    fDiskW         =  model_parameters["fDiskW"];
-    fPoloidalB     =  model_parameters["fPoloidalB"];
-    fPoloidalP     =  model_parameters["fPoloidalP"];
-    fPoloidalR     =  model_parameters["fPoloidalR"];
-    fPoloidalW     =  model_parameters["fPoloidalW"];
-    fPoloidalZ     =  model_parameters["fPoloidalZ"];
-    fStriation     =  model_parameters["fStriation"];
-    fToroidalBN    =  model_parameters["fToroidalBN"];
-    fToroidalBS    =  model_parameters["fToroidalBS"];
-    fToroidalR     =  model_parameters["fToroidalR"];
-    fToroidalW     =  model_parameters["fToroidalW"];
-    fToroidalZ     =  model_parameters["fToroidalZ"];
+    parameters.fDiskB1        =  model_parameters["fDiskB1"];
+    parameters.fDiskB2        =  model_parameters["fDiskB2"];
+    parameters.fDiskB3        =  model_parameters["fDiskB3"];
+    parameters.fDiskH         =  model_parameters["fDiskH"];
+    parameters.fDiskPhase1    =  model_parameters["fDiskPhase1"];
+    parameters.fDiskPhase2    =  model_parameters["fDiskPhase2"];
+    parameters.fDiskPhase3    =  model_parameters["fDiskPhase3"];
+    parameters.fDiskPitch     =  model_parameters["fDiskPitch"];
+    parameters.fDiskW         =  model_parameters["fDiskW"];
+    parameters.fPoloidalB     =  model_parameters["fPoloidalB"];
+    parameters.fPoloidalP     =  model_parameters["fPoloidalP"];
+    parameters.fPoloidalR     =  model_parameters["fPoloidalR"];
+    parameters.fPoloidalW     =  model_parameters["fPoloidalW"];
+    parameters.fPoloidalZ     =  model_parameters["fPoloidalZ"];
+    parameters.fStriation     =  model_parameters["fStriation"];
+    parameters.fToroidalBN    =  model_parameters["fToroidalBN"];
+    parameters.fToroidalBS    =  model_parameters["fToroidalBS"];
+    parameters.fToroidalR     =  model_parameters["fToroidalR"];
+    parameters.fToroidalW     =  model_parameters["fToroidalW"];
+    parameters.fToroidalZ     =  model_parameters["fToroidalZ"];
     
-    fSpurCenter    = model_parameters["fSpurCenter"];
-    fSpurLength    = model_parameters["fSpurLength"];
-    fSpurWidth     = model_parameters["fSpurWidth"];
-    fTwistingTime  = model_parameters["fTwistingTime"];
+    parameters.fSpurCenter    = model_parameters["fSpurCenter"];
+    parameters.fSpurLength    = model_parameters["fSpurLength"];
+    parameters.fSpurWidth     = model_parameters["fSpurWidth"];
+    parameters.fTwistingTime  = model_parameters["fTwistingTime"];
   }
   else throw std::runtime_error("unknown field model");
 }
 
 
-vector UFMagneticField::_at_position(const double &x, const double &y, const double &z, const UFMagneticField &p) const
+template <typename T>
+Vec3<T> UFMagneticField::field(const double &x, const double &y, const double &z, const UFParameters<T> &p) const
 {
-  vector B_cart{{0., 0., 0.}};
+  Vec3<T> B_cart{{0., 0., 0.}};
   double squared_length = pow(x, 2) + pow(y, 2) + pow(z, 2);
-  if (squared_length > pow(p.fMaxRadius, 2))
+  if (squared_length > pow(fMaxRadius, 2))
     return B_cart;
   else {
     const auto diskField = GetDiskField(x, y, z, p);
@@ -90,23 +91,23 @@ vector UFMagneticField::_at_position(const double &x, const double &y, const dou
   }
 }
 
-vector UFMagneticField::GetDiskField(const double &x, const double &y, const double &z, const UFMagneticField &p)
-  const
+template <typename T>
+Vec3<T> UFMagneticField::GetDiskField(const double &x, const double &y, const double &z, const UFParameters<T> &p) const
 {
-  if (p.activeModel == "spur")
+  if (activeModel == "spur")
     return GetSpurField(x, y, z, p);
   else
     return GetSpiralField(x, y, z, p);
 }
 
 
-vector UFMagneticField::GetHaloField(const double &x, const double &y, const double &z, const UFMagneticField &p)
-  const
+template <typename T>
+Vec3<T> UFMagneticField::GetHaloField(const double &x, const double &y, const double &z, const UFParameters<T> &p) const
 {
-  if (p.activeModel == "twistX")
+  if (activeModel == "twistX")
     return GetTwistedHaloField(x, y, z, p);
   else {
-    vector B_cart_halo{{0., 0., 0.}};
+    Vec3<T> B_cart_halo{{0., 0., 0.}};
     const auto poloidalHaloField = GetPoloidalHaloField(x, y, z, p);
     const auto toroidalHaloField = GetToroidalHaloField(x, y, z, p);
     for (size_t l = 0; l < 3; l++) {
@@ -118,21 +119,21 @@ vector UFMagneticField::GetHaloField(const double &x, const double &y, const dou
 }
 
 
-vector UFMagneticField::GetTwistedHaloField(const double x, const double y, const double z, const UFMagneticField &p)
-  const
+template <typename T>
+Vec3<T> UFMagneticField::GetTwistedHaloField(const double x, const double y, const double z, const UFParameters<T> &p) const
 {
   const double r = sqrt(x*x + y*y);
   const double cosPhi = r > std::numeric_limits<double>::min() ? x / r : 1;
   const double sinPhi = r > std::numeric_limits<double>::min() ? y / r : 0;
 
-  vector bXCart = GetPoloidalHaloField(x, y, z, p);
-  vector bXCartTmp{{bXCart[0], bXCart[1], bXCart[2]}};
-  vector bXCyl = Cart2Cyl(bXCartTmp, cosPhi, sinPhi);
+  Vec3<T> bXCart = GetPoloidalHaloField(x, y, z, p);
+  Vec3<T> bXCartTmp{{bXCart[0], bXCart[1], bXCart[2]}};
+  Vec3<T> bXCyl = Cart2Cyl(bXCartTmp, cosPhi, sinPhi);
 
-  number bZ = bXCyl[2];
-  number bR = bXCyl[0];
+  T bZ = bXCyl[2];
+  T bR = bXCyl[0];
 
-  number bPhi = 0;
+  T bPhi = 0;
 
   if (p.fTwistingTime != 0 && r != 0) {
     // radial rotation curve parameters (fit to Reid et al 2014)
@@ -157,46 +158,46 @@ vector UFMagneticField::GetTwistedHaloField(const double x, const double y, cons
     bPhi = (bZ * deltaZ + bR * deltaR) * p.fTwistingTime;
 
   }
-  vector bCylX{{bR, bPhi , bZ}};
-  return Cyl2Cart<vector>(bCylX, cosPhi, sinPhi);
+  Vec3<T> bCylX{{bR, bPhi , bZ}};
+  return Cyl2Cart<Vec3<T>>(bCylX, cosPhi, sinPhi);
 }
 
-vector UFMagneticField::GetToroidalHaloField(const double x, const double y, const double z, const UFMagneticField &p)
-  const
+template <typename T>
+Vec3<T> UFMagneticField::GetToroidalHaloField(const double x, const double y, const double z, const UFParameters<T> &p) const
 {
   const double r2 = x*x + y*y;
   const double r = sqrt(r2);
   const double absZ = abs(z);
 
-  number b0 = z >= 0 ? p.fToroidalBN : p.fToroidalBS;
-  number rh = p.fToroidalR;
-  number z0 = p.fToroidalZ;
-  number fwh = p.fToroidalW;
+  T b0 = z >= 0 ? p.fToroidalBN : p.fToroidalBS;
+  T rh = p.fToroidalR;
+  T z0 = p.fToroidalZ;
+  T fwh = p.fToroidalW;
   //number sigmoidR = Sigmoid<number>(r, rh, fwh);
-  number sigmoidR = 1 / (1 + exp(-(r-rh)/fwh));
+  T sigmoidR = 1 / (1 + exp(-(r-rh)/fwh));
   //number sigmoidZ = Sigmoid<number>(absZ, p.fDiskH, p.fDiskW);
-  number sigmoidZ = 1 / (1 + exp(-(absZ-p.fDiskH)/p.fDiskW));
+  T sigmoidZ = 1 / (1 + exp(-(absZ-p.fDiskH)/p.fDiskW));
 
   // Eq. (21)
-  number bPhi = b0 * (1. - sigmoidR) * sigmoidZ * exp(-absZ/z0);
+  T bPhi = b0 * (1. - sigmoidR) * sigmoidZ * exp(-absZ/z0);
 
-  vector bCyl{{0., bPhi, 0.}};
+  Vec3<T> bCyl{{0., bPhi, 0.}};
   const double cosPhi = r > std::numeric_limits<double>::min() ? x / r : 1;
   const double sinPhi = r > std::numeric_limits<double>::min() ? y / r : 0;
-  return Cyl2Cart<vector>(bCyl, cosPhi, sinPhi);
+  return Cyl2Cart<Vec3<T>>(bCyl, cosPhi, sinPhi);
 }
 
-vector UFMagneticField::GetPoloidalHaloField(const double x, const double y, const double z, const UFMagneticField &p)
-  const
+template <typename T>
+Vec3<T> UFMagneticField::GetPoloidalHaloField(const double x, const double y, const double z, const UFParameters<T> &p) const
 {
   const double r2 = x*x + y*y;
   const double r = std::sqrt(r2);
 
-  number c = pow(p.fPoloidalA/p.fPoloidalZ, p.fPoloidalP);
-  number a0p = pow(p.fPoloidalA, p.fPoloidalP);
-  number rp = pow(r, p.fPoloidalP);
-  number abszp = pow(abs(z), p.fPoloidalP);
-  number cabszp = c*abszp;
+  T c = pow(p.fPoloidalA/p.fPoloidalZ, p.fPoloidalP);
+  T a0p = pow(p.fPoloidalA, p.fPoloidalP);
+  T rp = pow(r, p.fPoloidalP);
+  T abszp = pow(abs(z), p.fPoloidalP);
+  T cabszp = c*abszp;
 
   /*
     since $\sqrt{a^2 + b} - a$ is numerical unstable for $b\ll a$,
@@ -204,11 +205,11 @@ vector UFMagneticField::GetPoloidalHaloField(const double x, const double y, con
     + b} + a} = \frac{b}{\sqrt{a^2 + b} + a}$}
   */
 
-  number t0 = a0p + cabszp - rp;
-  number t1 = sqrt(pow(t0, 2) + 4*a0p*rp);
-  number ap = 2*a0p*rp / (t1  + t0);
+  T t0 = a0p + cabszp - rp;
+  T t1 = sqrt(pow(t0, 2) + 4*a0p*rp);
+  T ap = 2*a0p*rp / (t1  + t0);
 
-  number a = 0;
+  T a = 0;
   if (ap < 0) {
     if (r > std::numeric_limits<double>::min()) {
       // this should never happen
@@ -221,38 +222,38 @@ vector UFMagneticField::GetPoloidalHaloField(const double x, const double y, con
     a = pow(ap, 1/p.fPoloidalP);
 
   // Eq.(29) and Eq.(32)
-  number radialDependence =
-    p.activeModel == "base" ?
+  T radialDependence =
+    activeModel == "base" ?
     exp(-a/p.fPoloidalR) :
     //1 - Sigmoid<number>(a, p.fPoloidalR, p.fPoloidalW);
     1 - 1 / (1 + exp(-(a-p.fPoloidalR)/p.fPoloidalW));
 
   // Eq.(28)
-  number Bzz = p.fPoloidalB * radialDependence;
+  T Bzz = p.fPoloidalB * radialDependence;
 
   // (r/a)
-  number rOverA =  1 / pow(2*a0p / (t1  + t0), 1/p.fPoloidalP);
+  T rOverA =  1 / pow(2*a0p / (t1  + t0), 1/p.fPoloidalP);
 
   // Eq.(35) for p=n
   const double signZ = z < 0 ? -1 : 1;
-  number Br =
+  T Br =
     Bzz * c * a / rOverA * signZ * pow(abs(z), p.fPoloidalP - 1) / t1;
 
   // Eq.(36) for p=n
-  number Bz = Bzz * pow(rOverA, p.fPoloidalP-2) * (ap + a0p) / t1;
+  T Bz = Bzz * pow(rOverA, p.fPoloidalP-2) * (ap + a0p) / t1;
 
   if (r < std::numeric_limits<double>::min())
-    return vector{{0., 0., Bz}};
+    return Vec3<T>{{0., 0., Bz}};
   else {
-    vector bCylX{{Br, 0 , Bz}};
+    Vec3<T> bCylX{{Br, 0 , Bz}};
     const double cosPhi =  x / r;
     const double sinPhi =  y / r;
-    return Cyl2Cart<vector>(bCylX, cosPhi, sinPhi);
+    return Cyl2Cart<Vec3<T>>(bCylX, cosPhi, sinPhi);
   }
 }
 
-vector UFMagneticField::GetSpurField(const double x, const double y, const double z, const UFMagneticField &p)
-  const
+template <typename T>
+Vec3<T> UFMagneticField::GetSpurField(const double x, const double y, const double z, const UFParameters<T> &p) const
 {
   // reference approximately at solar radius
   const double rRef = 8.2; //kpc
@@ -264,59 +265,59 @@ vector UFMagneticField::GetSpurField(const double x, const double y, const doubl
   const double r2 = x*x + y*y;
   const double r = sqrt(r2);
   if (r < std::numeric_limits<double>::min())
-    return vector{{0, 0, 0}};
+    return Vec3<T>{{0, 0, 0}};
 
   double phi = atan2(y, x);
   if (phi < 0)
     phi += num::twopi;
 
-  number phiRef = p.fDiskPhase1;
+  T phiRef = p.fDiskPhase1;
   int iBest = -2;
-  number bestDist = -1;
+  T bestDist = -1;
   for (int i = -1; i <= 1; ++i) {
-    number pphi = phi - phiRef + i*num::twopi;
-    number rr = rRef*exp(pphi * fTanPitch);
+    T pphi = phi - phiRef + i*num::twopi;
+    T rr = rRef*exp(pphi * fTanPitch);
     if (bestDist < 0 || abs(r-rr) < bestDist) {
       bestDist =  abs(r-rr);
       iBest = i;
     }
   }
   if (iBest == 0) {
-    number phi0 = phi - log(r/rRef) / fTanPitch;
+    T phi0 = phi - log(r/rRef) / fTanPitch;
 
     // Eq. (16)
     //number deltaPhi0 = DeltaPhi<number, number, number>(phiRef, phi0);
-    number deltaPhi0 = acos(cos(phi0)*cos(phiRef) + sin(phi0)*sin(phiRef));
-    number delta = deltaPhi0 / p.fSpurWidth;
-    number B = p.fDiskB1 * exp(-0.5*pow(delta, 2));
+    T deltaPhi0 = acos(cos(phi0)*cos(phiRef) + sin(phi0)*sin(phiRef));
+    T delta = deltaPhi0 / p.fSpurWidth;
+    T B = p.fDiskB1 * exp(-0.5*pow(delta, 2));
 
     // Eq. (18)
     const double wS = 5*num::rad;
-    number phiC = p.fSpurCenter;
+    T phiC = p.fSpurCenter;
     //number deltaPhiC = DeltaPhi<number, number, number>(phiC, phi);
-    number deltaPhiC = acos(cos(phi)*cos(phiC) + sin(phi)*sin(phiC));
-    number lC = p.fSpurLength;
+    T deltaPhiC = acos(cos(phi)*cos(phiC) + sin(phi)*sin(phiC));
+    T lC = p.fSpurLength;
     //number gS = 1 - Sigmoid<number>(abs(deltaPhiC), lC, wS);
-    number gS = 1 - 1 / (1 + exp(-(abs(deltaPhiC)-lC)/wS));
+    T gS = 1 - 1 / (1 + exp(-(abs(deltaPhiC)-lC)/wS));
 
     // Eq. (13)
     //number hd = 1 - Sigmoid<number>(abs(z), p.fDiskH, p.fDiskW);
-    number hd = 1 - 1 / (1 + exp(-(abs(z)-p.fDiskH)/p.fDiskW));
+    T hd = 1 - 1 / (1 + exp(-(abs(z)-p.fDiskH)/p.fDiskW));
 
     // Eq. (17)
-    number bS = rRef/r * B * hd * gS;
-    vector bCyl{{bS * fSinPitch, bS * fCosPitch, 0.}};
+    T bS = rRef/r * B * hd * gS;
+    Vec3<T> bCyl{{bS * fSinPitch, bS * fCosPitch, 0.}};
     const double cosPhi = x / r;
     const double sinPhi = y / r;
-    return Cyl2Cart<vector>(bCyl, cosPhi, sinPhi);
+    return Cyl2Cart<Vec3<T>>(bCyl, cosPhi, sinPhi);
   }
   else
-    return vector{{0, 0, 0}};
+    return Vec3<T>{{0, 0, 0}};
 
 }
 
-vector UFMagneticField::GetSpiralField(const double x, const double y, const double z, const UFMagneticField &p)
-  const
+template <typename T>
+Vec3<T> UFMagneticField::GetSpiralField(const double x, const double y, const double z, const UFParameters<T> &p) const
 {
   // reference radius
   const double rRef = 5.; // kpc
@@ -334,14 +335,14 @@ vector UFMagneticField::GetSpiralField(const double x, const double y, const dou
   // cylindrical coordinates
   const double r2 = x*x + y*y;
   if (r2 == 0)
-    return vector{{0, 0, 0}};
+    return Vec3<T>{{0, 0, 0}};
 
   const double r = std::sqrt(r2);
   const double phi = std::atan2(y, x);
 
   // Eq.(13)
   //number hdz = 1 - Sigmoid(abs(z), fDiskH, fDiskW);
-  number hdz = 1 - 1 / (1 + exp(-(abs(z)-p.fDiskH)/p.fDiskW));
+  T hdz = 1 - 1 / (1 + exp(-(abs(z)-p.fDiskH)/p.fDiskW));
 
   // Eq.(14) times rRef divided by r
   //const double rFacI = Sigmoid(r, rInner, wInner);
@@ -354,38 +355,26 @@ vector UFMagneticField::GetSpiralField(const double x, const double y, const dou
   const double gdrTimesRrefByR = rRef * rFac * rFacO * rFacI;
 
   // Eq. (12)
-  number phi0 = phi - log(r/rRef) / fTanPitch;
+  T phi0 = phi - log(r/rRef) / fTanPitch;
 
   // Eq. (10)
-  number b =
-    fDiskB1 * cos(1 * (phi0 - p.fDiskPhase1)) +
-    fDiskB2 * cos(2 * (phi0 - p.fDiskPhase2)) +
-    fDiskB3 * cos(3 * (phi0 - p.fDiskPhase3));
+  T b =
+    p.fDiskB1 * cos(1 * (phi0 - p.fDiskPhase1)) +
+    p.fDiskB2 * cos(2 * (phi0 - p.fDiskPhase2)) +
+    p.fDiskB3 * cos(3 * (phi0 - p.fDiskPhase3));
 
   // Eq. (11)
-  number fac = hdz * gdrTimesRrefByR;
-  vector bCyl{{ b * fac * fSinPitch,
+  T fac = hdz * gdrTimesRrefByR;
+  Vec3<T> bCyl{{ b * fac * fSinPitch,
       b * fac * fCosPitch,
       0.}};
 
   const double cosPhi = x / r;
   const double sinPhi = y / r;
-  return Cyl2Cart<vector>(bCyl, cosPhi, sinPhi);
+  return Cyl2Cart<Vec3<T>>(bCyl, cosPhi, sinPhi);
 }
 
-#if IMAGINE_HAS_AUTODIFF
 
-Eigen::MatrixXd UFMagneticField::_jac(const double &x, const double &y, const double &z, UFMagneticField &p) const
-{
-  vector out;
-  Eigen::MatrixXd _deriv = ad::jacobian([&](double _x, double _y, double _z, UFMagneticField &_p)
-                                        { return _p._at_position(_x, _y, _z, _p); },
-                                        ad::wrt(p.fPoloidalA, p.fDiskB1, p.fDiskB2, p.fDiskB3, p.fDiskH, p.fDiskPhase1, p.fDiskPhase2, p.fDiskPhase3, p.fDiskPitch, p.fDiskW, p.fPoloidalB,p.fPoloidalP, p.fPoloidalR, p.fPoloidalW, p.fPoloidalZ, p.fStriation, p.fToroidalBN, p.fToroidalBS, p.fToroidalR, p.fToroidalW, p.fToroidalZ, p.fSpurCenter, p.fSpurLength, p.fSpurWidth, p.fTwistingTime
-                                        
-                                        ), ad::at(x, y, z, p), out);
-  return _filter_diff(_deriv);
-}
-
-#endif
+IMAGINE_INSTANTIATE_VECTOR_MODEL(UFMagneticField)
 
 }

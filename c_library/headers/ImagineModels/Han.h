@@ -30,7 +30,7 @@ class HanMagneticField : public RegularVectorModel<HanMagneticField, HanParamete
         std::array<double, 7> R_s{3.0, 4.1, 4.9, 6.1, 7.5, 8.5, 10.5};
 
         template <typename T>
-        Vec3<T> evaluate(const double &x, const double &y, const double &z, const HanParameters<T> &p) const;
+        Vec3<T> field(const double &x, const double &y, const double &z, const HanParameters<T> &p) const;
  };
 
 }

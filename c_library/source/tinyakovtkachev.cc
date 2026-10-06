@@ -6,13 +6,14 @@
 
 namespace imagine {
 
-vector TTMagneticField::_at_position(const double &x, const double &y, const double &z, const TTMagneticField &p) const
+template <typename T>
+Vec3<T> TTMagneticField::field(const double &x, const double &y, const double &z, const TTParameters<T> &p) const
 {
 
     double r = sqrt(x * x + y * y);
     double phi = atan2(y, x);
 
-    vector B_vec3{{0, 0, 0}};
+    Vec3<T> B_vec3{{0, 0, 0}};
     if (r > b_r_max)
     {
         return B_vec3;
@@ -50,11 +51,11 @@ vector TTMagneticField::_at_position(const double &x, const double &y, const dou
     //  if(r<1.e-26){B_r_phi = b_r*std::cos(phi+phase);} <-- hammurabi comment
 
     // B-field in cylindrical coordinates: <-- hammurabi comment
-    vector B_cyl{{B_r_phi * sin(pitch) * f_z,
+    Vec3<T> B_cyl{{B_r_phi * sin(pitch) * f_z,
                   B_r_phi * cos(pitch) * f_z,
                   0.}};
 
-    B_vec3 = Cyl2Cart<vector>(phi, B_cyl);
+    B_vec3 = Cyl2Cart<Vec3<T>>(phi, B_cyl);
 
     std::cout << "Bx: " << B_vec3[0] << std::endl;
     std::cout << "By: " << B_vec3[1] << std::endl;
@@ -63,17 +64,7 @@ vector TTMagneticField::_at_position(const double &x, const double &y, const dou
     return B_vec3;
 }
 
-#if IMAGINE_HAS_AUTODIFF
 
-Eigen::MatrixXd TTMagneticField::_jac(const double &x, const double &y, const double &z, TTMagneticField &p) const
-{
-    vector out;
-    Eigen::MatrixXd _deriv = ad::jacobian([&](double _x, double _y, double _z, TTMagneticField &_p)
-                                          { return _p._at_position(_x, _y, _z, _p); },
-                                          ad::wrt(p.b_Rsun, p.b_b0, p.b_d, p.b_z0, p.b_p), ad::at(x, y, z, p), out);
-    return _filter_diff(_deriv);
-}
-
-#endif
+IMAGINE_INSTANTIATE_VECTOR_MODEL(TTMagneticField)
 
 }

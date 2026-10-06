@@ -56,7 +56,7 @@ class JF12RandomField : public RandomVectorField {
 
     double spatial_profile(const double &x, const double &y, const double &z) const override;
 
-    vector anisotropy_direction(const double &x, const double &y, const double &z) const; 
+    Vec3<double> anisotropy_direction(const double &x, const double &y, const double &z) const; 
 };
 
 }

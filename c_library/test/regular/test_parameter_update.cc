@@ -13,12 +13,12 @@ void test_parameter_update() {
     check(umf.parameters.by == 0.);
     check(umf.parameters.bz == 0.);
 
-    vector zeros{{0., 0., 0.}};
+    Vec3<double> zeros{{0., 0., 0.}};
     check(umf.at_position(2.4, 2.1, -.2) == zeros);
 
     umf.parameters.bx = -3.2;
     check(umf.get_parameter("bx") == -3.2);
-    vector updated{{-3.2, 0., 0.}};
+    Vec3<double> updated{{-3.2, 0., 0.}};
     check(umf.at_position(2.4, 2.1, -.2) == updated);
 
     umf.set_parameter_map({{"by", 1.5}, {"bz", 0.25}});

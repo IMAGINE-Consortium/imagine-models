@@ -12,7 +12,7 @@ DATA_DIR = Path(__file__).resolve().parent / "reference_data"
 RTOL_REGULAR, ATOL_REGULAR = 1e-12, 1e-14
 RTOL_RANDOM, ATOL_RANDOM = 1e-9, 1e-12
 
-KNOWN_BAD_JACOBIAN = {"HanMagneticField": "B3", "StanevBSSMagneticField": "B4", "SunMagneticField": "B5"}
+KNOWN_BAD_JACOBIAN = {}
 NO_GRID_CASES = {}
 BROKEN_DERIVATIVE_CASES = {"TFMagneticField__Dd1_C0": "B15", "TFMagneticField__Dd1_C1": "B15",
                            "UFMagneticField__expX": "B16", "SVT22__default": "B17"}
@@ -106,11 +106,8 @@ def has_jacobian(model):
 
 
 def jacobian(model, position, columns):
-    jac = np.atleast_2d(np.asarray(model.derivative(*position), dtype=float))
-    if hasattr(model, "parameter_names"):
-        names = list(model.parameter_names)
-        jac = jac[:, [names.index(c) for c in columns]]
-    return jac
+    model.active_parameters = list(columns)
+    return np.atleast_2d(np.asarray(model.derivative(*position), dtype=float))
 
 
 def sample(model, grid, seed):

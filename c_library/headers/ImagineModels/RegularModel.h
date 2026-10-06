@@ -13,12 +13,6 @@
 
 namespace imagine {
 
-template <typename T>
-using Vec3 = std::array<T, 3>;
-
-template <typename T>
-using Scalar = T;
-
 template <typename Derived, template <typename> class Params>
 class RegularModel {
 public:
@@ -89,14 +83,13 @@ private:
 template <typename Derived, template <typename> class Params>
 class RegularVectorModel : public RegularVectorField, public RegularModel<Derived, Params> {
 public:
-  vector at_position(const double &x, const double &y, const double &z) const override {
-    std::array<double, 3> b = this->derived().template evaluate<double>(x, y, z, this->parameters);
-    return vector{{b[0], b[1], b[2]}};
+  Vec3<double> at_position(const double &x, const double &y, const double &z) const override {
+    return this->derived().template field<double>(x, y, z, this->parameters);
   }
 
 #if IMAGINE_HAS_AUTODIFF
   Eigen::MatrixXd derivative(const double &x, const double &y, const double &z) const {
-    return this->template jacobian<3>([&](const Params<ad::real> &p) { return this->derived().template evaluate<ad::real>(x, y, z, p); });
+    return this->template jacobian<3>([&](const Params<ad::real> &p) { return this->derived().template field<ad::real>(x, y, z, p); });
   }
 #endif
 };
@@ -104,13 +97,13 @@ public:
 template <typename Derived, template <typename> class Params>
 class RegularScalarModel : public RegularScalarField, public RegularModel<Derived, Params> {
 public:
-  number at_position(const double &x, const double &y, const double &z) const override {
-    return this->derived().template evaluate<double>(x, y, z, this->parameters);
+  double at_position(const double &x, const double &y, const double &z) const override {
+    return this->derived().template field<double>(x, y, z, this->parameters);
   }
 
 #if IMAGINE_HAS_AUTODIFF
   Eigen::MatrixXd derivative(const double &x, const double &y, const double &z) const {
-    return this->template jacobian<1>([&](const Params<ad::real> &p) { return this->derived().template evaluate<ad::real>(x, y, z, p); });
+    return this->template jacobian<1>([&](const Params<ad::real> &p) { return this->derived().template field<ad::real>(x, y, z, p); });
   }
 #endif
 };
@@ -119,13 +112,13 @@ public:
 
 #if IMAGINE_HAS_AUTODIFF
 #define IMAGINE_INSTANTIATE_AUTODIFF(Model, Result) \
-  template Result<imagine::ad::real> Model::evaluate<imagine::ad::real>(const double &, const double &, const double &, const Model::parameters_t<imagine::ad::real> &) const;
+  template Result<imagine::ad::real> Model::field<imagine::ad::real>(const double &, const double &, const double &, const Model::parameters_t<imagine::ad::real> &) const;
 #else
 #define IMAGINE_INSTANTIATE_AUTODIFF(Model, Result)
 #endif
 
 #define IMAGINE_INSTANTIATE_MODEL(Model, Result) \
-  template Result<double> Model::evaluate<double>(const double &, const double &, const double &, const Model::parameters_t<double> &) const; \
+  template Result<double> Model::field<double>(const double &, const double &, const double &, const Model::parameters_t<double> &) const; \
   IMAGINE_INSTANTIATE_AUTODIFF(Model, Result)
 
 #define IMAGINE_INSTANTIATE_VECTOR_MODEL(Model) IMAGINE_INSTANTIATE_MODEL(Model, imagine::Vec3)

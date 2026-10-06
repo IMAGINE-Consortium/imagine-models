@@ -6,10 +6,11 @@
 
 namespace imagine {
 
-vector HMRMagneticField::_at_position(const double &x, const double &y, const double &z, const HMRMagneticField &p) const
+template <typename T>
+Vec3<T> HMRMagneticField::field(const double &x, const double &y, const double &z, const HMRParameters<T> &p) const
 {
 
-  vector B_vec3{{0, 0, 0}};
+  Vec3<T> B_vec3{{0, 0, 0}};
 
   double r = std::sqrt(x * x + y * y);
   const double phi = std::atan2(y, x);
@@ -27,26 +28,16 @@ vector HMRMagneticField::_at_position(const double &x, const double &y, const do
   auto B_r_phi = b_r * cos(-phi - ((1. / tan(p.b_p * (M_PI / 180.))) * log(r / p.b_epsilon0)));
 
   // B-field in cylindrical coordinates:
-  vector B_cyl{{B_r_phi * sin(p.b_p * (M_PI / 180.)) * f_z,
+  Vec3<T> B_cyl{{B_r_phi * sin(p.b_p * (M_PI / 180.)) * f_z,
                 B_r_phi * cos(p.b_p * (M_PI / 180.)) * f_z,
                 0.}};
 
-  B_vec3 = Cyl2Cart<vector>(phi, B_cyl);
+  B_vec3 = Cyl2Cart<Vec3<T>>(phi, B_cyl);
 
   return B_vec3;
 }
 
-#if IMAGINE_HAS_AUTODIFF
 
-Eigen::MatrixXd HMRMagneticField::_jac(const double &x, const double &y, const double &z, HMRMagneticField &p) const
-{
-  vector out;
-  Eigen::MatrixXd _deriv = ad::jacobian([&](double _x, double _y, double _z, HMRMagneticField &_p)
-                                        { return _p._at_position(_x, _y, _z, _p); },
-                                        ad::wrt(p.b_Rsun, p.b_z1, p.b_z2, p.b_r1, p.b_p, p.b_epsilon0), ad::at(x, y, z, p), out);
-  return _filter_diff(_deriv);
-}
-
-#endif
+IMAGINE_INSTANTIATE_VECTOR_MODEL(HMRMagneticField)
 
 }

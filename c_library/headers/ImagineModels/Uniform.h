@@ -16,7 +16,7 @@ class UniformMagneticField : public RegularVectorModel<UniformMagneticField, Uni
 {
 public:
     template <typename T>
-    Vec3<T> evaluate(const double &x, const double &y, const double &z, const UniformMagneticParameters<T> &p) const
+    Vec3<T> field(const double &x, const double &y, const double &z, const UniformMagneticParameters<T> &p) const
     {
         return {p.bx, p.by, p.bz};
     }
@@ -31,7 +31,7 @@ class UniformDensityField : public RegularScalarModel<UniformDensityField, Unifo
 {
 public:
     template <typename T>
-    T evaluate(const double &x, const double &y, const double &z, const UniformDensityParameters<T> &p) const
+    T field(const double &x, const double &y, const double &z, const UniformDensityParameters<T> &p) const
     {
         return p.n0;
     }

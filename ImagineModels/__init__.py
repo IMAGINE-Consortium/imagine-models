@@ -8,7 +8,7 @@ except ImportError:
     
 try:  
     _jf12 = JF12RegularField()
-    _ = _jf12.active_diff
+    _ = _jf12.active_parameters
     __has_autodiff__ = True
 except AttributeError:
     __has_autodiff__ = False

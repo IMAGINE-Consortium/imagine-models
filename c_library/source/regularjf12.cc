@@ -6,7 +6,8 @@
 
 namespace imagine {
 
-vector JF12MagneticField::_at_position(const double &x, const double &y, const double &z, const JF12MagneticField &p) const
+template <typename T>
+Vec3<T> JF12MagneticField::field(const double &x, const double &y, const double &z, const JF12Parameters<T> &p) const
 {
   const double r{sqrt(x * x + y * y)};
   const double rho{
@@ -16,7 +17,7 @@ vector JF12MagneticField::_at_position(const double &x, const double &y, const d
   // define boundaries for where magnetic field is zero (outside of galaxy)
   if (r > Rmax || rho < rho_GC)
   {
-    return vector{{0., 0., 0.}};
+    return Vec3<T>{{0., 0., 0.}};
   }
 
   //------------------------------------------------------------------------------
@@ -29,7 +30,7 @@ vector JF12MagneticField::_at_position(const double &x, const double &y, const d
   const auto zprofile{1. / (1 + exp(-2. / p.w_disk * (std::abs(z) - p.h_disk)))};
 
   // printf("%g, %g \n", z, zprofile);
-  number B_cyl[3] = {0, 0, 0}; // the disk field in cylindrical coordinates
+  T B_cyl[3] = {0, 0, 0}; // the disk field in cylindrical coordinates
 
   if ((r > rcent)) // disk field zero elsewhere
   {
@@ -41,9 +42,9 @@ vector JF12MagneticField::_at_position(const double &x, const double &y, const d
     {
       // use flux conservation to calculate the field strength in the 8th spiral
       // arm
-      number bv_B[8] = {p.b_arm_1, p.b_arm_2, p.b_arm_3, p.b_arm_4,
+      T bv_B[8] = {p.b_arm_1, p.b_arm_2, p.b_arm_3, p.b_arm_4,
                         p.b_arm_5, p.b_arm_6, p.b_arm_7, 0.};
-      number b8 = 0.;
+      T b8 = 0.;
 
       for (int i = 0; i < 7; i++)
       {
@@ -53,7 +54,7 @@ vector JF12MagneticField::_at_position(const double &x, const double &y, const d
 
       // iteratively figure out which spiral arm the current coordinates (r.phi)
       // correspond to
-      number b_disk = 0.;
+      T b_disk = 0.;
       double r_negx =
           r * exp(-1 / tan(M_PI / 180. * (90 - inc)) * (phi - M_PI));
 
@@ -82,8 +83,8 @@ vector JF12MagneticField::_at_position(const double &x, const double &y, const d
   ////TOROIDAL HALO COMPONENT
 
   if (do_halo) {
-    number b1, rh;
-    number B_h = 0.;
+    T b1, rh;
+    T B_h = 0.;
 
     if (z >= 0)
     { // North
@@ -98,7 +99,7 @@ vector JF12MagneticField::_at_position(const double &x, const double &y, const d
 
     B_h = b1 * (1. - 1. / (1. + exp(-2. / p.wh * (r - rh)))) *
           exp(-(std::abs(z)) / (p.z0)); // vertical exponential fall-off
-    const number B_cyl_h[3] = {0., B_h * zprofile, 0.};
+    const T B_cyl_h[3] = {0., B_h * zprofile, 0.};
     // add fields together
     B_cyl[0] += B_cyl_h[0];
     B_cyl[1] += B_cyl_h[1];
@@ -109,9 +110,9 @@ vector JF12MagneticField::_at_position(const double &x, const double &y, const d
   // X- FIELD
 
   if (do_X) {
-    number Xtheta = 0.;
-    number rp_X = 0.; // the mid-plane radius for the field line that pass through r
-    number B_X = 0.;
+    T Xtheta = 0.;
+    T rp_X = 0.; // the mid-plane radius for the field line that pass through r
+    T B_X = 0.;
     double r_sign = 1.; // +1 for north, -1 for south
     if (z < 0)
     {
@@ -120,7 +121,7 @@ vector JF12MagneticField::_at_position(const double &x, const double &y, const d
 
     // dividing line between region with constant elevation angle, and the
     // interior:
-    number rc_X = p.rpc_X + std::abs(z) / tan(p.Xtheta_const * M_PI /180.);
+    T rc_X = p.rpc_X + std::abs(z) / tan(p.Xtheta_const * M_PI /180.);
     if (r < rc_X)
     { // interior region, with varying elevation angle
       rp_X = r * p.rpc_X / rc_X;
@@ -140,7 +141,7 @@ vector JF12MagneticField::_at_position(const double &x, const double &y, const d
     }
 
     // X-field in cylindrical coordinates
-    number B_cyl_X[3] = {B_X * cos(Xtheta) * r_sign, 0., B_X * sin(Xtheta)};
+    T B_cyl_X[3] = {B_X * cos(Xtheta) * r_sign, 0., B_X * sin(Xtheta)};
     // add fields together
     B_cyl[0] += B_cyl_X[0];
     B_cyl[1] += B_cyl_X[1];
@@ -151,28 +152,14 @@ vector JF12MagneticField::_at_position(const double &x, const double &y, const d
 
 
   // convert field to cartesian coordinates
-  vector B_cart{{0.0, 0.0, 0.0}};
+  Vec3<T> B_cart{{0.0, 0.0, 0.0}};
   B_cart[0] = B_cyl[0] * cos(phi) - B_cyl[1] * sin(phi);
   B_cart[1] = B_cyl[0] * sin(phi) + B_cyl[1] * cos(phi);
   B_cart[2] = B_cyl[2];
   return B_cart;
 }
 
-#if IMAGINE_HAS_AUTODIFF
 
-Eigen::MatrixXd JF12MagneticField::_jac(const double &x, const double &y, const double &z, JF12MagneticField &p) const
-{
-  vector out;
-  Eigen::MatrixXd _deriv = ad::jacobian([&](double _x, double _y, double _z, JF12MagneticField &_p)
-                                        { return _p._at_position(_x, _y, _z, _p); },
-                                        ad::wrt(p.b_arm_1, p.b_arm_2, p.b_arm_3, p.b_arm_4, p.b_arm_5, p.b_arm_6, p.b_arm_7,
-                                                p.b_ring, p.h_disk, p.w_disk,
-                                                p.Bn, p.Bs, p.rn, p.rs, p.wh, p.z0,
-                                                p.B0_X, p.Xtheta_const, p.rpc_X, p.r0_X),
-                                        ad::at(x, y, z, p), out);
-  return _filter_diff(_deriv);
-}
-
-#endif
+IMAGINE_INSTANTIATE_VECTOR_MODEL(JF12MagneticField)
 
 }

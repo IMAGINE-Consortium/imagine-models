@@ -6,7 +6,8 @@
 
 namespace imagine {
 
-vector SVT22MagneticField::_at_position(const double &x, const double &y, const double &z, const SVT22MagneticField &p) const
+template <typename T>
+Vec3<T> SVT22MagneticField::field(const double &x, const double &y, const double &z, const SVT22Parameters<T> &p) const
 {
   const double r{sqrt(x * x + y * y)};
   const double rho{
@@ -14,15 +15,15 @@ vector SVT22MagneticField::_at_position(const double &x, const double &y, const 
   const double phi{atan2(y, x)};
 
     
-  number B_cyl[3] = {0, 0, 0}; // the disk field in cylindrical coordinates
+  T B_cyl[3] = {0, 0, 0}; // the disk field in cylindrical coordinates
 
   //-------------------------------------------------------------------------
   ////TOROIDAL HALO COMPONENT
 
   if (do_halo) {
-    number b1, rh;
-    number B_h = 0.;
-    number z_min = 0.1;
+    T b1, rh;
+    T B_h = 0.;
+    T z_min = 0.1;
     if (z >= 0)
     { // North
       b1 = p.B_val;
@@ -33,7 +34,7 @@ vector SVT22MagneticField::_at_position(const double &x, const double &y, const 
     }
 
     B_h = b1 * (exp(-z_min/std::abs(z)) * exp(-std::abs(r) / p.r_cut) * exp(-(std::abs(z)) / (p.z_cut))); // vertical exponential fall-off
-    const number B_cyl_h[3] = {0., B_h * 1, 0.};
+    const T B_cyl_h[3] = {0., B_h * 1, 0.};
     // add fields together
     B_cyl[0] += B_cyl_h[0];
     B_cyl[1] += B_cyl_h[1];
@@ -42,25 +43,14 @@ vector SVT22MagneticField::_at_position(const double &x, const double &y, const 
 
 
   // convert field to cartesian coordinates
-  vector B_cart{{0.0, 0.0, 0.0}};
+  Vec3<T> B_cart{{0.0, 0.0, 0.0}};
   B_cart[0] = B_cyl[0] * cos(phi) - B_cyl[1] * sin(phi);
   B_cart[1] = B_cyl[0] * sin(phi) + B_cyl[1] * cos(phi);
   B_cart[2] = B_cyl[2];
   return B_cart;
 }
 
-#if IMAGINE_HAS_AUTODIFF
 
-Eigen::MatrixXd SVT22MagneticField::_jac(const double &x, const double &y, const double &z, SVT22MagneticField &p) const
-{
-  vector out;
-  Eigen::MatrixXd _deriv = ad::jacobian([&](double _x, double _y, double _z, SVT22MagneticField &_p)
-                                        { return _p._at_position(_x, _y, _z, _p); },
-                                        ad::wrt(p.B_val, p.r_cut, p.z_cut),
-                                        ad::at(x, y, z, p), out);
-  return _filter_diff(_deriv);
-}
-
-#endif
+IMAGINE_INSTANTIATE_VECTOR_MODEL(SVT22MagneticField)
 
 }

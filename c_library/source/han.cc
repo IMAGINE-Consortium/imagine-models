@@ -6,7 +6,7 @@ namespace imagine {
 
 // J. L. Han et al 2018 ApJS 234 11
 template <typename T>
-Vec3<T> HanMagneticField::evaluate(const double &x, const double &y, const double &z, const HanParameters<T> &p) const
+Vec3<T> HanMagneticField::field(const double &x, const double &y, const double &z, const HanParameters<T> &p) const
 {
   Vec3<T> B_cyl{{0., 0., 0.}};
   const double r = sqrt(x * x + y * y);

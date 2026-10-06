@@ -32,7 +32,7 @@ void test_grid(const std::map<std::string, std::shared_ptr<RegularVectorField>> 
         for (double x : irregular.x)
             for (double y : irregular.y)
                 for (double z : irregular.z) {
-                    vector v = model->at_position(x, y, z);
+                    Vec3<double> v = model->at_position(x, y, z);
                     for (int c = 0; c < 3; ++c)
                         check(eval_irregular(c, idx) == static_cast<double>(v[c]));
                     ++idx;

@@ -5,43 +5,27 @@
 #include <functional>
 #include <cmath>
 
-#include "ImagineModels/RegularField.h"
+#include "ImagineModels/RegularModel.h"
 
 namespace imagine {
 
 //simple archimdeean sprial, implementation based on CRPropa
 
 
-class ArchimedeanMagneticField : public RegularVectorField  {
-    protected:
+#define ARCHIMEDES_PARAMETERS(X) \
+    X(R_0, 3)                    \
+    X(Omega, 1.)                 \
+    X(v_w, 0.4)                  \
+    X(B_0, 1.)
 
-    vector _at_position(const double &x, const double &y, const double &z, const ArchimedeanMagneticField &p) const;
+IMAGINE_PARAMETERS(ArchimedeanParameters, ARCHIMEDES_PARAMETERS)
 
-#if IMAGINE_HAS_AUTODIFF
-    Eigen::MatrixXd _jac(const double &x, const double &y, const double &z, ArchimedeanMagneticField &p) const;
-#endif
-    public:
-        using RegularVectorField :: RegularVectorField;
-
-        number R_0 = 3; 
-        number Omega = 1.;
-        number v_w = 0.4;
-        number B_0 = 1.;
-
-
-#if IMAGINE_HAS_AUTODIFF
-    const std::set<std::string> all_diff{"R_0", "Omega", "v_w", "B_0"};
-    std::set<std::string> active_diff{"R_0", "Omega", "v_w", "B_0"};
-
-    Eigen::MatrixXd derivative(const double &x, const double &y, const double &z)
-    {
-        return _jac(x, y, z, *this);
-    }
-#endif
-        vector at_position(const double &x, const double &y, const double &z) const {
-            return _at_position(x, y, z, *this);
-        }
- };
+class ArchimedeanMagneticField : public RegularVectorModel<ArchimedeanMagneticField, ArchimedeanParameters>
+{
+public:
+    template <typename T>
+    Vec3<T> field(const double &x, const double &y, const double &z, const ArchimedeanParameters<T> &p) const;
+};
 
 }
 

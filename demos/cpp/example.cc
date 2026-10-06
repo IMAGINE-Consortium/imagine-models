@@ -12,7 +12,7 @@ void print_positions(const std::map<std::string, std::shared_ptr<RegularVectorFi
   for (const auto &[name, model] : models) {
     std::cout << "The model " << name << " is evaluated:\n";
     for (const auto &[label, p] : positions) {
-      vector b = model->at_position(p[0], p[1], p[2]);
+      Vec3<double> b = model->at_position(p[0], p[1], p[2]);
       std::cout << "  " << label << " (" << p[0] << ", " << p[1] << ", " << p[2] << ") kpc: "
                 << b[0] << " " << b[1] << " " << b[2] << " muG\n";
     }

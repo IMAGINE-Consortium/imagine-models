@@ -6,24 +6,25 @@
 
 namespace imagine {
 
-vector JaffeMagneticField::_at_position(const double &x, const double &y, const double &z, const JaffeMagneticField &p) const
+template <typename T>
+Vec3<T> JaffeMagneticField::field(const double &x, const double &y, const double &z, const JaffeParameters<T> &p) const
 {
   if (x == 0. && y == 0. && z == 0.)
   {
-    return vector{{0., 0., 0.}};
+    return Vec3<T>{{0., 0., 0.}};
   }
-  number inner_b{0};
-  if (p.ring)
+  T inner_b{0};
+  if (ring)
   {
     inner_b = p.ring_amp;
   }
-  else if (p.bar)
+  else if (bar)
   {
     inner_b = p.bar_amp;
   }
 
-  vector bhat = orientation(x, y, z, p);
-  vector btot{{0., 0., 0.}};
+  Vec3<T> bhat = orientation(x, y, z, p);
+  Vec3<T> btot{{0., 0., 0.}};
 
   auto scaling = radial_scaling(x, y, p) *
                  (p.disk_amp * disk_scaling(z, p) +
@@ -38,7 +39,7 @@ vector JaffeMagneticField::_at_position(const double &x, const double &y, const 
 
 
   // compress factor for each arm or for ring/bar
-  std::vector<number> arm = arm_compress(x, y, z, p);
+  std::vector<T> arm = arm_compress(x, y, z, p);
   // only inner region
   if (arm.size() == 1)
   {
@@ -52,7 +53,7 @@ vector JaffeMagneticField::_at_position(const double &x, const double &y, const 
   // spiral arm region
   else
   {
-    std::array<number, 4> arm_amp = {p.arm_amp1, p.arm_amp2, p.arm_amp3, p.arm_amp4};
+    std::array<T, 4> arm_amp = {p.arm_amp1, p.arm_amp2, p.arm_amp3, p.arm_amp4};
     for (decltype(arm.size()) i = 0; i < arm.size(); ++i)
     {
       for (int j = 0; j < bhat.size(); ++j)
@@ -66,11 +67,12 @@ vector JaffeMagneticField::_at_position(const double &x, const double &y, const 
 
 
 
-vector JaffeMagneticField::orientation(const double &x, const double &y, const double &z, const JaffeMagneticField &p) const
+template <typename T>
+Vec3<T> JaffeMagneticField::orientation(const double &x, const double &y, const double &z, const JaffeParameters<T> &p) const
 {
   if (x == 0. && y == 0.)
   {
-    return vector{{0., 0., 0.}};
+    return Vec3<T>{{0., 0., 0.}};
   }
 
   const double r{
@@ -81,14 +83,14 @@ vector JaffeMagneticField::orientation(const double &x, const double &y, const d
   const auto cos_p = cos(arm_pitch);
   const auto sin_p = sin(arm_pitch); // pitch angle
 
-  vector tmp{{0., 0., 0.}};
-  number quadruple{1.};
+  Vec3<T> tmp{{0., 0., 0.}};
+  T quadruple{1.};
   if (r < 0.5) // forbidden region
     return tmp;
   if (z > p.disk_z0)
-    quadruple = (1 - 2 * p.quadruple);
+    quadruple = (1 - 2 * this->quadruple);
   // molecular ring
-  if (p.ring)
+  if (ring)
   {
     // inside spiral arm
     if (r > r_lim)
@@ -99,12 +101,12 @@ vector JaffeMagneticField::orientation(const double &x, const double &y, const d
     // inside molecular ring
     else
     {
-      tmp[0] = (1 - 2 * p.bss) * y / r; // sin(phi)
-      tmp[1] = (2 * p.bss - 1) * x / r; //-cos(phi)
+      tmp[0] = (1 - 2 * bss) * y / r; // sin(phi)
+      tmp[1] = (2 * bss - 1) * x / r; //-cos(phi)
     }
   }
   // elliptical bar (replace molecular ring)
-  else if (p.bar)
+  else if (bar)
   {
     const auto cos_phi = cos(p.bar_phi0);
     const auto sin_phi = sin(p.bar_phi0);
@@ -130,8 +132,8 @@ vector JaffeMagneticField::orientation(const double &x, const double &y, const d
       {
       new_x = sgn_ny;
       new_y = -sgn_ny * (new_x / new_y) * p.bar_b * p.bar_b / (p.bar_a * p.bar_a);
-      tmp[0] = (cos_phi * new_x + sin_phi * new_y) * (1 - 2 * p.bss);
-      tmp[1] = (-sin_phi * new_x + cos_phi * new_y) * (1 - 2 * p.bss);
+      tmp[0] = (cos_phi * new_x + sin_phi * new_y) * (1 - 2 * bss);
+      tmp[1] = (-sin_phi * new_x + cos_phi * new_y) * (1 - 2 * bss);
         // versor
       auto tmp_length = sqrt(tmp[0] * tmp[0] + tmp[1] * tmp[1] + tmp[2] * tmp[2]);
       if (tmp_length != 0.)
@@ -144,15 +146,16 @@ vector JaffeMagneticField::orientation(const double &x, const double &y, const d
       }
       else
       {
-        tmp[0] = (2 * p.bss - 1) * sgn_nx * sin_phi;
-        tmp[1] = (2 * p.bss - 1) * sgn_nx * cos_phi;
+        tmp[0] = (2 * bss - 1) * sgn_nx * sin_phi;
+        tmp[1] = (2 * bss - 1) * sgn_nx * cos_phi;
       }
     }
   }
   return tmp;
 }
 
-number JaffeMagneticField::radial_scaling(const double &x, const double &y, const JaffeMagneticField &p) const
+template <typename T>
+T JaffeMagneticField::radial_scaling(const double &x, const double &y, const JaffeParameters<T> &p) const
 {
   const double r2 = x * x + y * y;
   // separate into 3 parts for better view
@@ -162,11 +165,12 @@ number JaffeMagneticField::radial_scaling(const double &x, const double &y, cons
   return s1 * (s2 + s3);
 }
 
-std::vector<number> JaffeMagneticField::arm_compress(const double &x, const double &y, const double &z, const JaffeMagneticField &p) const
+template <typename T>
+std::vector<T> JaffeMagneticField::arm_compress(const double &x, const double &y, const double &z, const JaffeParameters<T> &p) const
 {
   const auto r{sqrt(x * x + y * y) / p.comp_r};
   const auto c0{1. / p.comp_c - 1.};
-  std::vector<number> a0 = dist2arm(x, y, p);
+  std::vector<T> a0 = dist2arm(x, y, p);
 
   const auto r_scaling{radial_scaling(x, y, p)};
   const auto z_scaling{arm_scaling(z, p)};
@@ -191,11 +195,12 @@ std::vector<number> JaffeMagneticField::arm_compress(const double &x, const doub
   return a0;
 }
 
-std::vector<number> JaffeMagneticField::arm_compress_dust(const double &x, const double &y, const double &z, const JaffeMagneticField &p) const
+template <typename T>
+std::vector<T> JaffeMagneticField::arm_compress_dust(const double &x, const double &y, const double &z, const JaffeParameters<T> &p) const
 {
   const auto r{sqrt(x * x + y * y) / p.comp_r};
   const auto c0{1. / p.comp_c - 1.};
-  std::vector<number> a0 = dist2arm(x, y, p);
+  std::vector<T> a0 = dist2arm(x, y, p);
   const auto r_scaling{radial_scaling(x, y, p)};
   const auto z_scaling{arm_scaling(z, p)};
   // only difference from normal arm_compress
@@ -219,7 +224,8 @@ std::vector<number> JaffeMagneticField::arm_compress_dust(const double &x, const
   return a0;
 }
 
-std::vector<number> JaffeMagneticField::dist2arm(const double &x, const double &y, const JaffeMagneticField &p) const
+template <typename T>
+std::vector<T> JaffeMagneticField::dist2arm(const double &x, const double &y, const JaffeParameters<T> &p) const
 {
   const double r{sqrt(x * x + y * y)};
   const auto r_lim{p.ring_r};
@@ -230,16 +236,16 @@ std::vector<number> JaffeMagneticField::dist2arm(const double &x, const double &
   const auto beta_inv{-sin_p / cos_p};
   auto theta{atan2(y, x)};
 
-  int arm_num = p.arm_num;
+  int arm_num = this->arm_num;
 
-  if (p.ring)
+  if (ring)
   {
     if (r < r_lim)
     {
       int arm_num = 1;
     }
   }
-  else if (p.bar)
+  else if (bar)
   {
     if (r < bar_lim)
     {
@@ -247,12 +253,12 @@ std::vector<number> JaffeMagneticField::dist2arm(const double &x, const double &
     }
   }
 
-  std::vector<number> d;
+  std::vector<T> d;
 
   if (theta < 0)
     theta += 2 * M_PI;
   // if molecular ring
-  if (p.ring)
+  if (ring)
   {
     // in molecular ring, return oly first element of d is used
     if (r < r_lim)
@@ -263,8 +269,8 @@ std::vector<number> JaffeMagneticField::dist2arm(const double &x, const double &
     else
     {
       // loop through arms
-      std::vector<number> arm_phi{p.arm_phi1, p.arm_phi2, p.arm_phi3, p.arm_phi4};
-      for (int i = 0; i < p.arm_num; ++i)
+      std::vector<T> arm_phi{p.arm_phi1, p.arm_phi2, p.arm_phi3, p.arm_phi4};
+      for (int i = 0; i < this->arm_num; ++i)
       {
         auto d_ang{arm_phi[i]*M_PI/180 - theta};
         auto d_rad{
@@ -278,7 +284,7 @@ std::vector<number> JaffeMagneticField::dist2arm(const double &x, const double &
     }
   }
   // if elliptical bar
-  else if (p.bar) {
+  else if (bar) {
     if (r == 0.) {
       d.push_back(0.);
     }
@@ -296,8 +302,8 @@ std::vector<number> JaffeMagneticField::dist2arm(const double &x, const double &
       else
       {
         // loop through arms
-        std::vector<number> arm_phi{p.arm_phi1, p.arm_phi2, p.arm_phi3, p.arm_phi4};
-        for (int i = 0; i < p.arm_num; ++i)
+        std::vector<T> arm_phi{p.arm_phi1, p.arm_phi2, p.arm_phi3, p.arm_phi4};
+        for (int i = 0; i < this->arm_num; ++i)
         {
           auto d_ang{arm_phi[i]*M_PI/180 - theta};
           auto d_rad{abs(p.arm_r0 * exp(d_ang * beta_inv) - r)};
@@ -311,40 +317,28 @@ std::vector<number> JaffeMagneticField::dist2arm(const double &x, const double &
   return d;
 }
 
-number JaffeMagneticField::arm_scaling(const double &z, const JaffeMagneticField &p) const
+template <typename T>
+T JaffeMagneticField::arm_scaling(const double &z, const JaffeParameters<T> &p) const
 {
   return 1. / (cosh(z / p.arm_z0) *
                cosh(z / p.arm_z0));
 }
 
-number JaffeMagneticField::disk_scaling(const double &z, const JaffeMagneticField &p) const
+template <typename T>
+T JaffeMagneticField::disk_scaling(const double &z, const JaffeParameters<T> &p) const
 {
   return 1. / (cosh(z / p.disk_z0) *
                cosh(z / p.disk_z0));
 }
 
-number JaffeMagneticField::halo_scaling(const double &z, const JaffeMagneticField &p) const
+template <typename T>
+T JaffeMagneticField::halo_scaling(const double &z, const JaffeParameters<T> &p) const
 {
   return 1. / (cosh(z / p.halo_z0) *
                cosh(z / p.halo_z0));
 }
 
-#if IMAGINE_HAS_AUTODIFF
 
-Eigen::MatrixXd JaffeMagneticField::_jac(const double &x, const double &y, const double &z, JaffeMagneticField &p) const
-{
-  vector out;
-  Eigen::MatrixXd _deriv = ad::jacobian([&](double _x, double _y, double _z, JaffeMagneticField &_p)
-                                        { return _p._at_position(_x, _y, _z, _p); },
-                                        ad::wrt(p.disk_amp, p.disk_z0, p.halo_amp, p.halo_z0, p.r_inner, p.r_scale, p.r_peak,
-                                                p.ring_amp, p.ring_r, p.bar_amp, p.bar_a, p.bar_b, p.bar_phi0,
-                                                p.arm_r0, p.arm_z0, p.arm_phi1, p.arm_phi2, p.arm_phi3, p.arm_phi4,
-                                                p.arm_amp1, p.arm_amp2, p.arm_amp3, p.arm_amp4, p.arm_pitch,
-                                                p.comp_c, p.comp_d, p.comp_r, p.comp_p),
-                                        ad::at(x, y, z, p), out);
-  return _filter_diff(_deriv);
-}
-
-#endif
+IMAGINE_INSTANTIATE_VECTOR_MODEL(JaffeMagneticField)
 
 }
