@@ -6,11 +6,12 @@ on:
 
 jobs:
   cpp:
-    name: C++ (${{ matrix.features }})
-    runs-on: ubuntu-24.04
+    name: C++ ${{ matrix.os }} (${{ matrix.features }})
+    runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
+        os: [ubuntu-24.04, macos-15]
         features: [full, minimal]
     env:
       FEATURE_FLAGS: ${{ matrix.features == 'minimal' && '-DUSE_AUTODIFF=OFF -DUSE_FFTW=OFF' || '' }}
@@ -38,19 +39,21 @@ jobs:
           cmake --install build --prefix "$RUNNER_TEMP/prefix"
           cmake -S c_library/test/consumer -B "$RUNNER_TEMP/consumer" -G Ninja -DCMAKE_PREFIX_PATH="$RUNNER_TEMP/prefix"
           cmake --build "$RUNNER_TEMP/consumer"
-          LD_LIBRARY_PATH="$RUNNER_TEMP/prefix/lib" "$RUNNER_TEMP/consumer/consumer"
+          LD_LIBRARY_PATH="$RUNNER_TEMP/prefix/lib" DYLD_LIBRARY_PATH="$RUNNER_TEMP/prefix/lib" "$RUNNER_TEMP/consumer/consumer"
 
   python:
-    name: Python ${{ matrix.python }} (${{ matrix.features }})
-    runs-on: ubuntu-24.04
+    name: Python ${{ matrix.python }} ${{ matrix.os }} (${{ matrix.features }})
+    runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
         include:
-          - {python: "3.9", features: full}
-          - {python: "3.12", features: full}
-          - {python: "3.13", features: full}
-          - {python: "3.12", features: minimal}
+          - {os: ubuntu-24.04, python: "3.9", features: full}
+          - {os: ubuntu-24.04, python: "3.12", features: full}
+          - {os: ubuntu-24.04, python: "3.13", features: full}
+          - {os: ubuntu-24.04, python: "3.12", features: minimal}
+          - {os: macos-15, python: "3.12", features: full}
+          - {os: macos-15, python: "3.12", features: minimal}
     env:
       USE_AUTODIFF: ${{ matrix.features == 'full' && 'ON' || 'OFF' }}
       USE_FFTW: ${{ matrix.features == 'full' && 'ON' || 'OFF' }}

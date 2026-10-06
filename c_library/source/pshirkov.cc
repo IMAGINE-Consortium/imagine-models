@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <cmath>
 #include "ImagineModels/units.h"
 #include "ImagineModels/Pshirkov.h"

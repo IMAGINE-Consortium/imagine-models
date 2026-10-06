@@ -1,3 +1,5 @@
+#include <type_traits>
+
 #include "../bindings.h"
 #include "../regular_trampoline.h"
 

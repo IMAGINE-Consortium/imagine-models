@@ -1,6 +1,7 @@
 #ifndef IMAGINE_BINDINGS_H
 #define IMAGINE_BINDINGS_H
 
+#include <utility>
 #include <vector>
 
 #include <pybind11/pybind11.h>
