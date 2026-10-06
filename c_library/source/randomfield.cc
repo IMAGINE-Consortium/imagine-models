@@ -5,6 +5,34 @@
 
 namespace imagine {
 
+namespace {
+
+double uniform_53(std::mt19937 &gen) {
+  const double a = gen() >> 5;
+  const double b = gen() >> 6;
+  return (a * 67108864. + b) / 9007199254740992.;
+}
+
+class StandardNormal {
+  bool has_spare = false;
+  double spare = 0.;
+
+public:
+  double operator()(std::mt19937 &gen) {
+    if (has_spare) {
+      has_spare = false;
+      return spare;
+    }
+    const double r = std::sqrt(-2. * std::log(1. - uniform_53(gen)));
+    const double phi = 6.283185307179586 * uniform_53(gen);
+    spare = r * std::sin(phi);
+    has_spare = true;
+    return r * std::cos(phi);
+  }
+};
+
+}
+
 double RandomField::hammurabi_spectrum(const double &abs_k, const double &rms, const double &k0, const double &k1, const double &a0, const double &a1) const {
   // this function is adapted from https://github.com/hammurabi-dev/hammurabiX/blob/master/source/field/b/brnd_jf12.cc
   // original author: https://github.com/gioacchinowang
@@ -66,7 +94,7 @@ void RandomField::seed_complex_random_numbers(fftw_complex* vec,  const std::arr
       }
 
   auto gen = std::mt19937(seed);
-  std::normal_distribution<double> nd{0., 1.};
+  StandardNormal nd;
   const double half = std::sqrt(0.5);
 
   for (int i = 0; i < shp[0]; ++i) {

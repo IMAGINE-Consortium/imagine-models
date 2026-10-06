@@ -8,10 +8,9 @@ namespace imagine {
 
 void RandomVectorField::unit_random_numbers(std::array<FFTWWorkspace*, 3> ws, const RegularGrid &grid, const int seed) const {
   auto gen_int = std::mt19937(seed);
-  std::uniform_int_distribution<int> uni(0, 1215752192);
   const double norm = 1. / std::sqrt(3. * ws[0]->size());
   for (int i = 0; i < 3; ++i) {
-    seed_complex_random_numbers(ws[i]->complex(), grid.shape, grid.increment, uni(gen_int));
+    seed_complex_random_numbers(ws[i]->complex(), grid.shape, grid.increment, static_cast<int>(gen_int() >> 1));
     ws[i]->backward();
     double* val = ws[i]->real();
     for (std::size_t s = 0; s < ws[i]->padded_size(); ++s)
