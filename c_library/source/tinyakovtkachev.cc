@@ -1,5 +1,4 @@
 #include <cmath>
-#include <iostream>
 
 #include "ImagineModels/TinyakovTkachev.h"
 #include "ImagineModels/helpers.h"
@@ -57,9 +56,6 @@ Vec3<T> TTMagneticField::field(const double &x, const double &y, const double &z
 
     B_vec3 = Cyl2Cart<Vec3<T>>(phi, B_cyl);
 
-    std::cout << "Bx: " << B_vec3[0] << std::endl;
-    std::cout << "By: " << B_vec3[1] << std::endl;
-    std::cout << "Bz: " << B_vec3[2] << std::endl;
 
     return B_vec3;
 }

@@ -6,7 +6,7 @@ def plot_slice(array, slice_dim, shp, rfp, inc, vmin, vmax, vec_dim=0, show_cbar
     """
     produces a plot showing a slice through a IMAGINE model output. The slice goes throgh the middle of array in the respective dimension slice_dim. All distances are kpc.
 
-    :param array: vector or scalar field in grid form e.g. from on_grid()
+    :param array: vector or scalar field in grid form, e.g. from evaluate() or sample()
     :param slice_dim: dimension on which to slice, e.g. 0 will give a slice through the y-z plane
     :param shp: shape of the image to plot, given as a list containing number of cells in [x, y, z]
     :param rfp: reference point = location of the smallest coordinate value in each direction, as list [refx, refy, refz]
@@ -33,8 +33,8 @@ def plot_slice(array, slice_dim, shp, rfp, inc, vmin, vmax, vec_dim=0, show_cbar
 
    #
     is_vector = False
-    if isinstance(array, list): 
-        is_vector = True 
+    if isinstance(array, list) or np.ndim(array) == 4:
+        is_vector = True
    
     if cmap is None:
         cmap = "plasma"
