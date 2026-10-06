@@ -10,7 +10,7 @@
 
 
 void _check_array_equality_from_pointer(std::array<double*, 3> a, std::array<double*, 3> b , size_t &n) {
-    for (int d = 0; d==3; ++d) {
+    for (int d = 0; d < 3; ++d) {
         std::vector<double>  arr_a(a[d], a[d] + n);
         std::vector<double>  arr_b(b[d], b[d] + n);
         assert (arr_a == arr_b); 

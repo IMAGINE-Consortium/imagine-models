@@ -1,7 +1,7 @@
 #ifndef RANDOM_TRAMPOLINE_H
 #define RANDOM_TRAMPOLINE_H
 
-#include "hamunits.h"
+#include "units.h"
 #include "Field.h"
 
 #include "RandomField.h"

@@ -41,7 +41,11 @@ else()
     message("-- autodiff library manually disabled")
 endif()
 
-add_compile_definitions(autodiff_FOUND=${autodiff_FOUND})
+if(autodiff_FOUND)
+    add_compile_definitions(autodiff_FOUND=1)
+else()
+    add_compile_definitions(autodiff_FOUND=0)
+endif()
                 
 ## FFTW
 
@@ -68,7 +72,11 @@ else()
     message("-- fftw library manually disabled")
 endif()
 
-add_compile_definitions(FFTW_FOUND=${FFTW_FOUND})
+if(FFTW_FOUND)
+    add_compile_definitions(FFTW_FOUND=1)
+else()
+    add_compile_definitions(FFTW_FOUND=0)
+endif()
 
 ### INSTALLATION 
 

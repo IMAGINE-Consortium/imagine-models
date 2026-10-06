@@ -4,7 +4,7 @@ import pytest
 import numpy as np
 
 
-regular_models = ['JaffeMagneticField', 'HelixMagneticField', 'JF12RegularField', 'Sun2008MagneticField'
+regular_models = ['JaffeMagneticField', 'HelixMagneticField', 'JF12RegularField', 'SunMagneticField'
                   #'AxiSymmetricSpiral'
                   ]
 
@@ -16,7 +16,7 @@ known_positions = {'JF12RegularField': [([0, 0, 0], [0, 0, 0]), # Galactic cente
                    #                       ], 
                    'HelixMagneticField': [([0, 0, 0], [0, 0, 0]), # origin
                                          ],
-                    'Sun2008MagneticField': [([0, 0, 0], [0.41582338163551863, 1.9562952014676114, 0.0]), # origin
+                    'SunMagneticField': [([0, 0, 0], [0.41582338163551863, 1.9562952014676114, 0.0]), # origin
                                          ],
                    }
 
@@ -87,9 +87,13 @@ def test_interface():
     
     with pytest.raises(TypeError):
         umf.on_grid(shape, zeropoint, increment) # must be passed by keyword
+    with pytest.raises(TypeError):
         umf.on_grid(shape=float_shape, reference_point=zeropoint, increment=increment) # shape must be int
+    with pytest.raises(TypeError):
         umf.on_grid(shape=one_float_shape, reference_point=zeropoint, increment=increment) # all shape must be int
-        umf.on_grid(shape=shape, reference_point=zeropoint, increment=one_int_inc) # all shape must be int
+    with pytest.raises(TypeError):
+        umf.on_grid(shape=shape, reference_point=zeropoint, increment=one_int_inc) # all increments must be float
+    with pytest.raises(TypeError):
         umf.on_grid(grid_x.tolist(), grid_y, grid_z) # lists won't work
     
 
@@ -101,10 +105,10 @@ def test_parameter_update():
     assert umf.by == 0.
     assert umf.bz == 0.
     
-    assert umf.at_position(2.4, 2.1, -.2) == [0., 0., 0]
+    assert umf.at_position(2.4, 2.1, -.2) == (0., 0., 0.)
     
     umf.bx = -3.2 
     
     assert umf.bx == -3.2 
     
-    assert umf.at_position(2.4, 2.1, -.2) == [-3.2, 0., 0]
+    assert umf.at_position(2.4, 2.1, -.2) == (-3.2, 0., 0.)
