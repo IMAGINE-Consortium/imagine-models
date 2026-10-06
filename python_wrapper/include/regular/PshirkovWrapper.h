@@ -9,8 +9,6 @@ void Pshirkov(py::module_ &m)
 {
     py::class_<PshirkovMagneticField, RegularVectorField>(m, "PshirkovMagneticField")
         .def(py::init<>())
-        .def(py::init<std::vector<double> &, std::vector<double> &, std::vector<double> &>())
-        .def(py::init<std::array<int, 3> &, std::array<double, 3> &, std::array<double, 3> &>())
 
         .def_readwrite("useASS", &PshirkovMagneticField::useASS)
         .def_readwrite("useBSS", &PshirkovMagneticField::useBSS)

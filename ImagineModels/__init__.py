@@ -1,7 +1,7 @@
-from _ImagineModels import VectorFieldBase, ScalarFieldBase, RegularVectorField, RegularScalarField, SVT22, JF12RegularField,  JaffeMagneticField, HelixMagneticField, UniformMagneticField, UniformDensityField, YMW16, SunMagneticField, HanMagneticField,WMAPMagneticField, TTMagneticField, HMRMagneticField, FauvetMagneticField, StanevBSSMagneticField, TFMagneticField, PshirkovMagneticField, ArchimedeanMagneticField, UFMagneticField
+from _ImagineModels import RegularGrid, IrregularGrid, GridError, RegularVectorField, RegularScalarField, SVT22, JF12RegularField,  JaffeMagneticField, HelixMagneticField, UniformMagneticField, UniformDensityField, YMW16, SunMagneticField, HanMagneticField,WMAPMagneticField, TTMagneticField, HMRMagneticField, FauvetMagneticField, StanevBSSMagneticField, TFMagneticField, PshirkovMagneticField, ArchimedeanMagneticField, UFMagneticField
     
 try: 
-    from _ImagineModels import JF12RandomField, ESRandomField, GaussianScalarField, LogNormalScalarField
+    from _ImagineModels import RandomVectorField, RandomScalarField, JF12RandomField, ESRandomField, GaussianScalarField, LogNormalScalarField
     __has_random_fields__ = True
 except ImportError:
     __has_random_fields__ = False

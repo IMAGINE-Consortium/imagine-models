@@ -12,8 +12,6 @@ void TinyakovTkachev(py::module_ &m)
 {
     py::class_<TTMagneticField, RegularVectorField>(m, "TTMagneticField")
         .def(py::init<>())
-        .def(py::init<std::vector<double> &, std::vector<double> &, std::vector<double> &>())
-        .def(py::init<std::array<int, 3> &, std::array<double, 3> &, std::array<double, 3> &>())
         .def_readwrite("b_b0", &TTMagneticField::b_b0)
         .def_readwrite("b_Rsun", &TTMagneticField::b_Rsun)
         .def_readwrite("b_r_max", &TTMagneticField::b_r_max)

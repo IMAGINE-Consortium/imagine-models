@@ -9,8 +9,6 @@ void SVT22(py::module_ &m)
 {
     py::class_<SVT22MagneticField, RegularVectorField>(m, "SVT22")
         .def(py::init<>())
-        .def(py::init<std::vector<double> &, std::vector<double> &, std::vector<double> &>())
-        .def(py::init<std::array<int, 3> &, std::array<double, 3> &, std::array<double, 3> &>())
 
         .def_readwrite("B_val", &SVT22MagneticField::B_val)
         .def_readwrite("r_cut", &SVT22MagneticField::r_cut)

@@ -9,8 +9,6 @@ void RegularJF12(py::module_ &m)
 {
     py::class_<JF12MagneticField, RegularVectorField>(m, "JF12RegularField")
         .def(py::init<>())
-        .def(py::init<std::vector<double> &, std::vector<double> &, std::vector<double> &>())
-        .def(py::init<std::array<int, 3> &, std::array<double, 3> &, std::array<double, 3> &>())
 
         .def_readwrite("b_arm_1", &JF12MagneticField::b_arm_1)
         .def_readwrite("b_arm_2", &JF12MagneticField::b_arm_2)

@@ -5,7 +5,6 @@
 #include <functional>
 #include <cmath>
 
-#include "ImagineModels/Field.h"
 #include "ImagineModels/RegularField.h"
 
 namespace imagine {

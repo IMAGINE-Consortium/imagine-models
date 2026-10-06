@@ -17,7 +17,7 @@ namespace py = pybind11;
 using namespace pybind11::literals;
 using namespace imagine;
 
-#include "include/FieldBases.h"
+#include "include/grid_bindings.h"
 
 #include "include/regular/RegularFieldBases.h"
 #include "include/regular/SunWrapper.h"
@@ -49,7 +49,7 @@ using namespace imagine;
 #include "include/random/LogNormalWrapper.h"
 #endif
 
-void FieldBases(py::module_ &);
+void Grids(py::module_ &);
 void RegularFieldBases(py::module_ &);
 
 void RegularJF12(py::module_ &);
@@ -84,7 +84,7 @@ PYBIND11_MODULE(_ImagineModels, m)
 {
   m.doc() = "IMAGINE Model Library";
 
-  FieldBases(m);
+  Grids(m);
   RegularFieldBases(m);
   RegularJF12(m);
   Jaffe(m);

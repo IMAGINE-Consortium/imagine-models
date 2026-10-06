@@ -71,6 +71,7 @@ set(IM_SRC_FILES
 
 if(IMAGINE_HAS_FFTW)
     list(APPEND IM_SRC_FILES
+        ${IM_SOURCE_DIR}/randomfield.cc
         ${IM_SOURCE_DIR}/randomscalarfield.cc
         ${IM_SOURCE_DIR}/randomvectorfield.cc
         ${IM_SOURCE_DIR}/gaussianscalar.cc

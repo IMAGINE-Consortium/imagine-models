@@ -8,7 +8,6 @@ using namespace pybind11::literals;
 void GaussianScalar(py::module_ &m) {
     py::class_<GaussianScalarField, RandomScalarField>(m, "GaussianScalarField")
         .def(py::init<>())
-        .def(py::init<std::array<int, 3> &, std::array<double, 3> &, std::array<double, 3> &>())
 
         .def_readwrite("apply_spectrum", &GaussianScalarField::apply_spectrum)
 

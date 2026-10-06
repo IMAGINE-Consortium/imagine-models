@@ -12,8 +12,6 @@ void Uniform(py::module_ &m)
 {
     py::class_<UniformMagneticField, RegularVectorField>(m, "UniformMagneticField")
         .def(py::init<>())
-        .def(py::init<std::vector<double> &, std::vector<double> &, std::vector<double> &>())
-        .def(py::init<std::array<int, 3> &, std::array<double, 3> &, std::array<double, 3> &>())
 
         .def_readwrite("bx", &UniformMagneticField::bx)
         .def_readwrite("by", &UniformMagneticField::by)
@@ -36,8 +34,6 @@ void Uniform(py::module_ &m)
 
     py::class_<UniformDensityField, RegularScalarField>(m, "UniformDensityField")
         .def(py::init<>())
-        .def(py::init<std::vector<double> &, std::vector<double> &, std::vector<double> &>())
-        .def(py::init<std::array<int, 3> &, std::array<double, 3> &, std::array<double, 3> &>())
 
         .def_readwrite("n0", &UniformDensityField::n0)
 

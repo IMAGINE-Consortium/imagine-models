@@ -5,7 +5,6 @@
 #include <vector>
 #include <iostream>
 
-#include "ImagineModels/Field.h"
 #include "ImagineModels/RegularField.h"
 
 namespace imagine {

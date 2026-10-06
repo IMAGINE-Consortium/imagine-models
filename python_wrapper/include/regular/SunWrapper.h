@@ -9,8 +9,6 @@ void Sun2008(py::module_ &m)
 {
     py::class_<SunMagneticField, RegularVectorField>(m, "SunMagneticField")
         .def(py::init<>())
-        .def(py::init<std::vector<double> &, std::vector<double> &, std::vector<double> &>())
-        .def(py::init<std::array<int, 3> &, std::array<double, 3> &, std::array<double, 3> &>())
 
         .def_readwrite("b_B0", &SunMagneticField::b_B0)
         .def_readwrite("b_Rsun", &SunMagneticField::b_Rsun)

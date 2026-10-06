@@ -9,7 +9,6 @@ void RandomJF12(py::module_ &m) {
 
     py::class_<JF12RandomField, RandomVectorField>(m, "JF12RandomField")
         .def(py::init<>())
-        .def(py::init<std::array<int, 3> &, std::array<double, 3> &, std::array<double, 3> &>())
 
         .def_readonly("regular_base", &JF12RandomField::regular_base)
 

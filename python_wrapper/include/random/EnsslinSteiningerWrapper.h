@@ -8,7 +8,6 @@ using namespace pybind11::literals;
 void EnsslinSteininger(py::module_ &m) {
     py::class_<ESRandomField, RandomVectorField>(m, "ESRandomField")
         .def(py::init<>())
-        .def(py::init<std::array<int, 3> &, std::array<double, 3> &, std::array<double, 3> &>())
 
         .def_readwrite("apply_spectrum", &ESRandomField::apply_spectrum)
 

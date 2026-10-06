@@ -9,8 +9,6 @@ void TF17(py::module_ &m)
 {
     py::class_<TFMagneticField, RegularVectorField>(m, "TFMagneticField")
         .def(py::init<>())
-        .def(py::init<std::vector<double> &, std::vector<double> &, std::vector<double> &>())
-        .def(py::init<std::array<int, 3> &, std::array<double, 3> &, std::array<double, 3> &>())
 
         .def_readwrite("a_disk", &TFMagneticField::a_disk)
         .def_readwrite("z1_disk", &TFMagneticField::z1_disk)

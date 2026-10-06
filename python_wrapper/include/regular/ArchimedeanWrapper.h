@@ -9,8 +9,6 @@ void Archimedes(py::module_ &m)
 {
     py::class_<ArchimedeanMagneticField, RegularVectorField>(m, "ArchimedeanMagneticField")
         .def(py::init<>())
-        .def(py::init<std::vector<double> &, std::vector<double> &, std::vector<double> &>())
-        .def(py::init<std::array<int, 3> &, std::array<double, 3> &, std::array<double, 3> &>())
 
         .def_readwrite("R_0", &ArchimedeanMagneticField::R_0)
         .def_readwrite("Omega", &ArchimedeanMagneticField::Omega)

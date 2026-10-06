@@ -6,7 +6,6 @@
 #include <cassert>
 #include <iostream>
 
-#include "ImagineModels/Field.h"
 #include "ImagineModelsRandom/RandomScalarField.h"
 
 namespace imagine {
@@ -22,7 +21,7 @@ class LogNormalScalarField : public RandomScalarField {
     double spectral_offset = 1.;
     double spectral_slope = 2.;
 
-    void _on_grid(double* val, const std::array<int, 3> &grid_shape, const std::array<double, 3> &grid_zeropoint, const std::array<double, 3> &grid_increment, const int seed) override;
+    void _sample(FFTWWorkspace &ws, const RegularGrid &grid, const int seed, ScalarGridData &out) const override;
 
     double calculate_fourier_sigma(const double &abs_k, const double &dk) const override;
 

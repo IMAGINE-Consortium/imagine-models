@@ -14,8 +14,8 @@ int main() {
 #endif
 #if IMAGINE_HAS_FFTW
     imagine::GaussianScalarField gauss;
-    double* grid = gauss.on_grid({4, 4, 4}, {0., 0., 0.}, {1., 1., 1.}, 3);
-    std::cout << "random grid value: " << grid[0] << std::endl;
+    imagine::ScalarGridData grid = gauss.sample(imagine::RegularGrid({4, 4, 4}, {0., 0., 0.}, {1., 1., 1.}), 3);
+    std::cout << "random grid value: " << grid(0, 0) << std::endl;
 #endif
     return 0;
 }

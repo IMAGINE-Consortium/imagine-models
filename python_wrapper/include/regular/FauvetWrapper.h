@@ -12,8 +12,6 @@ void Fauvet(py::module_ &m)
 {
     py::class_<FauvetMagneticField, RegularVectorField>(m, "FauvetMagneticField")
         .def(py::init<>())
-        .def(py::init<std::vector<double> &, std::vector<double> &, std::vector<double> &>())
-        .def(py::init<std::array<int, 3> &, std::array<double, 3> &, std::array<double, 3> &>())
 
         .def_readwrite("b_b0", &FauvetMagneticField::b_b0)
         .def_readwrite("b_r0", &FauvetMagneticField::b_r0)

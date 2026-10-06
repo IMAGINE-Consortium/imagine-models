@@ -11,8 +11,6 @@ using namespace pybind11::literals;
 void YMW(py::module_ &m) {
     py::class_<YMW16, RegularScalarField>(m, "YMW16")
         .def(py::init<>())
-        .def(py::init<std::array<int, 3> &, std::array<double, 3> &, std::array<double, 3> &>())
-        .def(py::init<std::vector<double> &, std::vector<double> &, std::vector<double> &>())
         .def_readwrite("r_warp", &YMW16::t0_r_warp)
         .def_readwrite("r0", &YMW16::r0)
         .def_readwrite("t0_gamma_w", &YMW16::t0_gamma_w)

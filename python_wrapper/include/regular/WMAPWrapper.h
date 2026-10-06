@@ -11,8 +11,6 @@ using namespace pybind11::literals;
 void WMAP(py::module_ &m) {
     py::class_<WMAPMagneticField, RegularVectorField>(m, "WMAPMagneticField")
         .def(py::init<>())
-        .def(py::init<std::vector<double> &, std::vector<double> &, std::vector<double> &>())
-        .def(py::init<std::array<int, 3> &, std::array<double, 3> &, std::array<double, 3> &>())
 
         .def_readwrite("b_b0", &WMAPMagneticField::b_b0)
         .def_readwrite("b_r0", &WMAPMagneticField::b_r0)

@@ -7,7 +7,6 @@
 #include <functional>
 #include <cassert>
 
-#include "ImagineModels/Field.h"
 #include "ImagineModels/RegularField.h"
 
 namespace imagine {

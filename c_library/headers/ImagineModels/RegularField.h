@@ -3,92 +3,32 @@
 
 #include <vector>
 #include <array>
-#include <stdexcept>
-#include <functional>
-#include <iostream>
-#include <algorithm>
+#include <string>
 #include <set>
 
-#include "ImagineModels/exceptions.h"
-#include "ImagineModels/Field.h"
+#include "ImagineModels/types.h"
+#include "ImagineModels/Grid.h"
 
 namespace imagine {
 
-class RegularScalarField : public Field<number, double *>
+class RegularScalarField
 {
-protected:
-  // Fields
-
-  // RegularField() : Field<T>() {};
-  // Methods
-  double *allocate_memory(std::array<int, 3> shp)
-  {
-    size_t arr_sz = grid_size(shp);
-    double *grid_eval = new double[arr_sz];
-    return grid_eval;
-  }
-
-  void free_memory(double *grid_eval)
-  {
-    delete grid_eval;
-  }
-
 public:
-  // -----CONSTRUCTORS-----
+  virtual ~RegularScalarField() = default;
 
-  ~RegularScalarField(){};
-
-  RegularScalarField() : Field<number, double *>(){};
-
-  RegularScalarField(std::array<int, 3> shape, std::array<double, 3> reference_point, std::array<double, 3> increment) : Field<number, double *>(shape, reference_point, increment){};
-
-  RegularScalarField(std::vector<double> grid_x, std::vector<double> grid_y, std::vector<double> grid_z) : Field<number, double *>(grid_x, grid_y, grid_z){};
-
-  // Fields
-  const int ndim = 1;
 #if IMAGINE_HAS_AUTODIFF
   const std::set<std::string> all_diff;
   std::set<std::string> active_diff;
 #endif
-  // Methods
 
-  double *on_grid(int seed = 0)
-  {
-    if (not initialized_with_grid)
-    {
-      throw GridException();
-    }
-    double *grid_eval = allocate_memory(internal_shape);
-    if (regular_grid)
-    {
-      evaluate_function_on_grid<number, double*>(grid_eval, internal_shape, internal_ref_point, internal_increment, [this](double xx, double yy, double zz)
-                                        { return at_position(xx, yy, zz); });
-    }
-    else
-    {
-      evaluate_function_on_grid<number, double*>(grid_eval, internal_grid_x, internal_grid_y, internal_grid_z, [this](double xx, double yy, double zz)
-                                        { return at_position(xx, yy, zz); });
-    }
-    return grid_eval;
-  }
+  virtual number at_position(const double &x, const double &y, const double &z) const = 0;
 
-  double *on_grid(const std::vector<double> &grid_x, const std::vector<double> &grid_y, const std::vector<double> &grid_z, int seed = 0)
+  ScalarGridData evaluate(const Grid &grid) const
   {
-    std::array<int, 3> shp = {(int)grid_x.size(), (int)grid_y.size(), (int)grid_z.size()};
-    double *grid_eval = allocate_memory(shp);
-    evaluate_function_on_grid<number, double*>(grid_eval, grid_x, grid_y, grid_z,
-                                      [this](double xx, double yy, double zz)
-                                      { return at_position(xx, yy, zz); });
-    return grid_eval;
-  }
-
-  double *on_grid(const std::array<int, 3> &shape, const std::array<double, 3> &reference_point, const std::array<double, 3> &increment, int seed = 0)
-  {
-    double *grid_eval = allocate_memory(shape);
-    evaluate_function_on_grid<number, double*>(grid_eval, shape, reference_point, increment,
-                                      [this](double xx, double yy, double zz)
-                                      { return at_position(xx, yy, zz); });
-    return grid_eval;
+    ScalarGridData out(grid_shape(grid));
+    for_each_point(grid, [&](std::size_t idx, double x, double y, double z)
+                   { out(0, idx) = static_cast<double>(at_position(x, y, z)); });
+    return out;
   }
 
 #if IMAGINE_HAS_AUTODIFF
@@ -114,88 +54,28 @@ public:
 #endif
 };
 
-class RegularVectorField : public Field<vector, std::array<double *, 3>>
+class RegularVectorField
 {
-protected:
-  // Fields
-
-  // RegularField() : Field<T>() {};
-  // Methods
-  std::array<double *, 3> allocate_memory(std::array<int, 3> shp) override
-  {
-    std::array<double *, 3> grid_eval;
-    size_t arr_sz = grid_size(shp);
-    grid_eval[0] = new double[arr_sz];
-    grid_eval[1] = new double[arr_sz];
-    grid_eval[2] = new double[arr_sz];
-    return grid_eval;
-  }
-
-  void free_memory(std::array<double *, 3> grid_eval) override
-  {
-    delete grid_eval[0];
-    delete grid_eval[1];
-    delete grid_eval[2];
-  }
-
 public:
-  ~RegularVectorField(){};
-
-  // Constructors
-  RegularVectorField() : Field<vector, std::array<double *, 3>>(){};
-
-  RegularVectorField(std::array<int, 3> shape, std::array<double, 3> reference_point, std::array<double, 3> grid_increment) : Field<vector, std::array<double *, 3>>(shape, reference_point, grid_increment){};
-
-  RegularVectorField(std::vector<double> grid_x, std::vector<double> grid_y, std::vector<double> grid_z) : Field<vector, std::array<double *, 3>>(grid_x, grid_y, grid_z){};
-
-  // Fields
-
-  const int ndim = 3;
+  virtual ~RegularVectorField() = default;
 
 #if IMAGINE_HAS_AUTODIFF
   const std::set<std::string> all_diff;
   std::set<std::string> active_diff;
 #endif
-  // Methods
 
-  std::array<double *, 3> on_grid(int seed = 0)
-  {
-    if (not initialized_with_grid)
-    {
-      throw GridException();
-    }
-    std::array<double *, 3> grid_eval = allocate_memory(internal_shape);
-    ;
-    if (regular_grid)
-    {
-      evaluate_function_on_grid<vector, std::array<double *, 3>>(grid_eval, internal_shape, internal_ref_point, internal_increment, [this](double xx, double yy, double zz)
-                                        { return at_position(xx, yy, zz); });
-    }
-    else
-    {
-      evaluate_function_on_grid<vector, std::array<double *, 3>>(grid_eval, internal_grid_x, internal_grid_y, internal_grid_z, [this](double xx, double yy, double zz)
-                                        { return at_position(xx, yy, zz); });
-    }
-    return grid_eval;
-  }
+  virtual vector at_position(const double &x, const double &y, const double &z) const = 0;
 
-  std::array<double *, 3> on_grid(const std::vector<double> &grid_x, const std::vector<double> &grid_y, const std::vector<double> &grid_z, int seed = 0)
+  VectorGridData evaluate(const Grid &grid) const
   {
-    std::array<int, 3> shp = {(int)grid_x.size(), (int)grid_y.size(), (int)grid_z.size()};
-    std::array<double *, 3> grid_eval = allocate_memory(shp);
-    evaluate_function_on_grid<vector, std::array<double *, 3>>(grid_eval, grid_x, grid_y, grid_z,
-                                      [this](double xx, double yy, double zz)
-                                      { return at_position(xx, yy, zz); });
-    return grid_eval;
-  }
-
-  std::array<double *, 3> on_grid(const std::array<int, 3> &shape, const std::array<double, 3> &reference_point, const std::array<double, 3> &increment, int seed = 0)
-  {
-    std::array<double *, 3> grid_eval = allocate_memory(shape);
-    evaluate_function_on_grid<vector, std::array<double *, 3>>(grid_eval, shape, reference_point, increment,
-                                      [this](double xx, double yy, double zz)
-                                      { return at_position(xx, yy, zz); });
-    return grid_eval;
+    VectorGridData out(grid_shape(grid));
+    for_each_point(grid, [&](std::size_t idx, double x, double y, double z)
+                   {
+                     vector v = at_position(x, y, z);
+                     out(0, idx) = static_cast<double>(v[0]);
+                     out(1, idx) = static_cast<double>(v[1]);
+                     out(2, idx) = static_cast<double>(v[2]); });
+    return out;
   }
 
 #if IMAGINE_HAS_AUTODIFF

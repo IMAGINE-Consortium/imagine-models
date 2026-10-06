@@ -1,4 +1,5 @@
 #include <cassert>
+#include <iostream>
 
 #include "ImagineModels/units.h"
 #include "ImagineModels/YMW.h"

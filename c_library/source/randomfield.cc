@@ -1,7 +1,13 @@
+#include <cmath>
+#include <iostream>
+#include <random>
+
+#include "ImagineModelsRandom/RandomField.h"
+
+namespace imagine {
 
 
-template<typename POSTYPE, typename GRIDTYPE>
-double RandomField<POSTYPE, GRIDTYPE>::hammurabi_spectrum(const double &abs_k, const double &rms, const double &k0, const double &k1, const double &a0, const double &a1) const {
+double RandomField::hammurabi_spectrum(const double &abs_k, const double &rms, const double &k0, const double &k1, const double &a0, const double &a1) const {
   // this function is adapted from https://github.com/hammurabi-dev/hammurabiX/blob/master/source/field/b/brnd_jf12.cc
   // original author: https://github.com/gioacchinowang
   const double p0 = rms*rms;
@@ -17,8 +23,7 @@ double RandomField<POSTYPE, GRIDTYPE>::hammurabi_spectrum(const double &abs_k, c
   return P * p0 * unit;
   }
 
-template<typename POSTYPE, typename GRIDTYPE>
-double RandomField<POSTYPE, GRIDTYPE>::simple_spectrum(const double &abs_k, const double &dk, const double &k0, const double &s) const {
+double RandomField::simple_spectrum(const double &abs_k, const double &dk, const double &k0, const double &s) const {
   double pi = 3.141592653589793;
   const double unit = 1. / (4 * pi * abs_k * abs_k); 
   const double dP = unit / std::pow(abs_k + k0, s);
@@ -26,19 +31,8 @@ double RandomField<POSTYPE, GRIDTYPE>::simple_spectrum(const double &abs_k, cons
   return dP; // / norm;
 }
 
-template<typename POSTYPE, typename GRIDTYPE>
-void RandomField<POSTYPE, GRIDTYPE>::remove_padding(double* val, const std::array<int, 3> &shp, const int pad) {
-  int start = 0;
-  int sz = shp[2];
-  int n = shp[0]*shp[1];
-  for (int i = 1; i<n; i++) {
-      std::copy(val + i*(sz + pad), val + i*(sz + pad) + sz, val + i*sz);
-  }
-}
 
-
-template<typename POSTYPE, typename GRIDTYPE>
-void RandomField<POSTYPE, GRIDTYPE>::seed_complex_random_numbers(fftw_complex* vec,  const std::array<int, 3> &shp, const std::array<double, 3> &inc, const int seed)  {
+void RandomField::seed_complex_random_numbers(fftw_complex* vec,  const std::array<int, 3> &shp, const std::array<double, 3> &inc, const int seed) const {
 
   bool debug_random = false;
   auto gen = std::mt19937(seed);
@@ -174,5 +168,14 @@ void RandomField<POSTYPE, GRIDTYPE>::seed_complex_random_numbers(fftw_complex* v
     std::cout <<  "\nnumber of real: " << no_of_real << "\nnumber of free: " << no_of_free<<  std::endl;    std::cout <<  "\ndegrees of freedom: " << (shp[1] * nyquist_z*2 * shp[0]) << "\nnumber of random numbers drawn: " << no_of_rand << std::endl;
     std::cout <<  "\n" << std::endl;
   }
+
+}
+
+ScalarGridData RandomField::profile(const Grid &grid) const {
+  ScalarGridData out(grid_shape(grid));
+  for_each_point(grid, [&](std::size_t idx, double x, double y, double z)
+                 { out(0, idx) = spatial_profile(x, y, z); });
+  return out;
+}
 
 }

@@ -93,12 +93,12 @@ def at_positions(model, positions):
 
 
 def on_regular_grid(model):
-    return np.asarray(model.on_grid(**REGULAR_GRID), dtype=float)
+    return np.asarray(model.evaluate(img.RegularGrid(**REGULAR_GRID)), dtype=float)
 
 
 def on_irregular_grid(model):
     g = IRREGULAR_GRID
-    return np.asarray(model.on_grid(g["grid_x"], g["grid_y"], g["grid_z"]), dtype=float)
+    return np.asarray(model.evaluate(img.IrregularGrid(g["grid_x"], g["grid_y"], g["grid_z"])), dtype=float)
 
 
 def has_jacobian(model):
@@ -110,7 +110,7 @@ def jacobian(model, position):
 
 
 def sample(model, grid, seed):
-    return np.asarray(model.on_grid(**grid, seed=seed), dtype=float)
+    return np.asarray(model.sample(img.RegularGrid(**grid), seed), dtype=float)
 
 
 def parameter_defaults(model):
