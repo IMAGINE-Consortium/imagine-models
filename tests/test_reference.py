@@ -10,7 +10,8 @@ def _load(case):
     path = rc.DATA_DIR / f"{case}.npz"
     if not path.exists():
         pytest.skip(f"no reference data for {case}")
-    data = np.load(path)
+    with np.load(path) as f:
+        data = {key: f[key] for key in f.files}
     return data, json.loads(str(data["meta"]))
 
 
@@ -19,8 +20,16 @@ def _assert_close(actual, expected, rtol, atol):
     np.testing.assert_allclose(actual, expected, rtol=rtol, atol=atol, equal_nan=True)
 
 
+def _has_key(case, key):
+    path = rc.DATA_DIR / f"{case}.npz"
+    if not path.exists():
+        return False
+    with np.load(path) as f:
+        return key in f.files
+
+
 def _cases_with(key):
-    return [c for c in rc.REGULAR_CASES if (rc.DATA_DIR / f"{c}.npz").exists() and key in np.load(rc.DATA_DIR / f"{c}.npz").files]
+    return [c for c in rc.REGULAR_CASES if _has_key(c, key)]
 
 
 @pytest.mark.parametrize("case", rc.REGULAR_CASES)

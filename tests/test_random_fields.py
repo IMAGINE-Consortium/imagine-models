@@ -4,7 +4,8 @@ import pytest
 import numpy as np
 
 
-pytestmark = pytest.mark.skipif(not img.__has_random_fields__, reason="ImagineModels was built without FFTW")
+if not img.__has_random_fields__:
+    pytest.skip("ImagineModels was built without FFTW", allow_module_level=True)
 
 vector_models = ['JF12RandomField', 'ESRandomField']
 scalar_models = ['GaussianScalarField', 'LogNormalScalarField']
