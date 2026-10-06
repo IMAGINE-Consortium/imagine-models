@@ -51,11 +51,15 @@ void RandomField::seed_complex_random_numbers(fftw_complex* vec,  const std::arr
     return std::sqrt(kx * kx + ky * ky + kz * kz);
   };
 
+  auto is_nyquist = [&](int i, int j, int l) {
+    return i == nyquist_x or j == nyquist_y or l == nyquist_z;
+  };
+
   double total_power = 0.;
   for (int i = 0; i < shp[0]; ++i)
     for (int j = 0; j < shp[1]; ++j)
       for (int l = 0; l < size_z; ++l) {
-        if (i == 0 and j == 0 and l == 0)
+        if ((i == 0 and j == 0 and l == 0) or is_nyquist(i, j, l))
           continue;
         const double multiplicity = (l == 0 or l == nyquist_z) ? 1. : 2.;
         total_power += multiplicity * mode_power(wave_vector_length(i, j, l));
@@ -76,7 +80,7 @@ void RandomField::seed_complex_random_numbers(fftw_complex* vec,  const std::arr
           vec[0][1] = 0.;
           continue;
         }
-        const double amplitude = std::sqrt(n * mode_power(wave_vector_length(i, j, l)) / total_power);
+        const double amplitude = is_nyquist(i, j, l) ? 0. : std::sqrt(n * mode_power(wave_vector_length(i, j, l)) / total_power);
 
         bool l_is_zero_or_nyquist = (l == 0 or l == nyquist_z);
         bool j_is_zero_or_nyquist = (j == 0 or j == nyquist_y);

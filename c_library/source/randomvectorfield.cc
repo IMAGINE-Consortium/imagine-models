@@ -101,55 +101,35 @@ void RandomVectorField::_sample(std::array<FFTWWorkspace*, 3> ws, const RegularG
   }
 }
 
-// this function is adapted from https://github.com/hammurabi-dev/hammurabiX/blob/master/source/field/b/brnd_jf12.cc
-// original author: https://github.com/gioacchinowang
 void RandomVectorField::divergence_cleaner(fftw_complex* bx, fftw_complex* by, fftw_complex* bz,  const std::array<int, 3> &shp, const std::array<double, 3> &inc) const {
-    double lx = shp[0]*inc[0];
-    double ly = shp[1]*inc[1];
-    double lz = shp[2]*inc[2];
-  
-    #ifdef _OPENMP
-      #pragma omp parallel for schedule(static)
-    #endif
-      for (int i = 0; i < shp[0]; ++i) {
-        double kx = i / lx;
-        if (i >= (shp[0] + 1) / 2)
-          kx -= 1. /  inc[0];
-          // it's faster to calculate indices manually
-        const int idx_lv1 = i * shp[1] * shp[2];
-        for (int j = 0; j < shp[1]; ++j) {
-          double ky = j /  ly;
-          if (j >= (shp[1] + 1) / 2)
-            ky -= 1. /  inc[1];
-          const int idx_lv2 = idx_lv1 + j * shp[2];
-          for (int l = 0; l < (int)shp[2]/2 + 1; ++l) {
-            // 0th term is fixed to zero in allocation
-            if (i == 0 and j == 0 and l == 0)
-              continue;
-            double kz = l /  lz;
-            const int idx = idx_lv2 + l;
-            double k_length = 0;
-            double b_length = 0;
-            double b_dot_k = 0;
-            std::array<double, 3> k{kx, ky, kz};
-            std::array<double, 3> b{(*bx)[idx], (*by)[idx], (*bz)[idx]};
-            b_length = static_cast<double>(b[0]*b[0] + b[1]*b[1] + b[2]*b[2]);
-            k_length = static_cast<double>(k[0]*k[0] + k[1]*k[1] + k[2]*k[2]);
+  const double lx = shp[0] * inc[0];
+  const double ly = shp[1] * inc[1];
+  const double lz = shp[2] * inc[2];
+  const int size_z = shp[2] / 2 + 1;
+  const double power_correction = std::sqrt(1.5);
 
-            if (k_length == 0 or b_length == 0) {
-              continue;
-              }
-            k_length = std::sqrt(k_length);
-            b_dot_k = (b[0]*k[0] + b[1]*k[1] + b[2]*k[2]);
-
-            const double bk_over_k = b_dot_k / k_length;
-            // multiply \sqrt(3) for preserving spectral power statistically
-            (*bx)[idx] = 1.73205081 * ((*bx)[idx] - k[0] * bk_over_k);
-            (*by)[idx] = 1.73205081 * ((*by)[idx] - k[1] * bk_over_k);
-            (*bz)[idx] = 1.73205081 * ((*bz)[idx] - k[2] * bk_over_k);
-          } // l
-        } // j
-      } // i
+  for (int i = 0; i < shp[0]; ++i) {
+    const double kx = (i > shp[0] / 2. ? i - shp[0] : i) / lx;
+    for (int j = 0; j < shp[1]; ++j) {
+      const double ky = (j > shp[1] / 2. ? j - shp[1] : j) / ly;
+      for (int l = 0; l < size_z; ++l) {
+        const double kz = l / lz;
+        const int idx = (i * shp[1] + j) * size_z + l;
+        const double k2 = kx * kx + ky * ky + kz * kz;
+        const bool nyquist = (i == shp[0] / 2. or j == shp[1] / 2. or l == shp[2] / 2.);
+        for (int part = 0; part < 2; ++part) {
+          if (k2 == 0. or nyquist) {
+            bx[idx][part] = by[idx][part] = bz[idx][part] = 0.;
+            continue;
+          }
+          const double k_dot_b = (kx * bx[idx][part] + ky * by[idx][part] + kz * bz[idx][part]) / k2;
+          bx[idx][part] = power_correction * (bx[idx][part] - kx * k_dot_b);
+          by[idx][part] = power_correction * (by[idx][part] - ky * k_dot_b);
+          bz[idx][part] = power_correction * (bz[idx][part] - kz * k_dot_b);
+        }
+      }
     }
+  }
+}
 
 }

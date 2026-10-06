@@ -128,3 +128,34 @@ def test_sample_requires_regular_grid():
     irregular = img.IrregularGrid(np.asarray([0., 1.]), np.asarray([2.]), np.asarray([-1., 0., 1.]))
     with pytest.raises(TypeError):
         img.GaussianScalarField().sample(irregular, 3)
+
+
+def _relative_divergence(field, grid):
+    b = np.fft.fftn(field, axes=(1, 2, 3))
+    k = np.meshgrid(*[np.fft.fftfreq(n, d) for n, d in zip(grid.shape, grid.increment)], indexing='ij')
+    divergence = k[0] * b[0] + k[1] * b[1] + k[2] * b[2]
+    scale = np.sqrt(k[0] ** 2 + k[1] ** 2 + k[2] ** 2) * np.sqrt((np.abs(b) ** 2).sum(axis=0))
+    return np.abs(divergence).sum() / scale.sum()
+
+
+@pytest.mark.parametrize('model', [ConstantRandomField(rms=2.), ConstantRandomField(rms=2., slope=2.), img.JF12RandomField(), img.ESRandomField()])
+def test_divergence_cleaning(model):
+    model.clean_divergence = True
+    assert _relative_divergence(model.sample(stat_grid, 4), stat_grid) < 1e-12
+    model.clean_divergence = False
+    assert _relative_divergence(model.sample(stat_grid, 4), stat_grid) > 0.3
+
+
+@pytest.mark.parametrize('slope', [None, 2.])
+def test_divergence_cleaning_preserves_amplitude(slope):
+    model = ConstantRandomField(rms=2., slope=slope)
+    energies = [(model.sample(stat_grid, seed) ** 2).sum(axis=0).mean() for seed in seeds]
+    _within(energies, 4.)
+
+
+@pytest.mark.parametrize('model_string', vector_models)
+def test_divergence_cleaning_preserves_total_power(model_string):
+    model = getattr(img, model_string)()
+    rms2 = (model.rms(stat_grid) ** 2).sum()
+    ratios = [(model.sample(stat_grid, seed) ** 2).sum() / rms2 for seed in seeds]
+    _within(ratios, 1.)
