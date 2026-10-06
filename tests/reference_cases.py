@@ -15,7 +15,7 @@ RTOL_RANDOM, ATOL_RANDOM = 1e-9, 1e-12
 KNOWN_BAD_JACOBIAN = {}
 NO_GRID_CASES = {}
 BROKEN_DERIVATIVE_CASES = {"TFMagneticField__Dd1_C0": "B15", "TFMagneticField__Dd1_C1": "B15",
-                           "UFMagneticField__expX": "B16", "SVT22__default": "B17"}
+                           "UFMagneticField__expX": "B16"}
 
 
 def _positions():

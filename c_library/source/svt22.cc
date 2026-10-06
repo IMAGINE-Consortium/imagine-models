@@ -23,7 +23,7 @@ Vec3<T> SVT22MagneticField::field(const double &x, const double &y, const double
   if (do_halo) {
     T b1, rh;
     T B_h = 0.;
-    T z_min = 0.1;
+    const double z_min = 0.1;
     if (z >= 0)
     { // North
       b1 = p.B_val;
