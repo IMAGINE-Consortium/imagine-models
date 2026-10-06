@@ -2,6 +2,8 @@
 #define IMAGINE_TYPES_H
 
 #include <array>
+#include <cmath>
+#include <cstdlib>
 
 #include "ImagineModels/config.h"
 
@@ -11,6 +13,8 @@
 #endif
 
 namespace imagine {
+
+using std::abs;
 
 #if IMAGINE_HAS_AUTODIFF
     namespace ad = autodiff;
