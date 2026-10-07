@@ -37,7 +37,7 @@ namespace imagine {
     X(t5_ngn, 1.84) /* cm^{-3}, normalization, fitted by YMW */                                                           \
     X(t5_wgn, 0.0151) /* kpc, width of shell , fitted by YMW */                                                           \
     X(t5_agn, 0.1258) /* kpc, mid line radius of shell, fitted by YMW */                                                  \
-    X(t6_offset, 0.004) /* kpc, zylinder offset */                                                                        \
+    X(t6_offset, 0.040) /* kpc, zylinder offset */                                                                        \
     X(t6_j_lb, 0.480) /* unitless, scale factor, fitted by YMW */                                                         \
     X(t6_nlb1, 1.094) /* cm^{-3}, normalization, fitted by YMW */                                                         \
     X(t6_detlb1, 28.4) /* degree, longitude scaling, fitted by YMW */                                                     \
