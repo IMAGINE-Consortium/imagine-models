@@ -127,7 +127,7 @@ Vec3<T> JF12MagneticField::field(const double &x, const double &y, const double 
       B_X = p.B0_X * pow(p.rpc_X / rc_X, 2.) * exp(-rp_X / p.r0_X);
       Xtheta = atan(std::abs(z) /
                     (r - rp_X)); // modified elevation angle in interior region
-      if (z == 0.)
+      if (z == 0. or r == 0.)
       {
         Xtheta = M_PI / 2.;
       } // to avoid some NaN

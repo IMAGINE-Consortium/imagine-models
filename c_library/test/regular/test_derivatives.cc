@@ -99,17 +99,7 @@ TEMPLATE_LIST_TEST_CASE("Jacobian columns follow active_parameters", "[derivativ
 }
 
 TEMPLATE_LIST_TEST_CASE("Jacobian is finite on the z-axis", "[derivatives]", AllModels) {
-  if constexpr (std::is_same_v<TestType, JF12MagneticField>)
-    SKIP("JF12 is NaN on the z-axis (B36), see the [!shouldfail] case");
   TestType model;
-  for (const auto &p : z_axis) {
-    CAPTURE(to_string(p));
-    CHECK(all_finite(model.derivative(p[0], p[1], p[2])));
-  }
-}
-
-TEST_CASE("JF12 Jacobian is finite on the z-axis", "[derivatives][!shouldfail]") {
-  JF12MagneticField model;
   for (const auto &p : z_axis) {
     CAPTURE(to_string(p));
     CHECK(all_finite(model.derivative(p[0], p[1], p[2])));
