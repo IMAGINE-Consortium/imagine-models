@@ -81,3 +81,13 @@ TEST_CASE("switches change the field", "[models]") {
   svt.do_halo = false;
   CHECK(value_at(svt, p) != with_halo);
 }
+
+TEST_CASE("Jaffe rejects unsupported arm numbers", "[models]") {
+  JaffeMagneticField jaffe;
+  jaffe.arm_num = 3;
+  CHECK(all_finite(value_at(jaffe, {-8.5, 1., .2})));
+  jaffe.arm_num = 5;
+  CHECK_THROWS_AS(jaffe.at_position(-8.5, 1., .2), std::invalid_argument);
+  jaffe.arm_num = 1;
+  CHECK_THROWS_AS(jaffe.at_position(-8.5, 1., .2), std::invalid_argument);
+}

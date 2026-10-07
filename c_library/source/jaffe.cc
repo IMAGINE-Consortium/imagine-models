@@ -1,7 +1,7 @@
 #include <algorithm>
 #include <cmath>
 #include <vector>
-#include <iostream>
+#include <stdexcept>
 #include "ImagineModels/units.h"
 #include "ImagineModels/Jaffe.h"
 
@@ -233,22 +233,8 @@ std::vector<T> JaffeMagneticField::dist2arm(const double &x, const double &y, co
   const auto beta_inv{-sin_p / cos_p};
   auto theta{atan2(y, x)};
 
-  int arm_num = this->arm_num;
-
-  if (ring)
-  {
-    if (r < r_lim)
-    {
-      int arm_num = 1;
-    }
-  }
-  else if (bar)
-  {
-    if (r < bar_lim)
-    {
-      int arm_num = 1;
-    }
-  }
+  if (arm_num < 2 or arm_num > 4)
+    throw std::invalid_argument("JaffeMagneticField: arm_num must be between 2 and 4.");
 
   std::vector<T> d;
 
