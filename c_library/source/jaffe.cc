@@ -162,7 +162,7 @@ T JaffeMagneticField::radial_scaling(const double &x, const double &y, const Jaf
   // separate into 3 parts for better view
   const auto s1{1. - exp(-r2 / (p.r_inner * p.r_inner))};
   const auto s2{exp(-r2 / (p.r_scale * p.r_scale))};
-  const auto s3 = p.r_peak == 0 ? 1. : exp(-r2 * r2 / (p.r_peak * p.r_peak * p.r_peak * p.r_peak));
+  const auto s3 = p.r_peak == 0 ? 0. : exp(-r2 * r2 / (p.r_peak * p.r_peak * p.r_peak * p.r_peak));
   return s1 * (s2 + s3);
 }
 
