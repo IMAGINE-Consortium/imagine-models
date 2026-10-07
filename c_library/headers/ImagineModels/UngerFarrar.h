@@ -142,7 +142,7 @@ public:
     {"fPoloidalB"     ,  5.8357990e+00 * astro::microgauss},
     {"fPoloidalP"     ,  1.9510779e+00 * astro::kpc},
     {"fPoloidalR"     ,  2.4994376e+00 * astro::kpc},
-    {"fPoloidalZ"     ,  2.3684453e+00 * astro::kpc},
+    {"fPoloidalZ"     ,  6.1938701e+00 * std::tan(2.0926122e+01 * num::rad) * astro::kpc},
     {"fStriation"     ,  5.1440500e-01},
     {"fToroidalBN"    ,  2.7077434e+00 * astro::microgauss},
     {"fToroidalBS"    , -2.5677104e+00 * astro::microgauss},
