@@ -8,6 +8,7 @@ void bind_uf24(py::module_ &m)
         .def(py::init<const std::string &>(), "model"_a)
         .def("set_model", &UFMagneticField::set_model, "model"_a)
         .def_property_readonly("model", &UFMagneticField::model)
+        .def_readwrite("fMaxRadius", &UFMagneticField::fMaxRadius)
         .def_readonly("available_models", &UFMagneticField::available_models)
         .def_readonly("all_parameters", &UFMagneticField::all_parameters);
 }

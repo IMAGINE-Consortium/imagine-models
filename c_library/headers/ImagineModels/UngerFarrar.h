@@ -79,7 +79,7 @@ public:
 
   /// maximum galacto-centric radius beyond which B=0
 
-  double fMaxRadius = 20;
+  double fMaxRadius = 30;
 
   /// model parameters, see Table 3 of UF23 paper
 
