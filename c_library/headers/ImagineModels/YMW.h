@@ -29,7 +29,7 @@ namespace imagine {
     X(t3_thetacn, 109.) /* degree, theta correction, fitted by YMW */                                                     \
     X(t3_nsg, 0.626) /* unitless, Carina relative under density, fitted by YMW */                                         \
     X(t3_wsg, 20) /* degree, theta scaling, fitted by YMW */                                                              \
-    X(t3_thetasg, 78.8) /* degree, theta correction, fitted by YMW */                                                     \
+    X(t3_thetasg, 75.8) /* degree, theta correction, fitted by YMW */                                                     \
     X(t4_ngc, 6.2) /* cm^{-3}, normalization, fitted by YMW */                                                            \
     X(t4_agc, 0.160) /* kpc, scale length, fixed by YMW based on CO */                                                    \
     X(t4_hgc, 0.035) /* kpc, scale height, fixed by YMW based on CO */                                                    \
