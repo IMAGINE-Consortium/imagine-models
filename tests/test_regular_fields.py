@@ -167,3 +167,24 @@ def test_model_variants():
     assert img.TFMagneticField().H_disk == 0.055
     with pytest.raises(ValueError):
         tf.set_model("Xd1", "C0")
+
+
+def test_configuration_members():
+    han = img.HanMagneticField()
+    position = (-8.5, 1., .1)
+    assert np.any(np.asarray(han.at_position(*position)) != 0.)
+    han.R_max = 8.
+    assert np.all(np.asarray(han.at_position(*position)) == 0.)
+    assert len(han.R_s) == 7
+
+    ymw = img.YMW16()
+    reference = ymw.at_position(-8.4, .05, .02)
+    ymw.localbubble_boundary = .05
+    assert ymw.at_position(-8.4, .05, .02) != reference
+    for name in ["t0_theta0", "h0", "h1", "h2", "Xgc", "Ygc", "Zgc", "t5_lc", "t6_zyl1", "t6_zyl2", "max_radius"]:
+        assert isinstance(getattr(ymw, name), float)
+
+    uf = img.UFMagneticField()
+    assert uf.fMaxRadius == 30.
+    uf.fMaxRadius = 20.
+    assert np.all(np.asarray(uf.at_position(-22., 0., 0.)) == 0.)
