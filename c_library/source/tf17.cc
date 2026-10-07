@@ -134,7 +134,7 @@ Vec3<T> TFMagneticField::getHaloField(const double &r, const double &z, const do
     else if (active_halo_model == "C1")
     { // m = 1
         // simplication of the equation in the cosinus
-        auto phi_prime = phi - shiftedWindingFunction<T>(r, z, cot_p0, p) - psd;
+        auto phi_prime = phi - shiftedWindingFunction<T>(r, z, cot_p0, p) - psh;
         B_z0 = p.B1_halo * exp(-r1_halo_r * r / p.L_halo) * cos(phi_prime);
     }
 
