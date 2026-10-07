@@ -47,6 +47,7 @@ if(BUILD_PYTHON_PACKAGE)
         ${PW}/regular/uniform.cc
         ${PW}/regular/wmap.cc
         ${PW}/regular/ymw16.cc
+        ${PW}/regular/xh24.cc
     )
     if(IMAGINE_HAS_FFTW)
         list(APPEND BINDING_SOURCES

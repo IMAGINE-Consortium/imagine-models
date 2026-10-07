@@ -43,7 +43,7 @@ def _regular_cases():
     for name in ["ArchimedeanMagneticField", "FauvetMagneticField", "HMRMagneticField", "HanMagneticField",
                  "HelixMagneticField", "JF12RegularField", "JaffeMagneticField", "PshirkovMagneticField",
                  "SVT22", "StanevBSSMagneticField", "SunMagneticField", "TFMagneticField", "TTMagneticField",
-                 "UFMagneticField", "UniformDensityField", "UniformMagneticField", "WMAPMagneticField", "YMW16"]:
+                 "UFMagneticField", "UniformDensityField", "UniformMagneticField", "WMAPMagneticField", "XH24MagneticField", "YMW16"]:
         cases[f"{name}__default"] = (name, {})
     cases["UniformMagneticField__set"] = ("UniformMagneticField", {"bx": -3.2, "by": 1.5, "bz": 0.25})
     cases["UniformDensityField__set"] = ("UniformDensityField", {"n0": 0.03})

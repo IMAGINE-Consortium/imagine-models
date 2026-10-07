@@ -75,6 +75,7 @@ void bind_uf24(py::module_ &m);
 void bind_uniform(py::module_ &m);
 void bind_wmap(py::module_ &m);
 void bind_ymw16(py::module_ &m);
+void bind_xh24(py::module_ &m);
 
 #if IMAGINE_HAS_FFTW
 void bind_random_bases(py::module_ &m);

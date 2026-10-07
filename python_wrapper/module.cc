@@ -26,6 +26,7 @@ PYBIND11_MODULE(_core, m)
   bind_uniform(m);
   bind_wmap(m);
   bind_ymw16(m);
+  bind_xh24(m);
 #if IMAGINE_HAS_FFTW
   bind_random_bases(m);
   bind_es_random(m);

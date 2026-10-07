@@ -19,6 +19,7 @@
 #include "ImagineModels/UngerFarrar.h"
 #include "ImagineModels/Uniform.h"
 #include "ImagineModels/WMAP.h"
+#include "ImagineModels/XH24.h"
 
 #include "ImagineModels/YMW.h"
 

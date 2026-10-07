@@ -59,6 +59,7 @@ set(IM_SRC_FILES
     ${IM_SOURCE_DIR}/jaffe.cc
     ${IM_SOURCE_DIR}/regularjf12.cc
     ${IM_SOURCE_DIR}/ymw16.cc
+    ${IM_SOURCE_DIR}/xh24.cc
     ${IM_SOURCE_DIR}/tf17.cc
     ${IM_SOURCE_DIR}/sun.cc
     ${IM_SOURCE_DIR}/pshirkov.cc
