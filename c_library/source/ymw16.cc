@@ -30,7 +30,7 @@ T YMW16::field(const double &x, const double &y, const double &z, const YMW16Par
   T gd = 0.;
   const T ne_thick = thick(zz_w, rr, gd, p);
   // longitude, in deg
-  const double ec_l = atan2(xx, p.r0 - yy) * 180 / M_PI;
+  const double ec_l{atan2(xx, p.r0 - yy) * 180 / M_PI};
   // since in YMW16, Fermi Bubble is not actually contributing, we ignore FB
   if (do_thick_disc)
     ne_comp[1] = ne_thick;
