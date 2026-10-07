@@ -2,7 +2,7 @@
 
 namespace imagine {
 
-// J. L. Han et al 2018 ApJS 234 11
+// Archimedean spiral, implementation from CRPropa (ArchimedeanSpiralField)
 template <typename T>
 Vec3<T> ArchimedeanMagneticField::field(const double &x, const double &y, const double &z, const ArchimedeanParameters<T> &p) const
 {

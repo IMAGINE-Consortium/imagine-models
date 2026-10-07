@@ -71,7 +71,10 @@ void RandomVectorField::_sample(std::array<FFTWWorkspace*, 3> ws, const RegularG
     }
     return b_rand_val;
   };
-  for_each_point(RegularGrid(ws[0]->padded_shape(), grid.reference_point, inc), [&](std::size_t idx, double xx, double yy, double zz) {
+  const std::size_t nz = shp[2];
+  const std::size_t padded_nz = ws[0]->padded_shape()[2];
+  for_each_point(grid, [&](std::size_t point, double xx, double yy, double zz) {
+    const std::size_t idx = point / nz * padded_nz + point % nz;
     std::array<double, 3> b{val[0][idx], val[1][idx], val[2][idx]};
     std::array<double, 3> eval = apply_profile(b, xx, yy, zz);
     val[0][idx] = eval[0];

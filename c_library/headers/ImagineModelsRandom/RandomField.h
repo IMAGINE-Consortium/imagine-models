@@ -19,8 +19,6 @@ protected:
 
   double simple_spectrum(const double &abs_k, const double &k0, const double &s) const;
 
-  double hammurabi_spectrum(const double &abs_k, const double &rms, const double &k0, const double &k1, const double &a0, const double &a1) const;
-
 public:
   virtual ~RandomField() = default;
 

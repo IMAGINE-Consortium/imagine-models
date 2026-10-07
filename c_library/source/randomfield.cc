@@ -33,22 +33,6 @@ public:
 
 }
 
-double RandomField::hammurabi_spectrum(const double &abs_k, const double &rms, const double &k0, const double &k1, const double &a0, const double &a1) const {
-  // this function is adapted from https://github.com/hammurabi-dev/hammurabiX/blob/master/source/field/b/brnd_jf12.cc
-  // original author: https://github.com/gioacchinowang
-  const double p0 = rms*rms;
-  double pi = 3.141592653589793;
-  const double unit = 1. / (4 * pi * abs_k * abs_k);   // units fixing, wave vector in 1/kpc units
-  // power laws
-  const double band1 = double(abs_k < k1);
-  const double band2 = double(abs_k > k1) * double(abs_k < k0);
-  const double band3 = double(abs_k > k0);
-  const double P = band1 * std::pow(k0 / k1, a1) * std::pow(abs_k / k1, 6.0) +
-                  band2 / std::pow(abs_k / k0, a1) +
-                  band3 / std::pow(abs_k / k0, a0);
-  return P * p0 * unit;
-  }
-
 double RandomField::simple_spectrum(const double &abs_k, const double &k0, const double &s) const {
   double pi = 3.141592653589793;
   const double unit = 1. / (4 * pi * abs_k * abs_k);

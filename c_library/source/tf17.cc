@@ -157,7 +157,7 @@ template <typename T>
 T TFMagneticField::azimuthalFieldComponent(const double &r, const double &z, const T &B_r, const T &B_z, const T &cp0, const TFParameters<T> &p) const
 {
     auto r_ = r / p.L_p;
-    auto rscale = r > epsilon ? r_ * exp(-r_) / (1 - exp(-r_)) : 1 - r_ / 2. - r_ * r_ / 12.;
+    auto rscale = r > epsilon ? r_ * exp(-r_) / (1 - exp(-r_)) : 1 - r_ / 2. + r_ * r_ / 12.;
     auto B_phi = cp0 / zscale(z, p) * rscale * B_r;
     B_phi = B_phi - 2 * z * r / (p.H_p * p.H_p) / zscale(z, p) * shiftedWindingFunction<T>(r, z, cp0, p) * B_z;
     return B_phi;
