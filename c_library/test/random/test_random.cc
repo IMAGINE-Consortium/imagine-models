@@ -254,6 +254,12 @@ TEMPLATE_LIST_TEST_CASE("evaluate_rms equals rms at each point", "[random]", Ran
     CHECK(on_grid(0, idx) == model.rms(x, y, z));
     CHECK(model.variance(x, y, z) == model.rms(x, y, z) * model.rms(x, y, z));
   });
+  const PointCloud cloud({-8.5, 3., 0.2}, {0., 4., -1.}, {.1, -.4, 2.});
+  const auto on_cloud = model.evaluate_rms(cloud);
+  REQUIRE(on_cloud.size() == 3);
+  for_each_point(cloud, [&](std::size_t idx, double x, double y, double z) {
+    CHECK(on_cloud(0, idx) == model.rms(x, y, z));
+  });
 }
 
 TEST_CASE("JF12 anisotropy follows the regular JF12 field", "[random]") {

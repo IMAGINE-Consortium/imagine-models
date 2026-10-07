@@ -45,10 +45,30 @@ TEMPLATE_LIST_TEST_CASE("evaluate on an irregular grid equals at_position", "[gr
       }
 }
 
+TEMPLATE_LIST_TEST_CASE("evaluate on a point cloud equals at_position", "[grid]", AllModels) {
+  TestType model;
+  std::vector<double> x, y, z;
+  for (const auto &p : positions) {
+    x.push_back(p[0]);
+    y.push_back(p[1]);
+    z.push_back(p[2]);
+  }
+  const PointCloud cloud(x, y, z);
+  auto result = model.evaluate(cloud);
+  REQUIRE(result.shape == std::array<int, 3>{int(positions.size()), 1, 1});
+  for (std::size_t i = 0; i < positions.size(); ++i) {
+    auto expected = value_at(model, positions[i]);
+    for (std::size_t c = 0; c < expected.size(); ++c)
+      CHECK(result(int(c), i) == expected[c]);
+  }
+}
+
 TEST_CASE("invalid grids throw", "[grid]") {
   CHECK_THROWS_AS(RegularGrid({4, 0, 2}, {0., 0., 0.}, {1., 1., 1.}), GridException);
   CHECK_THROWS_AS(RegularGrid({-1, 2, 2}, {0., 0., 0.}, {1., 1., 1.}), GridException);
   CHECK_THROWS_AS(IrregularGrid({1., 2.}, {}, {0.}), GridException);
+  CHECK_THROWS_AS(PointCloud({}, {}, {}), GridException);
+  CHECK_THROWS_AS(PointCloud({1., 2.}, {1.}, {1., 2.}), GridException);
 }
 
 TEST_CASE("grid shapes and sizes", "[grid]") {
@@ -56,4 +76,7 @@ TEST_CASE("grid shapes and sizes", "[grid]") {
   CHECK(irregular.shape() == std::array<int, 3>{6, 5, 5});
   CHECK(grid_shape(Grid(regular)) == regular.shape);
   CHECK(grid_shape(Grid(irregular)) == irregular.shape());
+  const PointCloud cloud({1., 2., 3.}, {0., 0., 0.}, {-1., 0., 1.});
+  CHECK(cloud.size() == 3);
+  CHECK(grid_shape(Grid(cloud)) == std::array<int, 3>{3, 1, 1});
 }

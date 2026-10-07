@@ -117,6 +117,8 @@ def test_rms_interfaces(model_string):
     assert line.shape == (2,)
     assert line[1] == on_grid[1, 1, 0]
     assert np.allclose(model.variance(np.array([-8.5, 3.]), 4., .1), line ** 2)
+    cloud = img.PointCloud([-8.5, 3.], [4., 4.], [.1, .1])
+    assert np.array_equal(model.rms(cloud), line)
 
 
 def test_python_subclass():

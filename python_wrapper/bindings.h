@@ -31,6 +31,17 @@ py::array_t<double> to_numpy(GridData<N> &&grid_data) {
   return py::array_t<double>(shape, owned->data.data(), owner);
 }
 
+template <int N>
+py::array_t<double> to_numpy_points(GridData<N> &&grid_data) {
+  auto owned = new GridData<N>(std::move(grid_data));
+  py::capsule owner(owned, [](void *p) { delete static_cast<GridData<N> *>(p); });
+  std::vector<py::ssize_t> shape;
+  if (N > 1)
+    shape.push_back(N);
+  shape.push_back(owned->shape[0]);
+  return py::array_t<double>(shape, owned->data.data(), owner);
+}
+
 template <typename F>
 py::array_t<double> map_positions(F &&f, const py::object &x, const py::object &y, const py::object &z) {
     using DoubleArray = py::array_t<double, py::array::c_style | py::array::forcecast>;

@@ -188,3 +188,29 @@ def test_configuration_members():
     assert uf.fMaxRadius == 30.
     uf.fMaxRadius = 20.
     assert np.all(np.asarray(uf.at_position(-22., 0., 0.)) == 0.)
+
+
+def test_point_cloud():
+    rng = np.random.default_rng(3)
+    positions = rng.uniform(-15., 15., size=(20, 3))
+    cloud = img.PointCloud.from_positions(positions)
+    assert len(cloud) == cloud.size == 20
+    assert np.array_equal(cloud.y, positions[:, 1])
+    same = img.PointCloud(positions[:, 0], positions[:, 1], positions[:, 2])
+    for model in [img.JF12RegularField(), img.UFMagneticField(), img.YMW16()]:
+        on_cloud = model.evaluate(cloud)
+        expected = model.at_positions(positions[:, 0], positions[:, 1], positions[:, 2])
+        assert on_cloud.shape == expected.shape
+        assert np.array_equal(on_cloud, expected)
+        assert np.array_equal(model.evaluate(same), on_cloud)
+
+    class Constant(img.RegularVectorField):
+        def at_position(self, x, y, z):
+            return [x, 2. * y, 3.]
+
+    assert np.array_equal(Constant().evaluate(cloud), np.vstack([positions[:, 0], 2. * positions[:, 1], np.full(20, 3.)]))
+
+    with pytest.raises(ValueError):
+        img.PointCloud([1., 2.], [1.], [1., 2.])
+    with pytest.raises(ValueError):
+        img.PointCloud.from_positions(np.zeros((4, 2)))

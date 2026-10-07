@@ -93,6 +93,10 @@ b = jf12.evaluate(grid)                                          # shape (3, 200
 irregular = img.IrregularGrid(x=[-10., 2.], y=[-5., 0., 4.], z=[0.])
 img.YMW16().evaluate(irregular)                                  # scalar field: shape (2, 3, 1)
 
+# on an unstructured set of points (e.g. a catalogue)
+cloud = img.PointCloud.from_positions(np.array([[-8.5, 0., 0.1], [3., 4., -1.], [0., 12., 2.]]))   # or PointCloud(x, y, z)
+jf12.evaluate(cloud)                                             # shape (3, 3): (component, point)
+
 # parameters
 jf12.parameter_names                  # ordered list
 jf12.b_arm_1 = 1.2                    # single parameter
@@ -132,6 +136,9 @@ int main() {
     imagine::VectorGridData grid_data = jf12.evaluate(imagine::RegularGrid({200, 200, 40}, {-20., -20., -4.}, {.2, .2, .2}));
     // grid_data(component, flat_index), flat_index = (i * ny + j) * nz + k
 
+    imagine::VectorGridData on_points = jf12.evaluate(imagine::PointCloud({-8.5, 3.}, {0., 4.}, {0.1, -1.}));
+    // on_points(component, point), shape {2, 1, 1}
+
 #if IMAGINE_HAS_FFTW
     imagine::JF12RandomField random_field;
     imagine::VectorGridData sample = random_field.sample(imagine::RegularGrid({64, 64, 16}, {-10., -10., -2.}, {.3, .3, .25}), 23);
@@ -155,7 +162,7 @@ A complete example is `demos/cpp/example.cc`.
 
 - **Units**: positions in kpc, magnetic fields in µG, thermal electron densities in cm⁻³.
 - **Coordinates**: Galactocentric Cartesian (x, y, z), with z perpendicular to the Galactic plane.
-- **Grids**: a `RegularGrid` has `shape`, `reference_point` (the first grid point) and `increment`; an `IrregularGrid` has arbitrary x, y and z axes. Grid results are indexed `[component, i, j, k]`.
+- **Grids**: a `RegularGrid` has `shape`, `reference_point` (the first grid point) and `increment`; an `IrregularGrid` has arbitrary x, y and z axes; a `PointCloud` is an unstructured list of N positions. Grid results are indexed `[component, i, j, k]`, point-cloud results `[component, point]` (in C++ the shape is `{N, 1, 1}`). Random fields can be sampled on a `RegularGrid` only (FFT); their `rms` works on all three.
 - **Random fields**: a random field is `rms(x) · G(x)`, where `G` is a zero-mean Gaussian random field with unit variance. The power spectrum only sets the correlation structure and is normalised on the given grid, so a sample realises exactly `rms(x)²` as local variance, independent of the grid. For vector fields `rms` is the total field strength `sqrt(E|B|²)`. Divergence cleaning (`clean_divergence`, on by default) keeps the total power, but with a spatially varying `rms` the local amplitude then follows `rms(x)` only approximately. `GaussianScalarField` is `mu + sigma · G`, `LogNormalScalarField` is `exp(log_mu + log_sigma · G)`.
 
 

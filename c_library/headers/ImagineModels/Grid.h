@@ -39,12 +39,30 @@ struct IrregularGrid {
   std::size_t size() const { return x.size() * y.size() * z.size(); }
 };
 
-using Grid = std::variant<RegularGrid, IrregularGrid>;
+struct PointCloud {
+  std::vector<double> x;
+  std::vector<double> y;
+  std::vector<double> z;
+
+  PointCloud(const std::vector<double> &x, const std::vector<double> &y, const std::vector<double> &z) : x(x), y(y), z(z) {
+    if (x.empty())
+      throw GridException("PointCloud: coordinate vectors must not be empty.");
+    if (y.size() != x.size() || z.size() != x.size())
+      throw GridException("PointCloud: x, y and z must have the same length.");
+  }
+
+  std::array<int, 3> shape() const { return {int(x.size()), 1, 1}; }
+  std::size_t size() const { return x.size(); }
+};
+
+using Grid = std::variant<RegularGrid, IrregularGrid, PointCloud>;
 
 inline std::array<int, 3> grid_shape(const Grid &grid) {
   if (auto g = std::get_if<RegularGrid>(&grid))
     return g->shape;
-  return std::get<IrregularGrid>(grid).shape();
+  if (auto g = std::get_if<IrregularGrid>(&grid))
+    return g->shape();
+  return std::get<PointCloud>(grid).shape();
 }
 
 template <typename F>
@@ -73,6 +91,12 @@ void for_each_point(const IrregularGrid &grid, F &&f) {
         f(m + n + k, grid.x[i], grid.y[j], grid.z[k]);
     }
   }
+}
+
+template <typename F>
+void for_each_point(const PointCloud &grid, F &&f) {
+  for (std::size_t i = 0; i < grid.x.size(); i++)
+    f(i, grid.x[i], grid.y[i], grid.z[i]);
 }
 
 template <typename F>

@@ -6,6 +6,7 @@ void bind_statistics(PyClass &cls)
 {
     cls.def("rms", [](const Field &self, const RegularGrid &grid) { return to_numpy(self.evaluate_rms(grid)); }, "grid"_a)
         .def("rms", [](const Field &self, const IrregularGrid &grid) { return to_numpy(self.evaluate_rms(grid)); }, "grid"_a)
+        .def("rms", [](const Field &self, const PointCloud &grid) { return to_numpy_points(self.evaluate_rms(grid)); }, "grid"_a)
         .def("rms", [](const Field &self, const py::object &x, const py::object &y, const py::object &z) {
             return map_positions([&](double a, double b, double c) { return self.rms(a, b, c); }, x, y, z); }, "x"_a, "y"_a, "z"_a)
         .def("variance", [](const Field &self, const py::object &x, const py::object &y, const py::object &z) {
