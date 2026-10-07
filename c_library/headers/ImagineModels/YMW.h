@@ -60,7 +60,7 @@ IMAGINE_PARAMETERS(YMW16Parameters, YMW16_PARAMETERS)
 class YMW16 : public RegularScalarModel<YMW16, YMW16Parameters>
 {
 public:
-  double max_radius = 30.; // kpc, Milky Way part of the model
+  double max_radius = 30.; // kpc
 
   // warp
   double t0_r_warp = 8.4; // kpc
@@ -83,7 +83,7 @@ public:
   // spiralarms
   bool do_spiral_arms = true;
 
-  // arms are Norma-Outer, Perseus, Carina - Sagittarius, Crux-Scutum, Local (YMW16 spiral.txt)
+  // arms are Norma-Outer, Perseus, Carina - Sagittarius, Crux-Scutum, Local 
   std::array<double, 5> t3_rmin{3.35, 3.707, 3.56, 3.67, 8.21}; // initial radius, kpc
   std::array<double, 5> t3_thmin{0.77, 2.093, 3.81, 5.76, 0.96}; // initial azimuth angle, rad
   std::array<double, 5> t3_tan_pitch{0.202, 0.173, 0.183, 0.186, 0.0483};

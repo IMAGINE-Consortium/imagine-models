@@ -27,7 +27,7 @@ IMAGINE_PARAMETERS(PshirkovParameters, PSHIRKOV_PARAMETERS)
 class PshirkovMagneticField : public RegularVectorModel<PshirkovMagneticField, PshirkovParameters>
 {
 public:
-	const std::array<std::string, 2> available_models{"ASS", "BSS"}; // axisymmetric / bisymmetric spiral disk field
+	const std::array<std::string, 2> available_models{"ASS", "BSS"};
 
 	explicit PshirkovMagneticField(const std::string &model = "BSS") { set_model(model); }
 

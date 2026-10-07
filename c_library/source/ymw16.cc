@@ -21,7 +21,7 @@ T YMW16::field(const double &x, const double &y, const double &z, const YMW16Par
     return 0.;
   // cylindrical r
   const double rr = sqrt(xx * xx + yy * yy);
-  // warp, applied to the disk components only
+  // warp
   double zz_w = zz;
   if (rr >= t0_r_warp)
     zz_w -= t0_gamma_w * (rr - t0_r_warp) * cos(atan2(yy, xx) - t0_theta0 / 180 * M_PI);
@@ -91,7 +91,7 @@ auto YMW16::_cosh_scaling(const double &s, const T &a, const T &b) const {
   return pow(1. / cosh((s - b) / a), 2);
 }
 
-// thick disk, also sets the radial cutoff gd of the disk components
+// thick disk
 template <typename T>
 T YMW16::thick(const double &zz, const double &rr, T &gd, const YMW16Parameters<T> &p) const {
   if (abs(zz) > cutoff * p.t1_h1 or (rr - p.t1_bd) > cutoff * p.t1_ad) {
@@ -135,7 +135,6 @@ T YMW16::spiral(const double &xx, const double &yy,
   for (int i = 0; i < 5; ++i) {
     double detrr;
     if (i != 4) {
-      // Norma-Outer and Perseus have one winding before theta_min, the other arms two
       const double d_phi = theta - t3_thmin[i];
       detrr = arm_distance(i, d_phi + 2 * M_PI);
       if (d_phi >= 0)
@@ -194,7 +193,6 @@ T YMW16::gum(const double &xx, const double &yy, const double &zz, const YMW16Pa
   const T RR = sqrt((xx - xc) * (xx - xc) + (yy - yc) * (yy - yc) + (zz - zc) * (zz - zc));
   T Dmin;
   if (theta == 0.) {
-    // limit theta -> 0 (the original divides 0 by 0 here)
     Dmin = abs(RR - p.t5_agn);
   }
   else {
@@ -221,7 +219,6 @@ T YMW16::localbubble(const double &xx, const double &yy, const double &zz, const
   const T y_lb = p.r0 + p.t6_offset;
   // r_LB in ref
   const T rLB = sqrt(pow((yy - y_lb) * t6_zyl1 - t6_zyl2 * zz, 2) + xx * xx);
-  // the first region is limited to a cone of 45 deg half opening angle
   const T y_axis = y_lb + t6_zyl2 / t6_zyl1 * zz;
   const T cos_a = (xx * xx + (p.r0 - yy) * (y_axis - yy)) /
                   (sqrt(xx * xx + (p.r0 - yy) * (p.r0 - yy)) * sqrt(xx * xx + (y_axis - yy) * (y_axis - yy)));
@@ -232,7 +229,6 @@ T YMW16::localbubble(const double &xx, const double &yy, const double &zz, const
   if ((rLB - Rlb) <= cutoff * p.t6_wlb1 and abs(zz) <= cutoff * p.t6_hlb1 and dl1 <= cutoff * p.t6_detlb1)
     nel1 = p.t6_nlb1 * pow(1. / cosh(dl1 / p.t6_detlb1), 2) * pow(1. / cosh((rLB - Rlb) / p.t6_wlb1), 2) *
            pow(1. / cosh(zz / p.t6_hlb1), 2);
-  // as in the original, the cuts of the second region only apply if the first one vanishes
   if (nel1 == 0. and ((rLB - Rlb) > cutoff * p.t6_wlb2 or abs(zz) > cutoff * p.t6_hlb2))
     return 0.;
   T nel2 = 0.;
