@@ -14,10 +14,10 @@ namespace imagine {
 
 #define SUN_PARAMETERS(X)                                                                      \
     X(b_Rsun, 8.5)                                                                             \
-    X(b_R0, 8.5)                                                                               \
+    X(b_R0, 10.)                                                                               \
     X(b_B0, 2.)                                                                                \
     X(b_z0, 1.)                                                                                \
-    X(b_Rc, 5.3)                                                                               \
+    X(b_Rc, 5.)                                                                                \
     X(b_Bc, 2.)                                                                                \
     X(b_p, -12.)                                                                               \
     X(bH_B0, 2.) /* 10 in original publication, 2 in update https://arxiv.org/abs/1010.4394 */ \
