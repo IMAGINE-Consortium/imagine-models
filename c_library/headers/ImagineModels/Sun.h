@@ -24,7 +24,7 @@ namespace imagine {
     X(bH_R0, 4.)                                                                               \
     X(bH_z0, 1.5)                                                                              \
     X(bH_z1a, 0.2)                                                                             \
-    X(bH_z1b, 0.4)
+    X(bH_z1b, 4.)
 
 IMAGINE_PARAMETERS(SunParameters, SUN_PARAMETERS)
 
