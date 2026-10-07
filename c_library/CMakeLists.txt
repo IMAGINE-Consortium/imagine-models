@@ -82,6 +82,7 @@ if(IMAGINE_HAS_FFTW)
         ${IM_SOURCE_DIR}/lognormal.cc
         ${IM_SOURCE_DIR}/randomjf12.cc
         ${IM_SOURCE_DIR}/ensslinsteininger.cc
+        ${IM_SOURCE_DIR}/uf26random.cc
     )
 endif()
 

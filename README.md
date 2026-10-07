@@ -239,6 +239,7 @@ cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug && cmake --build build && ctest --t
 | **Random models** | | | | | | |
 | Jansson Farrar | `JF12RandomField` | &#x2714; | [Jansson & Farrar (2012)](https://ui.adsabs.harvard.edu/abs/2012ApJ...761L..11J/abstract) | rms profile from JF12; anisotropy along the regular JF12 field (`anisotropy_rho`) | [Hammurabi X](https://github.com/hammurabi-dev/hammurabiX) | [ipynb](demos/python/model_examples/jf12_random_demo.ipynb) |
 | Ensslin Steininger | `ESRandomField` | &#x2714; | | rms `b0 * sqrt(exp(-(r - r_obs)/r0) exp(-(|z| - |z_obs|)/z0))` (energy density scaled exponentially, `b0` = rms at the observer), as in hammurabiX | [Hammurabi X](https://github.com/hammurabi-dev/hammurabiX) | |
+| Unger Farrar 2026 | `UF26RandomField` | &#x2714; | [Unger & Farrar (2026)](https://arxiv.org/abs/2608.21293) | isotropic random field, rms profile only (Sec. 8, Table 2): `set_model("expDisk")` (default; sech disk) or `set_model("ringDisk")` (disk + inner annulus, added in quadrature). The paper constrains only the rms; the power spectrum is the library default (`spectral_offset`, `spectral_slope`) | | |
 
 ### Thermal electron (scalar) fields
 

@@ -10,5 +10,6 @@
 
 #include "ImagineModelsRandom/RandomJF12.h"
 #include "ImagineModelsRandom/EnsslinSteininger.h"
+#include "ImagineModelsRandom/UF26Random.h"
 
 #endif

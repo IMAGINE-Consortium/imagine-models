@@ -97,8 +97,8 @@ double relative_divergence(const VectorGridData &b, const RegularGrid &grid) {
 
 }
 
-using RandomModels = std::tuple<JF12RandomField, ESRandomField, GaussianScalarField, LogNormalScalarField>;
-using RandomVectorModels = std::tuple<JF12RandomField, ESRandomField>;
+using RandomModels = std::tuple<JF12RandomField, ESRandomField, UF26RandomField, GaussianScalarField, LogNormalScalarField>;
+using RandomVectorModels = std::tuple<JF12RandomField, ESRandomField, UF26RandomField>;
 
 TEMPLATE_LIST_TEST_CASE("samples have the grid shape and are finite", "[random]", RandomModels) {
   TestType model;

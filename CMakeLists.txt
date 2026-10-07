@@ -52,6 +52,7 @@ if(BUILD_PYTHON_PACKAGE)
         list(APPEND BINDING_SOURCES
             ${PW}/random/bases.cc
             ${PW}/random/es_random.cc
+            ${PW}/random/uf26_random.cc
             ${PW}/random/gaussian_scalar.cc
             ${PW}/random/jf12_random.cc
             ${PW}/random/lognormal.cc

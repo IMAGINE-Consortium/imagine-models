@@ -67,8 +67,9 @@ def _regular_cases():
 
 def _random_cases():
     cases = {}
-    for name in ["JF12RandomField", "ESRandomField", "GaussianScalarField", "LogNormalScalarField"]:
+    for name in ["JF12RandomField", "ESRandomField", "UF26RandomField", "GaussianScalarField", "LogNormalScalarField"]:
         cases[f"{name}__default"] = (name, {})
+    cases["UF26RandomField__ringDisk"] = ("UF26RandomField", {"set_model": ["ringDisk"]})
     cases["JF12RandomField__no_cleaning"] = ("JF12RandomField", {"clean_divergence": False})
     cases["JF12RandomField__no_spectrum"] = ("JF12RandomField", {"apply_spectrum": False})
     return cases

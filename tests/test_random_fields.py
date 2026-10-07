@@ -7,7 +7,7 @@ import numpy as np
 if not img.__has_random_fields__:
     pytest.skip("ImagineModels was built without FFTW", allow_module_level=True)
 
-vector_models = ['JF12RandomField', 'ESRandomField']
+vector_models = ['JF12RandomField', 'ESRandomField', 'UF26RandomField']
 scalar_models = ['GaussianScalarField', 'LogNormalScalarField']
 
 grid = img.RegularGrid(shape=[16, 16, 16], reference_point=[-1., -1., -1.], increment=[.125, .125, .125])
@@ -185,3 +185,31 @@ def test_jf12_anisotropy_follows_regular_field():
     model = img.JF12RandomField()
     regular = img.JF12RegularField()
     assert np.allclose(model.anisotropy_direction(-8.5, 1., .2), regular.at_position(-8.5, 1., .2))
+
+
+def _vertical_integral(model, r, z_max=30., n=60001):
+    z = np.linspace(0., z_max, n)
+    b2 = model.rms(np.full(n, -r), 0., z) ** 2
+    return 0.5 * np.sum(b2[1:] + b2[:-1]) * (z[1] - z[0])
+
+
+def test_uf26_against_paper():
+    disk = img.UF26RandomField()
+    assert disk.model == "expDisk"
+    assert disk.b_disk == 4.4 and disk.z_disk == 1.0 and disk.l_r == 15. and disk.r_c == 1.
+    sun = disk.r_sun
+    assert disk.rms(-sun, 0., disk.z_disk) / disk.rms(-sun, 0., 0.) == pytest.approx(np.exp(-1.))
+    assert disk.rms(-sun, 0., 0.) == pytest.approx(4.4 / (1. + np.exp((sun - 18.) / 2.)))
+    assert _vertical_integral(disk, sun) == pytest.approx(11., abs=1.)
+
+    ring = img.UF26RandomField("ringDisk")
+    assert (ring.b_disk, ring.z_disk, ring.l_r, ring.b_ring, ring.r_ring, ring.w_ring, ring.z_ring) == (4.1, 0.9, 100., 4.1, 4.5, 2.0, 1.9)
+    assert _vertical_integral(ring, sun) == pytest.approx(10., abs=1.)
+    ring_only = img.UF26RandomField("ringDisk")
+    ring_only.b_disk = 0.
+    assert _vertical_integral(ring_only, ring.r_ring) == pytest.approx(30., abs=9.)
+
+    disk.set_model("ringDisk")
+    assert np.array_equal(disk.rms(np.array([-8., 3.]), 1., .2), ring.rms(np.array([-8., 3.]), 1., .2))
+    with pytest.raises(ValueError):
+        img.UF26RandomField("unknown")
