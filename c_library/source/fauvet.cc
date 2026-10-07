@@ -41,7 +41,7 @@ Vec3<T> FauvetMagneticField::field(const double &x, const double &y, const doubl
     auto hf_piece1 = (h_z1 * h_z1) / (h_z1 * h_z1 + (std::abs(z) - p.h_z0) * (std::abs(z) - p.h_z0));
     auto hf_piece2 = exp(-(r - p.h_r0) / (p.h_r0));
 
-    auto halo_field = p.h_b0 * hf_piece1 * (r / p.b_r0) * hf_piece2;
+    auto halo_field = p.h_b0 * hf_piece1 * (r / p.h_r0) * hf_piece2;
     B_cyl[1] += halo_field;
 
     B_vec3 = Cyl2Cart<Vec3<T>>(phi, B_cyl);
