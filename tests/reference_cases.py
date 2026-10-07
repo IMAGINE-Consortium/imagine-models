@@ -49,6 +49,8 @@ def _regular_cases():
     cases["UniformDensityField__set"] = ("UniformDensityField", {"n0": 0.03})
     cases["JF12RegularField__no_halo"] = ("JF12RegularField", {"do_halo": False})
     cases["JF12RegularField__no_X"] = ("JF12RegularField", {"do_X": False})
+    cases["JF12RegularField__Planck12b"] = ("JF12RegularField", {"set_model": ["Planck12b"]})
+    cases["JF12RegularField__Planck12c"] = ("JF12RegularField", {"set_model": ["Planck12c"]})
     cases["SVT22__no_halo"] = ("SVT22", {"do_halo": False})
     cases["JaffeMagneticField__ring_no_bar"] = ("JaffeMagneticField", {"ring": True, "bar": False})
     cases["JaffeMagneticField__bss"] = ("JaffeMagneticField", {"bss": True})
@@ -70,6 +72,7 @@ def _random_cases():
     for name in ["JF12RandomField", "ESRandomField", "UF26RandomField", "GaussianScalarField", "LogNormalScalarField"]:
         cases[f"{name}__default"] = (name, {})
     cases["UF26RandomField__ringDisk"] = ("UF26RandomField", {"set_model": ["ringDisk"]})
+    cases["JF12RandomField__Planck12c"] = ("JF12RandomField", {"set_model": ["Planck12c"]})
     cases["JF12RandomField__no_cleaning"] = ("JF12RandomField", {"clean_divergence": False})
     cases["JF12RandomField__no_spectrum"] = ("JF12RandomField", {"apply_spectrum": False})
     return cases

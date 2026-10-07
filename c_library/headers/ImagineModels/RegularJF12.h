@@ -1,7 +1,9 @@
 #ifndef REGULARJF12_H
 #define REGULARJF12_H
 
+#include <array>
 #include <functional>
+#include <string>
 #include <cmath>
 #include <cassert>
 #include <iostream>
@@ -59,10 +61,18 @@ public:
   bool do_halo = true;
   // X-field parameters
   bool do_X = true;
-  
+
+  const std::array<std::string, 3> available_models{"JF12", "Planck12b", "Planck12c"};
+  explicit JF12MagneticField(const std::string &model = "JF12") { set_model(model); }
+  void set_model(const std::string &model);
+  const std::string &model() const { return active_model; }
+  double arm_shift = 1.;
 
   template <typename T>
   Vec3<T> field(const double &x, const double &y, const double &z, const JF12Parameters<T> &p) const;
+
+private:
+  std::string active_model = "JF12";
 };
 
 }

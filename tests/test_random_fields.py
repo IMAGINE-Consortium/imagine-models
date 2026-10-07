@@ -213,3 +213,13 @@ def test_uf26_against_paper():
     assert np.array_equal(disk.rms(np.array([-8., 3.]), 1., .2), ring.rms(np.array([-8., 3.]), 1., .2))
     with pytest.raises(ValueError):
         img.UF26RandomField("unknown")
+
+
+def test_jf12_random_variants():
+    planck = img.JF12RandomField("Planck12b")
+    assert planck.model == "Planck12b" and planck.regular_base.model == "Planck12b"
+    assert [planck.b0_1, planck.b0_2, planck.b0_int, planck.b0_halo] == pytest.approx([3.12, 6.24, 3.9, 7.332])
+    planck.set_model("Planck12c")
+    assert [planck.b0_5, planck.b0_6, planck.b0_7, planck.arm_shift] == pytest.approx([0., 12.48, 0.78, 0.97])
+    planck.set_model("JF12")
+    assert planck.b0_7 == 37.29 and planck.regular_base.model == "JF12"

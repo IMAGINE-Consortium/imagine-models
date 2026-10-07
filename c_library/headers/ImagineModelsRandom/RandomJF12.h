@@ -1,7 +1,9 @@
 #ifndef RANDOMJF12_H
 #define RANDOMJF12_H
 
+#include <array>
 #include <cmath>
+#include <string>
 
 #include "ImagineModelsRandom/RandomVectorField.h"
 #include "ImagineModels/RegularJF12.h"
@@ -34,9 +36,18 @@ class JF12RandomField : public RandomVectorField {
 
     JF12MagneticField regular_base = JF12MagneticField();
 
+    const std::array<std::string, 3> available_models{"JF12", "Planck12b", "Planck12c"};
+    explicit JF12RandomField(const std::string &model = "JF12") { set_model(model); }
+    void set_model(const std::string &model);
+    const std::string &model() const { return active_model; }
+    double arm_shift = 1.;
+
     double spectrum(const double &abs_k) const override;
     double rms(const double &x, const double &y, const double &z) const override;
     Vec3<double> anisotropy_direction(const double &x, const double &y, const double &z) const override;
+
+  private:
+    std::string active_model = "JF12";
 };
 
 }

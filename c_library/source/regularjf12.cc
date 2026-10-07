@@ -1,10 +1,34 @@
+#include <algorithm>
 #include <cmath>
+#include <stdexcept>
 #include <cassert>
 #include <iostream>
 #include "ImagineModels/units.h"
 #include "ImagineModels/RegularJF12.h"
 
 namespace imagine {
+
+void JF12MagneticField::set_model(const std::string &model)
+{
+  if (std::find(available_models.begin(), available_models.end(), model) == available_models.end())
+    throw std::invalid_argument("Unknown JF12 model '" + model + "'.");
+  active_model = model;
+  parameters = JF12Parameters<double>{};
+  arm_shift = 1.;
+  if (model == "JF12")
+    return;
+  parameters.b_arm_6 = -3.5;
+  parameters.B0_X = 1.8;
+  if (model == "Planck12c") {
+    parameters.Bn = 1.;
+    parameters.Bs = -0.8;
+    parameters.B0_X = 3.;
+    parameters.b_arm_2 = 2.;
+    parameters.b_arm_4 = 2.;
+    parameters.b_arm_5 = -3.;
+    arm_shift = 0.97;
+  }
+}
 
 template <typename T>
 Vec3<T> JF12MagneticField::field(const double &x, const double &y, const double &z, const JF12Parameters<T> &p) const
@@ -57,17 +81,17 @@ Vec3<T> JF12MagneticField::field(const double &x, const double &y, const double 
       double r_negx =
           r * exp(-1 / tan(M_PI / 180. * (90 - inc)) * (phi - M_PI));
 
-      if (r_negx > rc_B[7])
+      if (r_negx > rc_B[7] * arm_shift)
       {
         r_negx = r * exp(-1 / tan(M_PI / 180. * (90 - inc)) * (phi + M_PI));
       }
-      if (r_negx > rc_B[7])
+      if (r_negx > rc_B[7] * arm_shift)
       {
         r_negx = r * exp(-1 / tan(M_PI / 180. * (90 - inc)) * (phi + 3 * M_PI));
       }
       for (int i = 7; i >= 0; i--)
       {
-        if (r_negx < rc_B[i])
+        if (r_negx < rc_B[i] * arm_shift)
         {
           b_disk = bv_B[i];
         }

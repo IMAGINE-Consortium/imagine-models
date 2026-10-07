@@ -214,3 +214,19 @@ def test_point_cloud():
         img.PointCloud([1., 2.], [1.], [1., 2.])
     with pytest.raises(ValueError):
         img.PointCloud.from_positions(np.zeros((4, 2)))
+
+
+def test_jf12_variants():
+    jf12 = img.JF12RegularField()
+    assert jf12.model == "JF12" and jf12.arm_shift == 1. and jf12.b_arm_6 == -4.2 and jf12.B0_X == 4.6
+    reference = jf12.at_position(-8.5, 1., .3)
+    jf12.b_arm_2 = 9.
+    jf12.set_model("Planck12b")
+    assert (jf12.b_arm_2, jf12.b_arm_6, jf12.B0_X, jf12.arm_shift) == (3., -3.5, 1.8, 1.)
+    planck_c = img.JF12RegularField("Planck12c")
+    assert (planck_c.Bn, planck_c.Bs, planck_c.B0_X, planck_c.b_arm_2, planck_c.b_arm_4, planck_c.b_arm_5, planck_c.b_arm_6,
+            planck_c.arm_shift) == (1., -0.8, 3., 2., 2., -3., -3.5, 0.97)
+    jf12.set_model("JF12")
+    assert jf12.at_position(-8.5, 1., .3) == reference
+    with pytest.raises(ValueError):
+        jf12.set_model("unknown")
