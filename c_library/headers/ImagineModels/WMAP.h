@@ -15,7 +15,7 @@ namespace imagine {
     X(b_b0, 6.) /* muG  -> not given in original paper? Could also be 3 according to https://www.aanda.org/articles/aa/full_html/2010/14/aa12733-09/aa12733-09.html */ \
     X(b_z0, 1.) /* kpc */                                                                                                                                              \
     X(b_r0, 8.) /* kpc */                                                                                                                                              \
-    X(b_psi0, 35) /* degree */                                                                                                                                         \
+    X(b_psi0, 27) /* degree */                                                                                                                                         \
     X(b_psi1, 0.9) /* degree */                                                                                                                                        \
     X(b_xsi0, 25) /* degree */
 
