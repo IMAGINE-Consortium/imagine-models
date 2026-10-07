@@ -198,6 +198,7 @@ cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug && cmake --build build && ctest --t
 ```
 
 - `tests/test_reference.py` compares every model against stored reference data (`tests/reference_data/`) and checks derivatives against finite differences. If a change alters a model's output on purpose, regenerate the affected cases with `python tests/generate_reference.py --force CASE...`.
+- `tests/test_external.py` compares models with values computed by their external reference implementations (`tests/external_data/`, values only): the original YMW16 code, hammurabiX (Jaffe), CRPropa (TF17, Pshirkov, JF12, Archimedes), the authors' UF23 code and the old hammurabi (Sun disk, Stanev, Fauvet). Each file records the source, tolerance and any deliberate difference.
 - `tests/test_random_fields.py` checks the statistics of the random fields (variance, amplitude, divergence, anisotropy).
 - The C++ tests (`c_library/test/`, [Catch2](https://github.com/catchorg/Catch2) v3: an installed copy is used if found, otherwise it is downloaded at configure time) check every model for grid consistency, finite values, the parameter registry and derivatives against finite differences, plus the random-field statistics. `build/c_library/imagine_tests --list-tests` lists them; a tag such as `"[random]"` runs a subset.
 - CI (`.github/workflows/ci.yml`) runs the C++ and Python tests with all optional dependencies and without them, and builds a wheel from the source distribution.
