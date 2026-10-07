@@ -28,7 +28,7 @@ TEST_CASE("UniformMagneticField parameter update", "[parameters]") {
 
 TEST_CASE("Han parameter names follow the declaration order", "[parameters]") {
   auto names = HanMagneticField::parameter_names();
-  REQUIRE(names.size() == 9);
+  REQUIRE(names.size() == 10);
   CHECK(names.front() == "B_p");
 }
 

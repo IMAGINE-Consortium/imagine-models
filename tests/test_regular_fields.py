@@ -175,7 +175,7 @@ def test_configuration_members():
     assert np.any(np.asarray(han.at_position(*position)) != 0.)
     han.R_max = 8.
     assert np.all(np.asarray(han.at_position(*position)) == 0.)
-    assert len(han.R_s) == 7
+    assert len(han.R_s) == 8
 
     ymw = img.YMW16()
     reference = ymw.at_position(-8.4, .05, .02)
@@ -230,3 +230,16 @@ def test_jf12_variants():
     assert jf12.at_position(-8.5, 1., .3) == reference
     with pytest.raises(ValueError):
         jf12.set_model("unknown")
+
+
+def test_han_variants():
+    han = img.HanMagneticField()
+    assert han.model == "Han2018" and han.B_s7 == 0. and han.R_max == 15. and han.R_s[5] == 8.5
+    assert "B_s7" not in han.active_parameters
+    xh24 = img.HanMagneticField("XH24")
+    assert (xh24.B_s7, xh24.R_max, xh24.R_s[5]) == (4.5, 20., 8.16)
+    assert "B_s7" in xh24.active_parameters
+    han.set_model("XH24")
+    assert np.array_equal(han.at_position(-8.3, 1., .1), xh24.at_position(-8.3, 1., .1))
+    with pytest.raises(ValueError):
+        han.set_model("unknown")
