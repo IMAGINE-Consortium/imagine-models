@@ -6,13 +6,16 @@ on:
 
 jobs:
   cpp:
-    name: C++ ${{ matrix.os }} (${{ matrix.features }})
+    name: C++ ${{ matrix.os }} (${{ matrix.features }}, ${{ matrix.build_type }})
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
         os: [ubuntu-24.04, macos-15]
         features: [full, minimal]
+        build_type: [Debug]
+        include:
+          - {os: ubuntu-24.04, features: full, build_type: Release}
     env:
       FEATURE_FLAGS: ${{ matrix.features == 'minimal' && '-DUSE_AUTODIFF=OFF -DUSE_FFTW=OFF' || '' }}
       EXPECTED: ${{ matrix.features == 'full' && '1' || '0' }}
@@ -24,7 +27,7 @@ jobs:
         with:
           features: ${{ matrix.features }}
       - name: Configure
-        run: cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Debug $FEATURE_FLAGS
+        run: cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} $FEATURE_FLAGS
       - name: Check detected features
         run: |
           cat build/c_library/generated/ImagineModels/config.h

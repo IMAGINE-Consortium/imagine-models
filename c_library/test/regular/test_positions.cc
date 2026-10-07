@@ -1,75 +1,59 @@
-#include <cassert>
-#include <iostream>
-#include <vector>
-#include <map>
-#include <memory>
+#include <catch2/catch_test_macros.hpp>
+#include <catch2/matchers/catch_matchers_floating_point.hpp>
 
-#include "ImagineModels/RegularModels.h"
+#include "test_helpers.h"
 
 using namespace imagine;
+using namespace imagine::test;
+using Catch::Matchers::WithinAbs;
+using Catch::Matchers::WithinRel;
 
-void test_at_position(std::map<std::string, std::map<std::array<double, 3>, Vec3<double>>> val_pos_map,
-                      std::map <std::string, std::shared_ptr<RegularVectorField>> model_dict
-                      ) {
-    auto model_iter = model_dict.begin();
+namespace {
 
+const Vec3<double> zero{0., 0., 0.};
 
-    while (model_iter != model_dict.end()) {
-        std::map<std::array<double, 3>, Vec3<double>> val_pos_map_this_model = val_pos_map[(model_iter->first)];
-        auto val_pos_iter = val_pos_map_this_model.begin();
-        while (val_pos_iter != val_pos_map_this_model.end()) {
-          double x = (val_pos_iter->first)[0];
-          double y = (val_pos_iter->first)[1];
-          double z = (val_pos_iter->first)[2];
-
-          Vec3<double> mval = (*(model_iter->second)).at_position(x, y, z);
-          /*std::string assertion_msg1 = "Assert failed with model " + model_iter->first + " and at position " + std::to_string(x) + " " + std::to_string(y) + " " + std::to_string(z);
-          std::string assertion_msg2 = "Assert failed with model eval " + std::to_string(mval[0]) + " " + std::to_string(mval[1]) + " " + std::to_string(mval[2]);
-          std::string assertion_msg3 = "But should be " + std::to_string((val_pos_iter->second)[0]) + " " + std::to_string((val_pos_iter->second)[1]) + " " + std::to_string((val_pos_iter->second)[2]);
-          std::cout << assertion_msg1  << std::endl;
-          std::cout << assertion_msg2  << std::endl;
-          std::cout << assertion_msg3  << std::endl;*/
-          assert(mval == (val_pos_iter->second));
-          ++val_pos_iter;
-          }
-        ++model_iter;
-    }
 }
 
-int main() {
-    // Define some positions in Galactic cartesian coordinates (units are kpc)
-    Vec3<double> zv{{0., 0., 0.}};
+TEST_CASE("JF12 is zero outside its boundaries", "[positions]") {
+  JF12MagneticField jf12;
+  CHECK(jf12.at_position(0., 0., 0.) == zero);
+  CHECK(jf12.at_position(.1, .3, .4) == zero);
+  CHECK(jf12.at_position(20.5, 0., 0.) == zero);
+  CHECK(jf12.at_position(-15., -15., 2.) == zero);
+  CHECK(jf12.at_position(-8.5, 0., 0.) != zero);
+}
 
-    Vec3<double> z1{{0., 0., 1.}};
+TEST_CASE("Jaffe and Pshirkov at the Galactic centre", "[positions]") {
+  CHECK(JaffeMagneticField().at_position(0., 0., 0.) == zero);
+  CHECK(JaffeMagneticField().at_position(0., 0., 1.) == zero);
+  CHECK(PshirkovMagneticField().at_position(0., 0., 0.) == zero);
+}
 
-    std::map<std::array<double, 3>, Vec3<double>> jf_12_map;
-    jf_12_map[{0., 0., 0.}] = zv; // Galactic center
-    jf_12_map[{.1, .3, .4}] = zv; // Within inner boundary
-    jf_12_map[{0., 0., 0.}] = zv; // outside outer boundary 
+TEST_CASE("Helix", "[positions]") {
+  HelixMagneticField helix;
+  CHECK(helix.at_position(.3, .4, 0.) == zero);
+  CHECK(helix.at_position(20., 1., 0.) == zero);
 
+  auto b = helix.at_position(3., 4., .2);
+  CHECK_THAT(b[0], WithinRel(.6, 1e-15));
+  CHECK_THAT(b[1], WithinRel(.8, 1e-15));
+  CHECK(b[2] == 1.);
 
-    std::map<std::array<double, 3>, Vec3<double>> jaffe_map;
-    jaffe_map[{0., 0., 0.}] = zv; // Galactic center
-    jaffe_map[{0., 0., 1.}] = zv; // Galactic center
+  helix.parameters = {2., 3., -1.};
+  b = helix.at_position(0., -5., 7.);
+  CHECK_THAT(b[0], WithinAbs(0., 1e-15));
+  CHECK_THAT(b[1], WithinRel(-3., 1e-15));
+  CHECK(b[2] == -1.);
+}
 
-    std::map<std::array<double, 3>, Vec3<double>> pshirkov_map;
-    pshirkov_map[{0., 0., 0.}] = zv; // Galactic center
-
-    std::map<std::array<double, 3>, Vec3<double>> helix_map;
-
-    std::map<std::string, std::map<std::array<double, 3>, Vec3<double>>> val_pos_map;
-    val_pos_map["JF12"] = jf_12_map;
-    val_pos_map["Jaffe"] = jaffe_map;
-    val_pos_map["Helix"] = helix_map;
-    val_pos_map["Pshirkov"] = pshirkov_map;
-
-
-    std::map <std::string, std::shared_ptr<RegularVectorField>> models;
-    models["JF12"] = std::shared_ptr<JF12MagneticField> (new JF12MagneticField());
-    models["Jaffe"] = std::shared_ptr<JaffeMagneticField> (new JaffeMagneticField());
-    models["Helix"] = std::shared_ptr<HelixMagneticField> (new HelixMagneticField());
-    models["Pshirkov"] = std::shared_ptr<PshirkovMagneticField> (new PshirkovMagneticField());
-
-    test_at_position(val_pos_map, models);
-
+TEST_CASE("uniform fields are constant", "[positions]") {
+  UniformMagneticField b;
+  b.parameters = {1., -2., .5};
+  UniformDensityField n;
+  n.parameters.n0 = .03;
+  for (const auto &p : positions) {
+    CAPTURE(to_string(p));
+    CHECK(b.at_position(p[0], p[1], p[2]) == Vec3<double>{1., -2., .5});
+    CHECK(n.at_position(p[0], p[1], p[2]) == .03);
+  }
 }

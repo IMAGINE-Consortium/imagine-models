@@ -113,11 +113,33 @@ set_target_properties(ImagineModels PROPERTIES
 )
 
 if(BUILD_TESTING)
-    foreach(test grid parameter_update positions)
-        add_executable(${test}_ctest ${CMAKE_CURRENT_SOURCE_DIR}/test/regular/test_${test}.cc)
-        target_link_libraries(${test}_ctest PRIVATE ImagineModels)
-        add_test(NAME ${test}_ctest COMMAND ${test}_ctest)
-    endforeach()
+    find_package(Catch2 3 QUIET)
+    if(NOT Catch2_FOUND)
+        include(FetchContent)
+        FetchContent_Declare(Catch2
+            GIT_REPOSITORY https://github.com/catchorg/Catch2.git
+            GIT_TAG v3.5.2
+            GIT_SHALLOW TRUE)
+        FetchContent_MakeAvailable(Catch2)
+        list(APPEND CMAKE_MODULE_PATH ${catch2_SOURCE_DIR}/extras)
+    endif()
+    include(Catch)
+
+    set(TEST_DIR ${CMAKE_CURRENT_SOURCE_DIR}/test)
+    set(TEST_SOURCES
+        ${TEST_DIR}/regular/test_grid.cc
+        ${TEST_DIR}/regular/test_parameters.cc
+        ${TEST_DIR}/regular/test_positions.cc
+        ${TEST_DIR}/regular/test_models.cc
+        ${TEST_DIR}/regular/test_derivatives.cc
+    )
+    if(IMAGINE_HAS_FFTW)
+        list(APPEND TEST_SOURCES ${TEST_DIR}/random/test_random.cc)
+    endif()
+    add_executable(imagine_tests ${TEST_SOURCES})
+    target_include_directories(imagine_tests PRIVATE ${TEST_DIR})
+    target_link_libraries(imagine_tests PRIVATE ImagineModels Catch2::Catch2WithMain)
+    catch_discover_tests(imagine_tests PROPERTIES SKIP_RETURN_CODE 4)
 endif()
 
 set(IM_CMAKE_INSTALL_DIR ${CMAKE_INSTALL_LIBDIR}/cmake/ImagineModels)
