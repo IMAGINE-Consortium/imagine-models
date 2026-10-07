@@ -109,8 +109,8 @@ Vec3<T> JaffeMagneticField::orientation(const double &x, const double &y, const 
   // elliptical bar (replace molecular ring)
   else if (bar)
   {
-    const auto cos_phi = cos(p.bar_phi0);
-    const auto sin_phi = sin(p.bar_phi0);
+    const auto cos_phi = cos(p.bar_phi0 * M_PI / 180);
+    const auto sin_phi = sin(p.bar_phi0 * M_PI / 180);
     auto new_x = cos_phi * x - sin_phi * y;
     auto new_y = sin_phi * x + cos_phi * y;
     double sgn_nx = 1.;
@@ -290,9 +290,9 @@ std::vector<T> JaffeMagneticField::dist2arm(const double &x, const double &y, co
       d.push_back(0.);
     }
     else {
-      const auto cos_tmp{cos(p.bar_phi0) * x / r - sin(p.bar_phi0) * y / r};
+      const auto cos_tmp{cos(p.bar_phi0 * M_PI / 180) * x / r - sin(p.bar_phi0 * M_PI / 180) * y / r};
       // cos(phi)cos(phi0) - sin(phi)sin(phi0)
-      const auto sin_tmp{cos(p.bar_phi0) * y / r + sin(p.bar_phi0) * x / r};
+      const auto sin_tmp{cos(p.bar_phi0 * M_PI / 180) * y / r + sin(p.bar_phi0 * M_PI / 180) * x / r};
       // sin(phi)cos(phi0) + cos(phi)sin(phi0)
       // in bar, return single element vector
       if (r < bar_lim)
