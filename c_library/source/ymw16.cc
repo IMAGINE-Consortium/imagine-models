@@ -204,11 +204,10 @@ T YMW16::spiral(const double &xx, const double &yy,
       }
       T d = abs(t3_rmin[i] * exp(d_phi * tpitch) - rr);
       T d_p = abs(t3_rmin[i] * exp((d_phi + 2. * M_PI) * tpitch) - rr);
-      // smin = std::min(d, d_p) * tpitch;
-      smin = std::min(d, d_p); // * tpitch;
+      smin = std::min(d, d_p) * cos(t3_tpitch[i] / 180 * M_PI);
     }
     else if (i == 4 and theta >= phimin and theta < (2 / 180 * M_PI)) { // Local arm
-      smin = abs(t3_rmin[i] * exp((theta + 2 * M_PI - phimin) * tpitch) - rr);
+      smin = abs(t3_rmin[i] * exp((theta + 2 * M_PI - phimin) * tpitch) - rr) * cos(t3_tpitch[i] / 180 * M_PI);
     }
     else {
       continue;
