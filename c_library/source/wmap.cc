@@ -34,11 +34,11 @@ Vec3<T> WMAPMagneticField::field(const double &x, const double &y, const double 
     // Antisymmetric, swap the signs.  The way my pitch angle is defined,
     // it seems this has to be swapped this way.  <------ hammurabi comment
 
-    // if (anti && z > 0) {
-    //     B_vec3[0] *= (-1.); 
-    //     B_vec3[1] *= (-1.); 
-    //     B_vec3[2] *= (-1.);
-    //     }
+    if (anti && z > 0) {
+        B_vec3[0] *= (-1.);
+        B_vec3[1] *= (-1.);
+        B_vec3[2] *= (-1.);
+    }
     return B_vec3;
 }
 
