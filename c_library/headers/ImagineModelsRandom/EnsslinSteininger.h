@@ -7,9 +7,10 @@ namespace imagine {
 
 class ESRandomField : public RandomVectorField {
   public:
-    double r0 = 8.5;
-    double z0 = 1.5;
-    std::array<double, 3> observer{8.5, 0, 0};
+    double b0 = 0.8; // muG
+    double r0 = 8.;
+    double z0 = 1.;
+    std::array<double, 3> observer{-8.3, 0., 0.006};
     double spectral_offset = 1.;
     double spectral_slope = 2.;
 

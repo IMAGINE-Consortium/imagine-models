@@ -230,7 +230,7 @@ cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug && cmake --build build && ctest --t
 | SVT22 | `SVT22` | &#x2714; | [Shaw et al. (2022)](https://academic.oup.com/mnras/article/517/2/2534/6731784) | model for the Galactic halo bubble | | [ipynb](demos/python/model_examples/svt22_demo.ipynb) |
 | **Random models** | | | | | | |
 | Jansson Farrar | `JF12RandomField` | &#x2714; | [Jansson & Farrar (2012)](https://ui.adsabs.harvard.edu/abs/2012ApJ...761L..11J/abstract) | rms profile from JF12; anisotropy along the regular JF12 field (`anisotropy_rho`) | [Hammurabi X](https://github.com/hammurabi-dev/hammurabiX) | [ipynb](demos/python/model_examples/jf12_random_demo.ipynb) |
-| Ensslin Steininger | `ESRandomField` | &#x2714; | | rms profile `exp(-r/r0) exp(-|z|/z0)` | [Hammurabi X](https://github.com/hammurabi-dev/hammurabiX) | |
+| Ensslin Steininger | `ESRandomField` | &#x2714; | | rms `b0 * sqrt(exp(-(r - r_obs)/r0) exp(-(|z| - |z_obs|)/z0))` (energy density scaled exponentially, `b0` = rms at the observer), as in hammurabiX | [Hammurabi X](https://github.com/hammurabi-dev/hammurabiX) | |
 
 ### Thermal electron (scalar) fields
 
