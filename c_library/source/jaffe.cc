@@ -111,14 +111,10 @@ Vec3<T> JaffeMagneticField::orientation(const double &x, const double &y, const 
   {
     const auto cos_phi = cos(p.bar_phi0 * M_PI / 180);
     const auto sin_phi = sin(p.bar_phi0 * M_PI / 180);
-    auto new_x = cos_phi * x - sin_phi * y;
-    auto new_y = sin_phi * x + cos_phi * y;
-    double sgn_nx = 1.;
-    double sgn_ny = 1.;
-    if (new_x < 0)   // manual copysign, as autodiff runs into problems with std::copysign
-      sgn_nx = -1.; 
-    if (new_y != 0)
-      sgn_ny = -1;
+    const auto x_rot = cos_phi * x - sin_phi * y;
+    const auto y_rot = sin_phi * x + cos_phi * y;
+    const double sgn_x = x_rot < 0 ? -1. : 1.;
+    const double sgn_y = y_rot < 0 ? -1. : 1.;
     // inside spiral arm
     if (r > bar_lim)
     {
@@ -129,10 +125,10 @@ Vec3<T> JaffeMagneticField::orientation(const double &x, const double &y, const 
     }
     // inside elliptical bar
     else
-    { if (new_y!= 0) 
+    { if (y_rot != 0) 
       {
-      new_x = sgn_ny;
-      new_y = -sgn_ny * (new_x / new_y) * p.bar_b * p.bar_b / (p.bar_a * p.bar_a);
+      const auto new_x = sgn_y;
+      const auto new_y = -sgn_y * (x_rot / y_rot) * p.bar_b * p.bar_b / (p.bar_a * p.bar_a);
       tmp[0] = (cos_phi * new_x + sin_phi * new_y) * (1 - 2 * bss);
       tmp[1] = (-sin_phi * new_x + cos_phi * new_y) * (1 - 2 * bss);
         // versor
@@ -147,8 +143,8 @@ Vec3<T> JaffeMagneticField::orientation(const double &x, const double &y, const 
       }
       else
       {
-        tmp[0] = (2 * bss - 1) * sgn_nx * sin_phi;
-        tmp[1] = (2 * bss - 1) * sgn_nx * cos_phi;
+        tmp[0] = (2 * bss - 1) * sgn_x * sin_phi;
+        tmp[1] = (2 * bss - 1) * sgn_x * cos_phi;
       }
     }
   }
