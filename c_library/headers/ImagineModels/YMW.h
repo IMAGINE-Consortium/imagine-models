@@ -60,6 +60,8 @@ IMAGINE_PARAMETERS(YMW16Parameters, YMW16_PARAMETERS)
 class YMW16 : public RegularScalarModel<YMW16, YMW16Parameters>
 {
 public:
+  double max_radius = 30.; // kpc, Milky Way part of the model
+
   // warp
   double t0_r_warp = 8.4; // kpc
   double t0_theta0 = 0.; // deg
@@ -81,12 +83,11 @@ public:
   // spiralarms
   bool do_spiral_arms = true;
 
-  // Sagittarius correction
-  // arms are Norma-Outer, Perseus, Carina - Sagittarius, Crux-Scutum, Local 
-  std::array<double, 5> t3_rmin{3.35, 3.707, 3.56, 3.670, 8.21};  // initial radius, kpc, Hou & Han fit
-  std::array<double, 5> t3_phimin{44.4, 120.0, 218.6, 330.3, 55.1};
-  // intial azimuth angle, degree, Hou & Han fit
-  std::array<double, 5> t3_tpitch{11.43, 9.84, 10.38, 10.54, 2.77}; // pitch angle, degree, Hou & Han fit
+  // arms are Norma-Outer, Perseus, Carina - Sagittarius, Crux-Scutum, Local (YMW16 spiral.txt)
+  std::array<double, 5> t3_rmin{3.35, 3.707, 3.56, 3.67, 8.21}; // initial radius, kpc
+  std::array<double, 5> t3_thmin{0.77, 2.093, 3.81, 5.76, 0.96}; // initial azimuth angle, rad
+  std::array<double, 5> t3_tan_pitch{0.202, 0.173, 0.183, 0.186, 0.0483};
+  std::array<double, 5> t3_cos_pitch{0.98, 0.985, 0.9836, 0.983, 0.9988};
   std::array<double, 5> t3_narm{0.135, 0.129, 0.103, 0.116, 0.0057};
   // cm^{-3}, density where arm joins thin disc, fitted by YMW
   std::array<double, 5> t3_warm{.3, .5, .3, .5, .3}; // kpc, arm widths, fitted by YMW via "preliminary global fits"
@@ -112,7 +113,7 @@ public:
   // loop
   bool do_loop = true;
   const double x_c = -0.010156 ;
-  const double y_c = 8.106207;
+  const double y_c = 8.106206;
   const double z_c = 0.010467;
 
   template <typename T>
@@ -121,12 +122,12 @@ public:
   auto _cosh_scaling(const double &s, const T &a, const T &b = 0. ) const;
 
   template <typename T>
-  T thick(const double &zz, const double &rr, const YMW16Parameters<T> &p) const;
+  T thick(const double &zz, const double &rr, T &gd, const YMW16Parameters<T> &p) const;
   template <typename T>
-  T thin(const double &zz, const double &rr, const YMW16Parameters<T> &p) const;
+  T thin(const double &zz, const double &rr, const T &gd, const YMW16Parameters<T> &p) const;
   template <typename T>
   T spiral(const double &xx, const double &yy, const double &zz,
-                const double &rr, const YMW16Parameters<T> &p) const;
+                const double &rr, const T &gd, const YMW16Parameters<T> &p) const;
   template <typename T>
   T galcen(const double &xx, const double &yy, const double &zz, const YMW16Parameters<T> &p) const;
   template <typename T>
