@@ -62,20 +62,22 @@ T YMW16::field(const double &x, const double &y, const double &z, const YMW16Par
     ne_comp[0] = ne_comp[1] + std::max(ne_comp[2], ne_comp[3]);
     // distance to local bubble
     const double rlb{sqrt(pow(((gc_pos[1] - p.r0 - p.t6_offset) * t6_zyl1 - t6_zyl2 * gc_pos[2]), 2) + gc_pos[0] * gc_pos[0])};
-    if (rlb < localbubble_boundary)
-    { // inside local bubble
-      ne_comp[0] = rlb * ne_comp[1] +
-                   std::max(ne_comp[2], ne_comp[3]);
-      if (ne_comp[6] > ne_comp[0])
+    if (rlb > localbubble_boundary)
+    { // outside local bubble
+      if (ne_comp[6] > ne_comp[0] and ne_comp[6] > ne_comp[5])
       {
         weight_localbubble = 1;
       }
     }
     else
-    { // outside local bubble
-      if (ne_comp[6] > ne_comp[0] and ne_comp[6] > ne_comp[5])
+    { // inside local bubble
+      if (ne_comp[6] > ne_comp[0])
       {
         weight_localbubble = 1;
+      }
+      else
+      {
+        ne_comp[0] = p.t6_j_lb * ne_comp[1] + std::max(ne_comp[2], ne_comp[3]);
       }
     }
     if (ne_comp[7] > ne_comp[0])
