@@ -143,7 +143,7 @@ T YMW16::thick(const double &zz, const double &rr, const YMW16Parameters<T> &p) 
     return 0.; // timesaving
   T gd = 1.;  
   if (rr > p.t1_bd) {
-    gd = _cosh_scaling(rr, p.t1_bd, p.t1_ad);
+    gd = _cosh_scaling(rr, p.t1_ad, p.t1_bd);
   }
   return p.t1_n1 * gd *_cosh_scaling(zz, p.t1_h1);
 }
@@ -158,7 +158,7 @@ T YMW16::thin(const double &zz, const double &rr, const YMW16Parameters<T> &p) c
     return 0.; // timesaving
   T gd = 1.;  
   if (rr > p.t1_bd) {
-    gd = _cosh_scaling(rr, p.t1_bd, p.t1_ad);
+    gd = _cosh_scaling(rr, p.t1_ad, p.t1_bd);
   }
   auto gd2 =  _cosh_scaling(rr, p.t2_a2,  p.t2_b2); // pow(1. / cosh((rr -  p.t2_b2) / p.t2_a2), 2);
 
@@ -173,7 +173,7 @@ T YMW16::spiral(const double &xx, const double &yy,
   // structure scaling
   T scaling = 1.;  
   if (rr > p.t1_bd) {
-    scaling = _cosh_scaling(rr, p.t1_bd, p.t1_ad);
+    scaling = _cosh_scaling(rr, p.t1_ad, p.t1_bd);
   }
   // z scaling, K_a*h0 in ref
   auto k3h = _z_scaling(rr, p.t3_ka, h0, h1, h2); 
