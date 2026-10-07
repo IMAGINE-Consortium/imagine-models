@@ -11,16 +11,13 @@ namespace imagine {
 // Fauvet magnetic field
 
 #define FAUVET_PARAMETERS(X)     \
-    X(b_b0, 7.1) /* muG */       \
+    X(b_b0, 2.1) /* muG */       \
+    X(b_RB, 8.5) /* kpc */       \
+    X(b_Rsun, 8.) /* kpc */      \
     X(b_z0, 1.) /* kpc */        \
-    X(b_r0, 8.) /* kpc */        \
-    X(b_p, -26.1) /* degree */   \
-    X(b_chi0, 22.4) /* degree */ \
-    X(h_b0, 1.) /* muG */        \
-    X(h_z0, 1.5) /* kpc */       \
-    X(h_r0, 4.) /* kpc */        \
-    X(h_z1a, .2) /* kpc */       \
-    X(h_z1b, .4) /* kpc */
+    X(b_r0, 7.1) /* kpc */       \
+    X(b_p, -30.) /* degree */    \
+    X(b_chi0, 22.4) /* degree */
 
 IMAGINE_PARAMETERS(FauvetParameters, FAUVET_PARAMETERS)
 
