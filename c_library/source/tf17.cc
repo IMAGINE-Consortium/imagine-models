@@ -11,13 +11,10 @@ namespace imagine {
 template <typename T>
 Vec3<T> TFMagneticField::field(const double &x, const double &y, const double &z, const TFParameters<T> &p) const
 {
-    //vector B_cart{{0., 0., 0.}};
     const double r = sqrt(x * x + y * y);
     double phi = M_PI - std::atan2(y, x);
 
-    // double cosPhi = pos.x / r;
     double cosPhi = cos(phi);
-    // double sinPhi = pos.y / r;
     double sinPhi = sin(phi);
 
     Vec3<T> df = getDiskField(r, z, phi, sinPhi, cosPhi, p);

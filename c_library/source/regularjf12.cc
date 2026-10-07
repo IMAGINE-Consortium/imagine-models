@@ -29,7 +29,6 @@ Vec3<T> JF12MagneticField::field(const double &x, const double &y, const double 
   // (1-zprofile) multiplied to the disk:
   const auto zprofile{1. / (1 + exp(-2. / p.w_disk * (std::abs(z) - p.h_disk)))};
 
-  // printf("%g, %g \n", z, zprofile);
   T B_cyl[3] = {0, 0, 0}; // the disk field in cylindrical coordinates
 
   if ((r > rcent)) // disk field zero elsewhere

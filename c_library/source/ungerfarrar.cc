@@ -150,9 +150,7 @@ Vec3<T> UFMagneticField::GetToroidalHaloField(const double x, const double y, co
   T rh = p.fToroidalR;
   T z0 = p.fToroidalZ;
   T fwh = p.fToroidalW;
-  //number sigmoidR = Sigmoid<number>(r, rh, fwh);
   T sigmoidR = 1 / (1 + exp(-(r-rh)/fwh));
-  //number sigmoidZ = Sigmoid<number>(absZ, p.fDiskH, p.fDiskW);
   T sigmoidZ = 1 / (1 + exp(-(absZ-p.fDiskH)/p.fDiskW));
 
   // Eq. (21)
@@ -202,7 +200,6 @@ Vec3<T> UFMagneticField::GetPoloidalHaloField(const double x, const double y, co
   T radialDependence =
     active_model == "expX" ?
     exp(-a/p.fPoloidalR) :
-    //1 - Sigmoid<number>(a, p.fPoloidalR, p.fPoloidalW);
     1 - 1 / (1 + exp(-(a-p.fPoloidalR)/p.fPoloidalW));
 
   // Eq.(28)
@@ -263,7 +260,6 @@ Vec3<T> UFMagneticField::GetSpurField(const double x, const double y, const doub
     T phi0 = phi - log(r/rRef) / fTanPitch;
 
     // Eq. (16)
-    //number deltaPhi0 = DeltaPhi<number, number, number>(phiRef, phi0);
     T deltaPhi0 = acos(cos(phi0)*cos(phiRef) + sin(phi0)*sin(phiRef));
     T delta = deltaPhi0 / p.fSpurWidth;
     T B = p.fDiskB1 * exp(-0.5*pow(delta, 2));
@@ -271,14 +267,11 @@ Vec3<T> UFMagneticField::GetSpurField(const double x, const double y, const doub
     // Eq. (18)
     const double wS = 5*num::rad;
     T phiC = p.fSpurCenter;
-    //number deltaPhiC = DeltaPhi<number, number, number>(phiC, phi);
     T deltaPhiC = acos(cos(phi)*cos(phiC) + sin(phi)*sin(phiC));
     T lC = p.fSpurLength;
-    //number gS = 1 - Sigmoid<number>(abs(deltaPhiC), lC, wS);
     T gS = 1 - 1 / (1 + exp(-(abs(deltaPhiC)-lC)/wS));
 
     // Eq. (13)
-    //number hd = 1 - Sigmoid<number>(abs(z), p.fDiskH, p.fDiskW);
     T hd = 1 - 1 / (1 + exp(-(abs(z)-p.fDiskH)/p.fDiskW));
 
     // Eq. (17)
@@ -318,13 +311,10 @@ Vec3<T> UFMagneticField::GetSpiralField(const double x, const double y, const do
   const double phi = std::atan2(y, x);
 
   // Eq.(13)
-  //number hdz = 1 - Sigmoid(abs(z), fDiskH, fDiskW);
   T hdz = 1 - 1 / (1 + exp(-(abs(z)-p.fDiskH)/p.fDiskW));
 
   // Eq.(14) times rRef divided by r
-  //const double rFacI = Sigmoid(r, rInner, wInner);
   const double rFacI = 1 / (1 + exp(-(r-rInner)/wInner));
-  //const double rFacO = 1 - Sigmoid(r, rOuter, wOuter);
   const double rFacO = 1 - 1 / (1 + exp(-(r-rOuter)/wOuter));
   
   // (using lim r--> 0 (1-exp(-r^2))/r --> r - r^3/2 + ...)

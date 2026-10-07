@@ -49,6 +49,7 @@ def _regular_cases():
     cases["UniformDensityField__set"] = ("UniformDensityField", {"n0": 0.03})
     cases["JF12RegularField__no_halo"] = ("JF12RegularField", {"do_halo": False})
     cases["JF12RegularField__no_X"] = ("JF12RegularField", {"do_X": False})
+    cases["SVT22__no_halo"] = ("SVT22", {"do_halo": False})
     cases["JaffeMagneticField__ring_no_bar"] = ("JaffeMagneticField", {"ring": True, "bar": False})
     cases["JaffeMagneticField__bss"] = ("JaffeMagneticField", {"bss": True})
     cases["JaffeMagneticField__quadruple"] = ("JaffeMagneticField", {"quadruple": True})

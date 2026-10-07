@@ -93,7 +93,6 @@ T YMW16::field(const double &x, const double &y, const double &z, const YMW16Par
                                  weight_loop * ne_comp[7]) +
              weight_gum * ne_comp[5]) +
         (weight_localbubble) * (ne_comp[6]);
-    // assert(std::isfinite(ne));
     #if !IMAGINE_HAS_AUTODIFF
     if (std::isnan(ne)) {
       std::cout << "Found nan at: (x,y,z): ()" << x << ", " << y << ", " << z << ")" << std::endl;
@@ -120,7 +119,6 @@ T YMW16::field(const double &x, const double &y, const double &z, const YMW16Par
       }
     }
     #endif
-    //std::cout << "ne: " << ne << std::endl;
     return ne;
   }
 }
