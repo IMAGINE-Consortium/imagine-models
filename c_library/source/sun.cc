@@ -74,7 +74,7 @@ Vec3<T> SunMagneticField::field(const double &x, const double &y, const double &
   // [ORIGINAL HAMMURABI COMMENT] Flip north.  Not sure how Sun did this. This is his code with no
   // flip though the paper says it's flipped but without this mod,
   // there is no antisymmetry across the disk.  However, it doesn't seem to work.
-  if (z > 0)
+  if (z < 0)
   {
     halo_field *= -1.;
   }
