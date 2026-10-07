@@ -53,7 +53,7 @@ def _regular_cases():
     cases["JaffeMagneticField__ring_no_bar"] = ("JaffeMagneticField", {"ring": True, "bar": False})
     cases["JaffeMagneticField__bss"] = ("JaffeMagneticField", {"bss": True})
     cases["JaffeMagneticField__quadruple"] = ("JaffeMagneticField", {"quadruple": True})
-    cases["PshirkovMagneticField__ass"] = ("PshirkovMagneticField", {"useASS": True, "useBSS": False})
+    cases["PshirkovMagneticField__ass"] = ("PshirkovMagneticField", {"set_model": ["ASS"]})
     cases["PshirkovMagneticField__no_halo"] = ("PshirkovMagneticField", {"useHalo": False})
     cases["WMAPMagneticField__anti"] = ("WMAPMagneticField", {"b_anti": True})
     for disk in ["Ad1", "Bd1", "Dd1"]:

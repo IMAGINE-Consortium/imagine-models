@@ -1,8 +1,9 @@
 #ifndef PSHIRKOV_H
 #define PSHIRKOV_H
 
-#include <functional>
+#include <array>
 #include <cmath>
+#include <string>
 
 #include "ImagineModels/RegularModel.h"
 
@@ -25,27 +26,25 @@ IMAGINE_PARAMETERS(PshirkovParameters, PSHIRKOV_PARAMETERS)
 
 class PshirkovMagneticField : public RegularVectorModel<PshirkovMagneticField, PshirkovParameters>
 {
-protected:
-
-
 public:
+	const std::array<std::string, 2> available_models{"ASS", "BSS"}; // axisymmetric / bisymmetric spiral disk field
 
-	bool useASS = false;  // switch for axisymmetric spiral field (ASS)
-	bool useBSS = true;  // switch for bisymmetric spiral field (BSS)
+	explicit PshirkovMagneticField(const std::string &model = "BSS") { set_model(model); }
+
+	void set_model(const std::string &model);
+	const std::string &model() const { return active_model; }
+
+	bool useDisk = true; // switch for disk field
 	bool useHalo = true; // switch for halo field
-
-    // differentiable parameters
 
 	// disk parameters
 	double R_c = 5.0;   // radius of central region, kpc
 
-	// halo parameters
+	template <typename T>
+	Vec3<T> field(const double &x, const double &y, const double &z, const PshirkovParameters<T> &p) const;
 
-
-
-public:
-  template <typename T>
-  Vec3<T> field(const double &x, const double &y, const double &z, const PshirkovParameters<T> &p) const;
+private:
+	std::string active_model = "BSS";
 };
 
 }

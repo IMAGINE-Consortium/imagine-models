@@ -91,3 +91,22 @@ TEST_CASE("Jaffe rejects unsupported arm numbers", "[models]") {
   jaffe.arm_num = 1;
   CHECK_THROWS_AS(jaffe.at_position(-8.5, 1., .2), std::invalid_argument);
 }
+
+TEST_CASE("Pshirkov variants load their published parameters", "[models][variants]") {
+  PshirkovMagneticField ps;
+  CHECK(ps.model() == "BSS");
+  CHECK(ps.parameters.pitch == -6.);
+  CHECK(ps.parameters.B0_Hs == 4.);
+  ps.set_parameter("B0_D", 123.);
+  ps.set_model("ASS");
+  CHECK(ps.model() == "ASS");
+  CHECK(ps.parameters.pitch == -5.);
+  CHECK(ps.parameters.B0_Hs == 2.);
+  CHECK(ps.parameter_map() == PshirkovMagneticField("ASS").parameter_map());
+  ps.set_model("BSS");
+  CHECK(ps.parameter_map() == PshirkovMagneticField().parameter_map());
+  CHECK_THROWS_AS(ps.set_model("no_such_model"), std::invalid_argument);
+  ps.useDisk = false;
+  ps.useHalo = false;
+  CHECK(ps.at_position(-8.5, 1., .2) == Vec3<double>{0., 0., 0.});
+}

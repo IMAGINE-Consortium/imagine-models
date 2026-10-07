@@ -1,9 +1,22 @@
 #include <algorithm>
 #include <cmath>
+#include <stdexcept>
 #include "ImagineModels/units.h"
 #include "ImagineModels/Pshirkov.h"
 
 namespace imagine {
+
+void PshirkovMagneticField::set_model(const std::string &model)
+{
+	if (std::find(available_models.begin(), available_models.end(), model) == available_models.end())
+		throw std::invalid_argument("Unknown Pshirkov model '" + model + "'.");
+	active_model = model;
+	parameters = PshirkovParameters<double>{};
+	if (model == "ASS") {
+		parameters.pitch = -5.;
+		parameters.B0_Hs = 2.;
+	}
+}
 
 template <typename T>
 Vec3<T> PshirkovMagneticField::field(const double &x, const double &y, const double &z, const PshirkovParameters<T> &p) const
@@ -24,7 +37,7 @@ Vec3<T> PshirkovMagneticField::field(const double &x, const double &y, const dou
 	auto cos_PHI = cos(PHI);
 
 	// disk field
-	if ((useASS) or (useBSS)) {
+	if (useDisk) {
 	// CRPROPA COMMENT:
 		// PT11 paper has B_theta = B * cos(p) but this seems because they define azimuth clockwise, while we have anticlockwise.
 		// see Tinyakov 2002 APh 18,165: "local field points to l=90+p" so p=-5 deg gives l=85 and hence clockwise from above.
@@ -47,7 +60,7 @@ Vec3<T> PshirkovMagneticField::field(const double &x, const double &y, const dou
 	// ADAPTED CRPROPA COMMENT: flipped in eq above magnetic field direction, as B_{theta} and B_{phi} refering to 180 degree rotated field
 
 		auto bMag = cos(theta - cos_pitch / sin_pitch * log(r / p.R_sun) + PHI);  // eq. 3 / 4
-		if ((useASS) and (bMag < 0))
+		if ((active_model == "ASS") and (bMag < 0))
 			bMag *= -1.;
 		bMag *= p.B0_D * p.R_sun / std::max(r, R_c) / cos_PHI * exp(-fabs(z) / p.z0_D);  // eq. 5, eq. 4
 		b[0] *= bMag;
