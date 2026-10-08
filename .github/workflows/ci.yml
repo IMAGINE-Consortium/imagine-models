@@ -31,6 +31,7 @@ jobs:
         os: [ubuntu-24.04, macos-15]
         features: [full, minimal]
         build_type: [Debug]
+        eigen: ["3"]
         include:
           - {os: ubuntu-24.04, features: full, build_type: Release}
           - {os: ubuntu-24.04, features: full, build_type: Debug, eigen: "5"}
