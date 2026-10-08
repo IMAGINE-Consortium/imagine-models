@@ -7,8 +7,8 @@
 #include "ImagineModels/config.h"
 
 #if IMAGINE_HAS_AUTODIFF
+#include <Eigen/Core>
 #include <autodiff/forward/real.hpp>
-#include <autodiff/forward/real/eigen.hpp>
 #endif
 
 namespace imagine {

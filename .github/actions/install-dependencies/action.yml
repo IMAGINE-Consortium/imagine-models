@@ -4,6 +4,10 @@ inputs:
   features:
     description: "full or minimal"
     required: true
+  eigen:
+    description: "Eigen major version for the full feature set: 3 (system package) or 5 (5.0.1 from source)"
+    required: false
+    default: "3"
 runs:
   using: composite
   steps:
@@ -14,7 +18,10 @@ runs:
         sudo apt-get update
         sudo apt-get install -y ninja-build
         if [ "${{ inputs.features }}" = "full" ]; then
-          sudo apt-get install -y libfftw3-dev libeigen3-dev
+          sudo apt-get install -y libfftw3-dev
+          if [ "${{ inputs.eigen }}" = "3" ]; then
+            sudo apt-get install -y libeigen3-dev
+          fi
         fi
     - name: System packages (macOS)
       if: runner.os == 'macOS'
@@ -27,6 +34,14 @@ runs:
         else
           echo "CMAKE_PREFIX_PATH=$(brew --prefix)" >> "$GITHUB_ENV"
         fi
+    - name: Eigen 5 (from source)
+      if: inputs.features == 'full' && inputs.eigen == '5'
+      shell: bash
+      run: |
+        git clone --depth 1 --branch 5.0.1 https://gitlab.com/libeigen/eigen.git "$RUNNER_TEMP/eigen-src"
+        cmake -S "$RUNNER_TEMP/eigen-src" -B "$RUNNER_TEMP/eigen-build" -DCMAKE_INSTALL_PREFIX="$RUNNER_TEMP/eigen5" -DBUILD_TESTING=OFF -DEIGEN_BUILD_DOC=OFF
+        cmake --install "$RUNNER_TEMP/eigen-build"
+        echo "CMAKE_PREFIX_PATH=$RUNNER_TEMP/eigen5${CMAKE_PREFIX_PATH:+:$CMAKE_PREFIX_PATH}" >> "$GITHUB_ENV"
     - name: autodiff
       if: inputs.features == 'full'
       shell: bash

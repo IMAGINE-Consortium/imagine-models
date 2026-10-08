@@ -23,7 +23,7 @@ jobs:
           ruff check
 
   cpp:
-    name: C++ ${{ matrix.os }} (${{ matrix.features }}, ${{ matrix.build_type }})
+    name: C++ ${{ matrix.os }} (${{ matrix.features }}, ${{ matrix.build_type }}${{ matrix.eigen == '5' && ', Eigen 5' || '' }})
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -33,6 +33,7 @@ jobs:
         build_type: [Debug]
         include:
           - {os: ubuntu-24.04, features: full, build_type: Release}
+          - {os: ubuntu-24.04, features: full, build_type: Debug, eigen: "5"}
     env:
       FEATURE_FLAGS: ${{ matrix.features == 'minimal' && '-DUSE_AUTODIFF=OFF -DUSE_FFTW=OFF' || '' }}
       EXPECTED: ${{ matrix.features == 'full' && '1' || '0' }}
@@ -43,6 +44,7 @@ jobs:
       - uses: ./.github/actions/install-dependencies
         with:
           features: ${{ matrix.features }}
+          eigen: ${{ matrix.eigen || '3' }}
       - name: Configure
         run: cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} $FEATURE_FLAGS
       - name: Check detected features
@@ -50,6 +52,7 @@ jobs:
           cat build/c_library/generated/ImagineModels/config.h
           grep -q "IMAGINE_HAS_AUTODIFF $EXPECTED" build/c_library/generated/ImagineModels/config.h
           grep -q "IMAGINE_HAS_FFTW $EXPECTED" build/c_library/generated/ImagineModels/config.h
+          if [ "${{ matrix.eigen }}" = "5" ]; then grep "^Eigen3_DIR:PATH=.*eigen5" build/CMakeCache.txt; fi
       - name: Build
         run: cmake --build build
       - name: Test
@@ -62,7 +65,7 @@ jobs:
           LD_LIBRARY_PATH="$RUNNER_TEMP/prefix/lib" DYLD_LIBRARY_PATH="$RUNNER_TEMP/prefix/lib" "$RUNNER_TEMP/consumer/consumer"
 
   python:
-    name: Python ${{ matrix.python }} ${{ matrix.os }} (${{ matrix.features }})
+    name: Python ${{ matrix.python }} ${{ matrix.os }} (${{ matrix.features }}${{ matrix.eigen == '5' && ', Eigen 5' || '' }})
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -74,6 +77,7 @@ jobs:
           - {os: ubuntu-24.04, python: "3.12", features: minimal}
           - {os: macos-15, python: "3.12", features: full}
           - {os: macos-15, python: "3.12", features: minimal}
+          - {os: ubuntu-24.04, python: "3.12", features: full, eigen: "5"}
     env:
       USE_AUTODIFF: ${{ matrix.features == 'full' && 'ON' || 'OFF' }}
       USE_FFTW: ${{ matrix.features == 'full' && 'ON' || 'OFF' }}
@@ -88,6 +92,7 @@ jobs:
       - uses: ./.github/actions/install-dependencies
         with:
           features: ${{ matrix.features }}
+          eigen: ${{ matrix.eigen || '3' }}
       - name: Install
         run: python -m pip install ".[test]"
       - name: Check detected features

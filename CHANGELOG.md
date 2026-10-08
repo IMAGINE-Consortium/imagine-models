@@ -25,6 +25,7 @@ Results of many models changed because implementation errors were fixed. Results
 - `PointCloud` grids for evaluation at arbitrary positions.
 - `interpolate`: linear or nearest-grid-point interpolation of data on a `RegularGrid` (e.g. a random sample) at arbitrary positions.
 - `rms`, `variance` (and `mean` for scalar fields) for random fields.
+- Eigen 5 support (Eigen 3.4 and 5.0 tested).
 - Installable C++ library with a CMake package (`ImagineModels::ImagineModels`) and pkg-config file.
 
 ### API changes

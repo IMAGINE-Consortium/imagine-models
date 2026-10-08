@@ -19,7 +19,7 @@ All implemented models are listed [below](#list-of-models).
 Optional (detected automatically at build time):
 
 - [FFTW3](http://fftw.org/) ≥ 3.3, for the random field models
-- [autodiff](https://autodiff.github.io/) (tested with 0.6.12 and 1.1.2) and [Eigen3](https://eigen.tuxfamily.org/) ≥ 3.4, for derivatives with respect to model parameters
+- [autodiff](https://autodiff.github.io/) (tested with 0.6.12 and 1.1.2) and [Eigen](https://eigen.tuxfamily.org/) ≥ 3.4 (tested with 3.4 and 5.0), for derivatives with respect to model parameters
 - [matplotlib](https://matplotlib.org/), for `plot_slice` and the demo notebooks
 - [healpy](https://healpy.readthedocs.io/), for the Local Bubble model
 
