@@ -31,7 +31,7 @@ Results of many models changed because implementation errors were fixed. Results
 - Grids are values passed to `evaluate(grid)` / `sample(grid, seed)`; `on_grid` and the grid constructors of the models are removed. Python results are NumPy arrays of shape `(3, nx, ny, nz)` or `(nx, ny, nz)`.
 - Parameters: `parameter_names`, `parameters` (dict), `active_parameters`.
 - Published variants are selected with `set_model` (UF24, TF17, Pshirkov, JF12, Han, UF26), which also loads their parameters.
-- Python classes renamed to their C++ names: `JF12RegularField` → `JF12MagneticField`, `SVT22` → `SVT22MagneticField`.
+- Classes renamed: `JF12RegularField` → `JF12MagneticField`, `SVT22` → `SVT22MagneticField` (Python, now equal to the C++ names), `UFMagneticField` → `UF24MagneticField`, `TFMagneticField` → `TF17MagneticField` (C++ and Python).
 - Pshirkov: `set_model("ASS" | "BSS")` and `useDisk` replace `useASS` / `useBSS`.
 - YMW16: `t3_thmin` (rad), `t3_tan_pitch`, `t3_cos_pitch` replace `t3_phimin` / `t3_tpitch`.
 - Fauvet: parameters `b_b0, b_RB, b_Rsun, b_z0, b_r0, b_p, b_chi0`.

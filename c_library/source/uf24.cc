@@ -39,16 +39,16 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 namespace imagine {
 
-void UFMagneticField::set_model(const std::string &model) {
+void UF24MagneticField::set_model(const std::string &model) {
     if (std::find(available_models.begin(), available_models.end(), model) == available_models.end())
         throw std::invalid_argument("Unknown UF24 model '" + model + "'.");
     active_model = model;
-    parameters = UFParameters<double>{};
+    parameters = UF24Parameters<double>{};
     set_parameter_map(all_parameters.at(model));
 }
 
 template <typename T>
-Vec3<T> UFMagneticField::field(const double &x, const double &y, const double &z, const UFParameters<T> &p) const {
+Vec3<T> UF24MagneticField::field(const double &x, const double &y, const double &z, const UF24Parameters<T> &p) const {
     Vec3<T> B_cart{{0., 0., 0.}};
     double squared_length = pow(x, 2) + pow(y, 2) + pow(z, 2);
     if (squared_length > pow(fMaxRadius, 2))
@@ -64,8 +64,8 @@ Vec3<T> UFMagneticField::field(const double &x, const double &y, const double &z
 }
 
 template <typename T>
-Vec3<T> UFMagneticField::GetDiskField(const double &x, const double &y, const double &z,
-                                      const UFParameters<T> &p) const {
+Vec3<T> UF24MagneticField::GetDiskField(const double &x, const double &y, const double &z,
+                                        const UF24Parameters<T> &p) const {
     if (active_model == "spur")
         return GetSpurField(x, y, z, p);
     else
@@ -73,8 +73,8 @@ Vec3<T> UFMagneticField::GetDiskField(const double &x, const double &y, const do
 }
 
 template <typename T>
-Vec3<T> UFMagneticField::GetHaloField(const double &x, const double &y, const double &z,
-                                      const UFParameters<T> &p) const {
+Vec3<T> UF24MagneticField::GetHaloField(const double &x, const double &y, const double &z,
+                                        const UF24Parameters<T> &p) const {
     if (active_model == "twistX")
         return GetTwistedHaloField(x, y, z, p);
     else {
@@ -89,8 +89,8 @@ Vec3<T> UFMagneticField::GetHaloField(const double &x, const double &y, const do
 }
 
 template <typename T>
-Vec3<T> UFMagneticField::GetTwistedHaloField(const double x, const double y, const double z,
-                                             const UFParameters<T> &p) const {
+Vec3<T> UF24MagneticField::GetTwistedHaloField(const double x, const double y, const double z,
+                                               const UF24Parameters<T> &p) const {
     const double r = sqrt(x * x + y * y);
     const double cosPhi = r > std::numeric_limits<double>::min() ? x / r : 1;
     const double sinPhi = r > std::numeric_limits<double>::min() ? y / r : 0;
@@ -131,8 +131,8 @@ Vec3<T> UFMagneticField::GetTwistedHaloField(const double x, const double y, con
 }
 
 template <typename T>
-Vec3<T> UFMagneticField::GetToroidalHaloField(const double x, const double y, const double z,
-                                              const UFParameters<T> &p) const {
+Vec3<T> UF24MagneticField::GetToroidalHaloField(const double x, const double y, const double z,
+                                                const UF24Parameters<T> &p) const {
     const double r2 = x * x + y * y;
     const double r = sqrt(r2);
     const double absZ = abs(z);
@@ -154,8 +154,8 @@ Vec3<T> UFMagneticField::GetToroidalHaloField(const double x, const double y, co
 }
 
 template <typename T>
-Vec3<T> UFMagneticField::GetPoloidalHaloField(const double x, const double y, const double z,
-                                              const UFParameters<T> &p) const {
+Vec3<T> UF24MagneticField::GetPoloidalHaloField(const double x, const double y, const double z,
+                                                const UF24Parameters<T> &p) const {
     const double r2 = x * x + y * y;
     const double r = std::sqrt(r2);
 
@@ -209,7 +209,8 @@ Vec3<T> UFMagneticField::GetPoloidalHaloField(const double x, const double y, co
 }
 
 template <typename T>
-Vec3<T> UFMagneticField::GetSpurField(const double x, const double y, const double z, const UFParameters<T> &p) const {
+Vec3<T> UF24MagneticField::GetSpurField(const double x, const double y, const double z,
+                                        const UF24Parameters<T> &p) const {
     // reference approximately at solar radius
     const double rRef = 8.2; // kpc
 
@@ -266,8 +267,8 @@ Vec3<T> UFMagneticField::GetSpurField(const double x, const double y, const doub
 }
 
 template <typename T>
-Vec3<T> UFMagneticField::GetSpiralField(const double x, const double y, const double z,
-                                        const UFParameters<T> &p) const {
+Vec3<T> UF24MagneticField::GetSpiralField(const double x, const double y, const double z,
+                                          const UF24Parameters<T> &p) const {
     // reference radius
     const double rRef = 5.; // kpc
     // inner boundary of spiral field
@@ -316,6 +317,6 @@ Vec3<T> UFMagneticField::GetSpiralField(const double x, const double y, const do
     return Cyl2Cart<Vec3<T>>(bCyl, cosPhi, sinPhi);
 }
 
-IMAGINE_INSTANTIATE_VECTOR_MODEL(UFMagneticField)
+IMAGINE_INSTANTIATE_VECTOR_MODEL(UF24MagneticField)
 
 }

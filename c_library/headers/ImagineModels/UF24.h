@@ -43,7 +43,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 namespace imagine {
 
-#define UF_PARAMETERS(X)                               \
+#define UF24_PARAMETERS(X)                             \
     X(fPoloidalA, 1 * astro::gpc)                      \
     X(fDiskB1, 1.0878565e+00 * astro::microgauss)      \
     X(fDiskB2, 2.6605034e+00 * astro::microgauss)      \
@@ -70,9 +70,9 @@ namespace imagine {
     X(fSpurWidth, 0)                                   \
     X(fTwistingTime, 0)
 
-IMAGINE_PARAMETERS(UFParameters, UF_PARAMETERS)
+IMAGINE_PARAMETERS(UF24Parameters, UF24_PARAMETERS)
 
-class UFMagneticField : public RegularVectorModel<UFMagneticField, UFParameters> {
+class UF24MagneticField : public RegularVectorModel<UF24MagneticField, UF24Parameters> {
 public:
     // variants, Table 2
     const std::array<std::string, 8> available_models{"base",  "neCL",  "expX",   "spur",
@@ -266,7 +266,7 @@ public:
          }},
     };
 
-    explicit UFMagneticField(const std::string &model = "base") { set_model(model); }
+    explicit UF24MagneticField(const std::string &model = "base") { set_model(model); }
 
     void set_model(const std::string &model);
     const std::string &model() const { return active_model; }
@@ -277,30 +277,30 @@ private:
 
     // major field components
     template <typename T>
-    Vec3<T> GetDiskField(const double &x, const double &y, const double &z, const UFParameters<T> &p) const;
+    Vec3<T> GetDiskField(const double &x, const double &y, const double &z, const UF24Parameters<T> &p) const;
     template <typename T>
-    Vec3<T> GetHaloField(const double &x, const double &y, const double &z, const UFParameters<T> &p) const;
+    Vec3<T> GetHaloField(const double &x, const double &y, const double &z, const UF24Parameters<T> &p) const;
 
     // variant sub-components
     // -- Sec. 5.2.2
     template <typename T>
-    Vec3<T> GetSpiralField(const double x, const double y, const double z, const UFParameters<T> &p) const;
+    Vec3<T> GetSpiralField(const double x, const double y, const double z, const UF24Parameters<T> &p) const;
     // -- Sec. 5.2.3
     template <typename T>
-    Vec3<T> GetSpurField(const double x, const double y, const double z, const UFParameters<T> &p) const;
+    Vec3<T> GetSpurField(const double x, const double y, const double z, const UF24Parameters<T> &p) const;
     // -- Sec. 5.3.1
     template <typename T>
-    Vec3<T> GetToroidalHaloField(const double x, const double y, const double z, const UFParameters<T> &p) const;
+    Vec3<T> GetToroidalHaloField(const double x, const double y, const double z, const UF24Parameters<T> &p) const;
     // -- Sec. 5.3.2
     template <typename T>
-    Vec3<T> GetPoloidalHaloField(const double x, const double y, const double z, const UFParameters<T> &p) const;
+    Vec3<T> GetPoloidalHaloField(const double x, const double y, const double z, const UF24Parameters<T> &p) const;
     // -- Sec. 5.3.3
     template <typename T>
-    Vec3<T> GetTwistedHaloField(const double x, const double y, const double z, const UFParameters<T> &p) const;
+    Vec3<T> GetTwistedHaloField(const double x, const double y, const double z, const UF24Parameters<T> &p) const;
 
 public:
     template <typename T>
-    Vec3<T> field(const double &x, const double &y, const double &z, const UFParameters<T> &p) const;
+    Vec3<T> field(const double &x, const double &y, const double &z, const UF24Parameters<T> &p) const;
 };
 
 }

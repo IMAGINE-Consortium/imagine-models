@@ -67,9 +67,9 @@ def _regular_cases():
         "SVT22MagneticField",
         "StanevBSSMagneticField",
         "SunMagneticField",
-        "TFMagneticField",
+        "TF17MagneticField",
         "TTMagneticField",
-        "UFMagneticField",
+        "UF24MagneticField",
         "UniformDensityField",
         "UniformMagneticField",
         "WMAPMagneticField",
@@ -93,9 +93,9 @@ def _regular_cases():
     cases["WMAPMagneticField__anti"] = ("WMAPMagneticField", {"b_anti": True})
     for disk in ["Ad1", "Bd1", "Dd1"]:
         for halo in ["C0", "C1"]:
-            cases[f"TFMagneticField__{disk}_{halo}"] = ("TFMagneticField", {"set_model": [disk, halo]})
+            cases[f"TF17MagneticField__{disk}_{halo}"] = ("TF17MagneticField", {"set_model": [disk, halo]})
     for variant in ["base", "neCL", "expX", "spur", "cre10", "synCG", "twistX", "nebCor"]:
-        cases[f"UFMagneticField__{variant}"] = ("UFMagneticField", {"set_model": [variant]})
+        cases[f"UF24MagneticField__{variant}"] = ("UF24MagneticField", {"set_model": [variant]})
     cases["AxiSymmetricSpiral__default"] = ("AxiSymmetricSpiral", {})
     return cases
 
@@ -115,7 +115,12 @@ REGULAR_CASES = _regular_cases()
 RANDOM_CASES = _random_cases() if img.__has_random_fields__ else {}
 
 
-RENAMED = {"JF12RegularField": "JF12MagneticField", "SVT22": "SVT22MagneticField"}
+RENAMED = {
+    "JF12RegularField": "JF12MagneticField",
+    "SVT22": "SVT22MagneticField",
+    "UFMagneticField": "UF24MagneticField",
+    "TFMagneticField": "TF17MagneticField",
+}
 
 
 def model_class(name):
@@ -182,9 +187,9 @@ _SOURCE_FILES = {
     "SVT22MagneticField": "svt22.cc",
     "StanevBSSMagneticField": "stanev.cc",
     "SunMagneticField": "sun.cc",
-    "TFMagneticField": "tf17.cc",
+    "TF17MagneticField": "tf17.cc",
     "TTMagneticField": "tt.cc",
-    "UFMagneticField": "uf24.cc",
+    "UF24MagneticField": "uf24.cc",
     "WMAPMagneticField": "wmap.cc",
     "YMW16": "ymw16.cc",
 }

@@ -26,30 +26,30 @@ TEMPLATE_LIST_TEST_CASE("values are finite on the z-axis", "[models]", AllModels
 }
 
 TEST_CASE("UF24 variants load their published parameters", "[models][variants]") {
-    UFMagneticField uf;
+    UF24MagneticField uf;
     for (const auto &variant : uf.available_models) {
         CAPTURE(variant);
         uf.set_parameter("fDiskB1", 123.);
         uf.set_model(variant);
         CHECK(uf.model() == variant);
-        CHECK(uf.parameter_map() == UFMagneticField(variant).parameter_map());
+        CHECK(uf.parameter_map() == UF24MagneticField(variant).parameter_map());
         for (const auto &[name, value] : uf.all_parameters.at(variant))
             CHECK(uf.get_parameter(name) == value);
         for (const auto &p : positions)
             CHECK(all_finite(value_at(uf, p)));
     }
     CHECK_THROWS_AS(uf.set_model("no_such_model"), std::invalid_argument);
-    CHECK_THROWS_AS(UFMagneticField("no_such_model"), std::invalid_argument);
+    CHECK_THROWS_AS(UF24MagneticField("no_such_model"), std::invalid_argument);
 }
 
 TEST_CASE("TF17 variants load their published parameters", "[models][variants]") {
     const auto disk = GENERATE(as<std::string>{}, "Ad1", "Bd1", "Dd1");
     const auto halo = GENERATE(as<std::string>{}, "C0", "C1");
     CAPTURE(disk, halo);
-    TFMagneticField tf("Ad1", "C0");
+    TF17MagneticField tf("Ad1", "C0");
     tf.set_parameter("B1_disk", 123.);
     tf.set_model(disk, halo);
-    const TFMagneticField fresh(disk, halo);
+    const TF17MagneticField fresh(disk, halo);
     CHECK(tf.disk_model() == disk);
     CHECK(tf.halo_model() == halo);
     CHECK(tf.parameter_map() == fresh.parameter_map());
@@ -59,7 +59,7 @@ TEST_CASE("TF17 variants load their published parameters", "[models][variants]")
 }
 
 TEST_CASE("TF17 rejects unknown variants", "[models][variants]") {
-    TFMagneticField tf;
+    TF17MagneticField tf;
     CHECK_THROWS_AS(tf.set_model("Xd1", "C0"), std::invalid_argument);
     CHECK_THROWS_AS(tf.set_model("Ad1", "C9"), std::invalid_argument);
     CHECK(tf.disk_model() == "Ad1");

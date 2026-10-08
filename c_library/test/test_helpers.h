@@ -14,7 +14,7 @@ namespace imagine::test {
 using VectorModels =
     std::tuple<ArchimedeanMagneticField, FauvetMagneticField, HanMagneticField, HelixMagneticField, HMRMagneticField,
                JaffeMagneticField, JF12MagneticField, PshirkovMagneticField, StanevBSSMagneticField, SunMagneticField,
-               SVT22MagneticField, TFMagneticField, TTMagneticField, UFMagneticField, UniformMagneticField,
+               SVT22MagneticField, TF17MagneticField, TTMagneticField, UF24MagneticField, UniformMagneticField,
                WMAPMagneticField, XH24MagneticField>;
 using ScalarModels = std::tuple<UniformDensityField, YMW16>;
 using AllModels = decltype(std::tuple_cat(std::declval<VectorModels>(), std::declval<ScalarModels>()));

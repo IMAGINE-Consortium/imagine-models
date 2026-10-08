@@ -10,7 +10,7 @@ regular_models = [
     "HelixMagneticField",
     "JF12MagneticField",
     "SunMagneticField",
-    "UFMagneticField",
+    "UF24MagneticField",
 ]
 scalar_models = ["YMW16", "UniformDensityField"]
 
@@ -36,7 +36,7 @@ known_positions = {
     "SunMagneticField": [
         ([0, 0, 0], [0.41582338163551863, 1.9562952014676114, 0.0]),  # origin
     ],
-    "UFMagneticField": [],
+    "UF24MagneticField": [],
 }
 
 regular_grid = img.RegularGrid(shape=[2, 3, 4], reference_point=[-2.0, 3.0, 0.1], increment=[0.1, 3.0, 0.1])
@@ -172,23 +172,23 @@ def test_at_positions_broadcasting():
 
 
 def test_model_variants():
-    uf = img.UFMagneticField(model="expX")
+    uf = img.UF24MagneticField(model="expX")
     assert uf.model == "expX"
     assert uf.fPoloidalA == uf.all_parameters["expX"]["fPoloidalA"]
     reference = uf.at_position(-8.5, 1.0, 0.3)
     uf.set_model("spur")
     uf.set_model("expX")
     assert uf.at_position(-8.5, 1.0, 0.3) == reference
-    assert img.UFMagneticField().model == "base"
+    assert img.UF24MagneticField().model == "base"
     with pytest.raises(AttributeError):
         uf.model = "base"
     with pytest.raises(ValueError):
         uf.set_model("unknown")
 
-    tf = img.TFMagneticField("Dd1", "C1")
+    tf = img.TF17MagneticField("Dd1", "C1")
     assert (tf.disk_model, tf.halo_model) == ("Dd1", "C1")
     assert np.isfinite(tf.at_position(5.0, 3.0, 0.5)).all()
-    assert img.TFMagneticField().H_disk == 0.055
+    assert img.TF17MagneticField().H_disk == 0.055
     with pytest.raises(ValueError):
         tf.set_model("Xd1", "C0")
 
@@ -208,7 +208,7 @@ def test_configuration_members():
     for name in ["t0_theta0", "h0", "h1", "h2", "Xgc", "Ygc", "Zgc", "t5_lc", "t6_zyl1", "t6_zyl2", "max_radius"]:
         assert isinstance(getattr(ymw, name), float)
 
-    uf = img.UFMagneticField()
+    uf = img.UF24MagneticField()
     assert uf.fMaxRadius == 30.0
     uf.fMaxRadius = 20.0
     assert np.all(np.asarray(uf.at_position(-22.0, 0.0, 0.0)) == 0.0)
@@ -221,7 +221,7 @@ def test_point_cloud():
     assert len(cloud) == cloud.size == 20
     assert np.array_equal(cloud.y, positions[:, 1])
     same = img.PointCloud(positions[:, 0], positions[:, 1], positions[:, 2])
-    for model in [img.JF12MagneticField(), img.UFMagneticField(), img.YMW16()]:
+    for model in [img.JF12MagneticField(), img.UF24MagneticField(), img.YMW16()]:
         on_cloud = model.evaluate(cloud)
         expected = model.at_positions(positions[:, 0], positions[:, 1], positions[:, 2])
         assert on_cloud.shape == expected.shape

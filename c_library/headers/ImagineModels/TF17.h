@@ -29,14 +29,14 @@ namespace imagine {
     X(H_p, 5.)             /* kpc; Ad1 */         \
     X(L_p, 50.)            /* kpc */
 
-IMAGINE_PARAMETERS(TFParameters, TF17_PARAMETERS)
+IMAGINE_PARAMETERS(TF17Parameters, TF17_PARAMETERS)
 
-class TFMagneticField : public RegularVectorModel<TFMagneticField, TFParameters> {
+class TF17MagneticField : public RegularVectorModel<TF17MagneticField, TF17Parameters> {
 public:
     const std::array<std::string, 3> available_disk_models{"Ad1", "Bd1", "Dd1"};
     const std::array<std::string, 2> available_halo_models{"C0", "C1"};
 
-    explicit TFMagneticField(const std::string &disk_model = "Ad1", const std::string &halo_model = "C0") {
+    explicit TF17MagneticField(const std::string &disk_model = "Ad1", const std::string &halo_model = "C0") {
         set_model(disk_model, halo_model);
     }
 
@@ -49,27 +49,27 @@ public:
 
     template <typename T>
     Vec3<T> getDiskField(const double &r, const double &z, const double &phi, const double &sinPhi,
-                         const double &cosPhi, const TFParameters<T> &p) const;
+                         const double &cosPhi, const TF17Parameters<T> &p) const;
 
     template <typename T>
     Vec3<T> getHaloField(const double &r, const double &z, const double &phi, const double &sinPhi,
-                         const double &cosPhi, const TFParameters<T> &p) const;
+                         const double &cosPhi, const TF17Parameters<T> &p) const;
 
     template <typename T>
     T azimuthalFieldComponent(const double &r, const double &z, const T &B_r, const T &B_z, const T &cp0,
-                              const TFParameters<T> &p) const;
+                              const TF17Parameters<T> &p) const;
 
     template <typename T>
     T radialFieldScale(const T &B1, const T &phi_star, const T &z1, const double &phi, const double &r, const double &z,
-                       const T &cp0, const TFParameters<T> &p) const;
+                       const T &cp0, const TF17Parameters<T> &p) const;
 
     template <typename T>
-    T shiftedWindingFunction(const T &r, const double &z, const T &cp0, const TFParameters<T> &p) const;
+    T shiftedWindingFunction(const T &r, const double &z, const T &cp0, const TF17Parameters<T> &p) const;
 
-    template <typename T> T zscale(const double &z, const TFParameters<T> &p) const;
+    template <typename T> T zscale(const double &z, const TF17Parameters<T> &p) const;
 
     template <typename T>
-    Vec3<T> field(const double &x, const double &y, const double &z, const TFParameters<T> &p) const;
+    Vec3<T> field(const double &x, const double &y, const double &z, const TF17Parameters<T> &p) const;
 
 private:
     std::string active_disk_model = "Ad1";

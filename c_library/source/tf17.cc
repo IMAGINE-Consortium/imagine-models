@@ -7,7 +7,7 @@
 namespace imagine {
 
 template <typename T>
-Vec3<T> TFMagneticField::field(const double &x, const double &y, const double &z, const TFParameters<T> &p) const {
+Vec3<T> TF17MagneticField::field(const double &x, const double &y, const double &z, const TF17Parameters<T> &p) const {
     const double r = sqrt(x * x + y * y);
     double phi = M_PI - std::atan2(y, x);
 
@@ -22,8 +22,8 @@ Vec3<T> TFMagneticField::field(const double &x, const double &y, const double &z
 }
 
 template <typename T>
-Vec3<T> TFMagneticField::getDiskField(const double &r, const double &z, const double &phi, const double &sinPhi,
-                                      const double &cosPhi, const TFParameters<T> &p) const {
+Vec3<T> TF17MagneticField::getDiskField(const double &r, const double &z, const double &phi, const double &sinPhi,
+                                        const double &cosPhi, const TF17Parameters<T> &p) const {
     Vec3<T> B_cart{{0., 0., 0.}};
     T B_r = 0;
     T B_phi = 0;
@@ -96,8 +96,8 @@ Vec3<T> TFMagneticField::getDiskField(const double &r, const double &z, const do
 }
 
 template <typename T>
-Vec3<T> TFMagneticField::getHaloField(const double &r, const double &z, const double &phi, const double &sinPhi,
-                                      const double &cosPhi, const TFParameters<T> &p) const {
+Vec3<T> TF17MagneticField::getHaloField(const double &r, const double &z, const double &phi, const double &sinPhi,
+                                        const double &cosPhi, const TF17Parameters<T> &p) const {
     int m;
     Vec3<T> B_cart{{0., 0., 0.}};
     auto r1_halo_r = (1. + p.a_halo * p.z1_halo * p.z1_halo) / (1. + p.a_halo * z * z);
@@ -131,8 +131,8 @@ Vec3<T> TFMagneticField::getHaloField(const double &r, const double &z, const do
 }
 
 template <typename T>
-T TFMagneticField::azimuthalFieldComponent(const double &r, const double &z, const T &B_r, const T &B_z, const T &cp0,
-                                           const TFParameters<T> &p) const {
+T TF17MagneticField::azimuthalFieldComponent(const double &r, const double &z, const T &B_r, const T &B_z, const T &cp0,
+                                             const TF17Parameters<T> &p) const {
     auto r_ = r / p.L_p;
     auto rscale = r > epsilon ? r_ * exp(-r_) / (1 - exp(-r_)) : 1 - r_ / 2. + r_ * r_ / 12.;
     auto B_phi = cp0 / zscale(z, p) * rscale * B_r;
@@ -141,8 +141,8 @@ T TFMagneticField::azimuthalFieldComponent(const double &r, const double &z, con
 }
 
 template <typename T>
-T TFMagneticField::radialFieldScale(const T &B1, const T &phi_star, const T &z1, const double &phi, const double &r,
-                                    const double &z, const T &cp0, const TFParameters<T> &p) const {
+T TF17MagneticField::radialFieldScale(const T &B1, const T &phi_star, const T &z1, const double &phi, const double &r,
+                                      const double &z, const T &cp0, const TF17Parameters<T> &p) const {
     // cosine argument
     auto phi_prime = phi - shiftedWindingFunction<T>(r, z, cp0, p) - phi_star;
     // bisymmetric (m = 1) term
@@ -150,15 +150,16 @@ T TFMagneticField::radialFieldScale(const T &B1, const T &phi_star, const T &z1,
 }
 
 template <typename T>
-T TFMagneticField::shiftedWindingFunction(const T &r, const double &z, const T &cp0, const TFParameters<T> &p) const {
+T TF17MagneticField::shiftedWindingFunction(const T &r, const double &z, const T &cp0,
+                                            const TF17Parameters<T> &p) const {
     return cp0 * log(1 - exp(-r / p.L_p) + epsilon) / zscale(z, p);
 }
 
-template <typename T> T TFMagneticField::zscale(const double &z, const TFParameters<T> &p) const {
+template <typename T> T TF17MagneticField::zscale(const double &z, const TF17Parameters<T> &p) const {
     return 1 + z * z / p.H_p / p.H_p;
 }
 
-void TFMagneticField::set_model(const std::string &dtype, const std::string &htype) {
+void TF17MagneticField::set_model(const std::string &dtype, const std::string &htype) {
     if (std::find(available_disk_models.begin(), available_disk_models.end(), dtype) == available_disk_models.end())
         throw std::invalid_argument("Unknown TF17 disk model '" + dtype + "'.");
     if (std::find(available_halo_models.begin(), available_halo_models.end(), htype) == available_halo_models.end())
@@ -269,6 +270,6 @@ void TFMagneticField::set_model(const std::string &dtype, const std::string &hty
     parameters.L_p = 50;
 }
 
-IMAGINE_INSTANTIATE_VECTOR_MODEL(TFMagneticField)
+IMAGINE_INSTANTIATE_VECTOR_MODEL(TF17MagneticField)
 
 }

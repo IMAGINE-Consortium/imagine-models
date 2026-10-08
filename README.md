@@ -106,7 +106,7 @@ jf12.b_arm_1 = 1.2  # single parameter
 jf12.parameters = {"Bn": 1.5}  # several at once (partial update)
 
 # published model variants: set_model selects the variant and loads its parameters
-uf = img.UFMagneticField(model="expX")
+uf = img.UF24MagneticField(model="expX")
 uf.set_model("spur")
 
 # derivatives w.r.t. the parameters (if built with autodiff)
@@ -256,9 +256,9 @@ Differences to the publications are listed under [Deviations from the publicatio
 | Stanev | `StanevBSSMagneticField` | [Stanev (1997)](https://arxiv.org/abs/astro-ph/9607086) | [hammurabi v3.01](https://sourceforge.net/projects/hammurabicode/) | | [ipynb](demos/python/model_examples/stanev_demo.ipynb) |
 | Sun | `SunMagneticField` | [Sun et al. (2008)](https://www.aanda.org/articles/aa/abs/2008/02/aa8671-07/aa8671-07.html); halo: [Sun & Reich (2010)](https://arxiv.org/abs/1010.4394) | [hammurabi v3.01](https://sourceforge.net/projects/hammurabicode/) | | [ipynb](demos/python/model_examples/sun_demo.ipynb) |
 | SVT22 | `SVT22MagneticField` | [Shaw et al. (2022)](https://academic.oup.com/mnras/article/517/2/2534/6731784) | | | [ipynb](demos/python/model_examples/svt22_demo.ipynb) |
-| TF17 | `TFMagneticField` | [Terral & Ferrière (2017)](https://arxiv.org/abs/1611.10222) | [CRPropa](https://github.com/CRPropa/CRPropa3) | disk Ad1, Bd1, Dd1 × halo C0, C1 | [ipynb](demos/python/model_examples/tf17_demo.ipynb) |
+| TF17 | `TF17MagneticField` | [Terral & Ferrière (2017)](https://arxiv.org/abs/1611.10222) | [CRPropa](https://github.com/CRPropa/CRPropa3) | disk Ad1, Bd1, Dd1 × halo C0, C1 | [ipynb](demos/python/model_examples/tf17_demo.ipynb) |
 | TT | `TTMagneticField` | [Tinyakov & Tkachev (2002)](https://arxiv.org/abs/astro-ph/0111305) | [hammurabi v3.01](https://sourceforge.net/projects/hammurabicode/) | | [ipynb](demos/python/model_examples/tt_demo.ipynb) |
-| UF24 | `UFMagneticField` | [Unger & Farrar (2024)](https://arxiv.org/abs/2311.12120) | authors' code ([UF23Field v1.1](https://doi.org/10.5281/zenodo.11321212), BSD-2) | base, neCL, expX, spur, cre10, synCG, twistX, nebCor | [ipynb](demos/python/model_examples/uf24_demo.ipynb) |
+| UF24 | `UF24MagneticField` | [Unger & Farrar (2024)](https://arxiv.org/abs/2311.12120) | authors' code ([UF23Field v1.1](https://doi.org/10.5281/zenodo.11321212), BSD-2) | base, neCL, expX, spur, cre10, synCG, twistX, nebCor | [ipynb](demos/python/model_examples/uf24_demo.ipynb) |
 | WMAP | `WMAPMagneticField` | [Page et al. (2007)](https://iopscience.iop.org/article/10.1086/513699) | [hammurabi v3.01](https://sourceforge.net/projects/hammurabicode/) | | [ipynb](demos/python/model_examples/wmap_demo.ipynb) |
 | XH24 halo | `XH24MagneticField` | [Xu & Han (2024)](https://arxiv.org/abs/2404.02038) | [authors' code](http://zmtt.bao.ac.cn/GMF/) | | |
 | **Random models** | | | | | |
@@ -294,6 +294,6 @@ Models not listed here have no known deviations.
 - **SVT22**: `B_val` = 3.72 µG; the published best fit is 3.96 µG (3 µG in arXiv v1).
 - **TF17**: lower limits of Table 2 used as values, as in CRPropa.
 - **UF26**: the paper constrains only the rms; the power spectrum is the library default.
-- **WMAP**: ψ0 = 27° and sin ψ on r̂ as corrected in Jansson et al. (2009, Sec. 5.3.6); amplitude `b_b0` = 6 µG not taken from the paper; `anti` (field reversed for z > 0) from hammurabi, not in the paper.
+- **WMAP**: ψ0 = 27° and sin ψ on r̂ as corrected in Jansson et al. (2009, Sec. 5.3.6); the paper gives no amplitude, `b_b0` = 6 µG is a default; `anti` (field reversed for z > 0) from hammurabi, not in the paper.
 - **XH24 halo**: field set to zero beyond r = 20 kpc, as in the authors' code.
 - **YMW16**: Galactic part only (no Magellanic Clouds or IGM), R ≤ 30 kpc as in the original code; exact π instead of the original's `RAD = 57.295779` (relative differences ≤ 4e-6), Gum Nebula limit θ → 0 instead of 0/0, no gap for azimuths in [6.28, 2π).
