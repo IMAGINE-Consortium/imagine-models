@@ -199,6 +199,23 @@ For Python, add a binding file `python_wrapper/regular/mymodel.cc` with `bind_re
 
 Quick prototypes can also be written in pure Python by subclassing `img.RegularVectorField` (see the tutorial notebook).
 
+### Code style
+
+- Formatting is done by tools: `clang-format` (C++, `.clang-format`) and `ruff format` / `ruff check` (Python, `pyproject.toml`). CI checks both with the versions pinned in `.github/workflows/ci.yml`.
+- One file stem per model: `ModelName.h`, `model_name.cc`, `python_wrapper/regular/model_name.cc`, `model_name_demo.ipynb`. Headers use `#pragma once`. The Python class name equals the C++ class name.
+- Parameter names follow the symbols of the publication or reference code; units other than kpc and µG are given in the parameter list (`X(b_p, -12.) /* deg */`).
+- Call math functions on templated values unqualified (`sqrt(x)`, `exp(x)`) so that the autodiff overloads apply.
+- Each model header starts with its reference, the external code it is based on, and its deviations from the publication (also listed [above](#deviations-from-the-publications)):
+
+  ```cpp
+  // Reference: Sun et al. 2008, arXiv:0711.1572
+  // Based on: hammurabi v3.01
+  // Deviations:
+  // - halo with the parameters of Sun & Reich 2010
+  ```
+
+- Otherwise, comments are at most five words: names of logical blocks, important switches, or equation labels (`// eq. 6`).
+
 
 ## Development
 
@@ -211,14 +228,14 @@ cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug && cmake --build build && ctest --t
 - `tests/test_external.py` compares models with values computed by their external reference implementations (`tests/external_data/`, values only): the original YMW16 code, hammurabiX (Jaffe), CRPropa (TF17, Pshirkov, JF12, Archimedes), the authors' UF23 code and the old hammurabi (Sun disk, Stanev, Fauvet). Each file records the source, tolerance and any deliberate difference.
 - `tests/test_random_fields.py` checks the statistics of the random fields (variance, amplitude, divergence, anisotropy).
 - The C++ tests (`c_library/test/`, [Catch2](https://github.com/catchorg/Catch2) v3: an installed copy is used if found, otherwise it is downloaded at configure time) check every model for grid consistency, finite values, the parameter registry and derivatives against finite differences, plus the random-field statistics. `build/c_library/imagine_tests --list-tests` lists them; a tag such as `"[random]"` runs a subset.
-- CI (`.github/workflows/ci.yml`) runs the C++ and Python tests with all optional dependencies and without them, and builds a wheel from the source distribution.
+- CI (`.github/workflows/ci.yml`) checks formatting and lint, runs the C++ and Python tests with all optional dependencies and without them, and builds a wheel from the source distribution.
 
 
 ## List of models
 
 Each model follows its reference publication; the publications are its documentation.
 "Based on" names the external code an implementation was ported from or compared with.
-Differences to the publications are listed under [Deviations from the publications](#deviations-from-the-publications).
+Differences to the publications are listed under [Deviations from the publications](#deviations-from-the-publications); [CHANGELOG.md](CHANGELOG.md) lists changes between versions.
 
 ### Magnetic (vector) fields
 
