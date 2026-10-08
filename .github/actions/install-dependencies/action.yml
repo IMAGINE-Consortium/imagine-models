@@ -38,7 +38,16 @@ runs:
       if: inputs.features == 'full' && inputs.eigen == '5'
       shell: bash
       run: |
-        git clone --depth 1 --branch 5.0.1 https://gitlab.com/libeigen/eigen.git "$RUNNER_TEMP/eigen-src"
+        for attempt in 1 2 3; do
+          git clone --depth 1 --branch 5.0.1 https://gitlab.com/libeigen/eigen.git "$RUNNER_TEMP/eigen-src" && break
+          rm -rf "$RUNNER_TEMP/eigen-src"
+          sleep 30
+        done
+        if [ ! -d "$RUNNER_TEMP/eigen-src" ]; then
+          curl -fsSL --retry 3 -o "$RUNNER_TEMP/eigen.tar.gz" https://gitlab.com/libeigen/eigen/-/archive/5.0.1/eigen-5.0.1.tar.gz
+          mkdir -p "$RUNNER_TEMP/eigen-src"
+          tar xzf "$RUNNER_TEMP/eigen.tar.gz" -C "$RUNNER_TEMP/eigen-src" --strip-components=1
+        fi
         cmake -S "$RUNNER_TEMP/eigen-src" -B "$RUNNER_TEMP/eigen-build" -DCMAKE_INSTALL_PREFIX="$RUNNER_TEMP/eigen5" -DBUILD_TESTING=OFF -DEIGEN_BUILD_DOC=OFF -DEIGEN_BUILD_BLAS=OFF -DEIGEN_BUILD_LAPACK=OFF
         cmake --install "$RUNNER_TEMP/eigen-build"
         echo "CMAKE_PREFIX_PATH=$RUNNER_TEMP/eigen5${CMAKE_PREFIX_PATH:+:$CMAKE_PREFIX_PATH}" >> "$GITHUB_ENV"
