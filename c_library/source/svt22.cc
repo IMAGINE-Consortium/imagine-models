@@ -13,10 +13,9 @@ Vec3<T> SVT22MagneticField::field(const double &x, const double &y, const double
     const double rho{sqrt(x * x + y * y + z * z)};
     const double phi{atan2(y, x)};
 
-    T B_cyl[3] = {0, 0, 0}; // the disk field in cylindrical coordinates
+    T B_cyl[3] = {0, 0, 0}; // cylindrical components
 
-    //-------------------------------------------------------------------------
-    ////TOROIDAL HALO COMPONENT
+    // toroidal halo
 
     if (do_halo) {
         T b1, rh;

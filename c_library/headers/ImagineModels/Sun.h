@@ -1,3 +1,8 @@
+// Reference: Sun et al. 2008, arXiv:0711.1572 (ASS+RING); halo: Sun & Reich 2010, arXiv:1010.4394
+// Based on: hammurabi v3.01 (old hammurabi)
+// Deviations:
+// - halo with the parameters of Sun & Reich 2010: bH_B0 = 2 muG, bH_z1a/bH_z1b = 0.2/4 kpc
+
 #pragma once
 
 #include <cmath>
@@ -7,20 +12,18 @@
 
 namespace imagine {
 
-// Sun et al. A&A V.477 2008 ASS+RING model magnetic field
-
-#define SUN_PARAMETERS(X)                                                                      \
-    X(b_Rsun, 8.5)                                                                             \
-    X(b_R0, 10.)                                                                               \
-    X(b_B0, 2.)                                                                                \
-    X(b_z0, 1.)                                                                                \
-    X(b_Rc, 5.)                                                                                \
-    X(b_Bc, 2.)                                                                                \
-    X(b_p, -12.)                                                                               \
-    X(bH_B0, 2.) /* 10 in original publication, 2 in update https://arxiv.org/abs/1010.4394 */ \
-    X(bH_R0, 4.)                                                                               \
-    X(bH_z0, 1.5)                                                                              \
-    X(bH_z1a, 0.2)                                                                             \
+#define SUN_PARAMETERS(X)                    \
+    X(b_Rsun, 8.5)                           \
+    X(b_R0, 10.)                             \
+    X(b_B0, 2.)                              \
+    X(b_z0, 1.)                              \
+    X(b_Rc, 5.)                              \
+    X(b_Bc, 2.)                              \
+    X(b_p, -12.)                             \
+    X(bH_B0, 2.) /* muG, Sun & Reich 2010 */ \
+    X(bH_R0, 4.)                             \
+    X(bH_z0, 1.5)                            \
+    X(bH_z1a, 0.2)                           \
     X(bH_z1b, 4.)
 
 IMAGINE_PARAMETERS(SunParameters, SUN_PARAMETERS)

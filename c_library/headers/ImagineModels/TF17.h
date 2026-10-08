@@ -1,3 +1,8 @@
+// Reference: Terral & Ferriere 2017, arXiv:1611.10222
+// Based on: CRPropa (TF17Field)
+// Deviations:
+// - lower limits of Table 2 used as values, as in CRPropa
+
 #pragma once
 
 #include <cmath>
@@ -7,24 +12,21 @@
 
 namespace imagine {
 
-// Terral, Ferriere 2017 - Constraints from Faraday rotation on the magnetic field structure in the galactic halo,
-// DOI: 10.1051/0004-6361/201629572, arXiv:1611.10222, implementation adapted from CRPRopa
-
-#define TF17_PARAMETERS(X)                                          \
-    X(a_disk, 0.9)         /* kp**-2; not relevant for: Bd1, Dd1 */ \
-    X(z1_disk, 0)          /* not relevant for: Ad1, Bd1 */         \
-    X(r1_disk, 3)          /* kpc; // not relevant for: Dd1 */      \
-    X(B1_disk, 19.)        /* muG; */                               \
-    X(L_disk, 0)           /* not relevant for: Ad1, Bd1 */         \
-    X(phi_star_disk, -54.) /* deg ; */                              \
-    X(H_disk, 0.055)       /* kpc; // not relevant for: Dd1 */      \
-    X(a_halo, 1.17)        /* kp**-2; */                            \
-    X(z1_halo, 0.)         /* kpc */                                \
-    X(B1_halo, 0.36)       /* muG */                                \
-    X(L_halo, 3.0)         /* kpc */                                \
-    X(phi_star_halo, 0)    /* deg */                                \
-    X(p_0, -7.9)           /* deg; */                               \
-    X(H_p, 5.)             /* kpc; Ad1 */                           \
+#define TF17_PARAMETERS(X)                        \
+    X(a_disk, 0.9)         /* kpc^-2; Ad1 only */ \
+    X(z1_disk, 0)          /* Dd1 only */         \
+    X(r1_disk, 3)          /* kpc; Ad1, Bd1 */    \
+    X(B1_disk, 19.)        /* muG */              \
+    X(L_disk, 0)           /* Dd1 only */         \
+    X(phi_star_disk, -54.) /* deg */              \
+    X(H_disk, 0.055)       /* kpc; Ad1, Bd1 */    \
+    X(a_halo, 1.17)        /* kpc^-2 */           \
+    X(z1_halo, 0.)         /* kpc */              \
+    X(B1_halo, 0.36)       /* muG */              \
+    X(L_halo, 3.0)         /* kpc */              \
+    X(phi_star_halo, 0)    /* deg */              \
+    X(p_0, -7.9)           /* deg */              \
+    X(H_p, 5.)             /* kpc; Ad1 */         \
     X(L_p, 50.)            /* kpc */
 
 IMAGINE_PARAMETERS(TFParameters, TF17_PARAMETERS)
@@ -42,7 +44,7 @@ public:
     const std::string &disk_model() const { return active_disk_model; }
     const std::string &halo_model() const { return active_halo_model; }
 
-    // security to avoid 0 division
+    // avoids division by zero
     double epsilon = 1e-16;
 
     template <typename T>

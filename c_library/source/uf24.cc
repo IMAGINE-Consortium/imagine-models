@@ -105,11 +105,11 @@ Vec3<T> UFMagneticField::GetTwistedHaloField(const double x, const double y, con
     T bPhi = 0;
 
     if (p.fTwistingTime != 0 && r != 0) {
-        // radial rotation curve parameters (fit to Reid et al 2014)
+        // rotation curve, Reid+14
         const double v0 = -240 * astro::kilometer / astro::second;
         const double r0 = 1.6; // kpc
         // vertical gradient (Levine+08)
-        const double z0 = 10; //
+        const double z0 = 10;
 
         // Eq.(43)
         const double fr = 1 - exp(-r / r0);
@@ -165,11 +165,7 @@ Vec3<T> UFMagneticField::GetPoloidalHaloField(const double x, const double y, co
     T abszp = pow(abs(z), p.fPoloidalP);
     T cabszp = c * abszp;
 
-    /*
-      since $\sqrt{a^2 + b} - a$ is numerical unstable for $b\ll a$,
-      we use $(\sqrt{a^2 + b} - a) \frac{\sqrt{a^2 + b} + a}{\sqrt{a^2
-      + b} + a} = \frac{b}{\sqrt{a^2 + b} + a}$}
-    */
+    // numerically stable form
 
     T t0 = a0p + cabszp - rp;
     T t1 = sqrt(pow(t0, 2) + 4 * a0p * rp);
@@ -296,11 +292,11 @@ Vec3<T> UFMagneticField::GetSpiralField(const double x, const double y, const do
     // Eq.(13)
     T hdz = 1 - 1 / (1 + exp(-(abs(z) - p.fDiskH) / p.fDiskW));
 
-    // Eq.(14) times rRef divided by r
+    // Eq.(14) times rRef / r
     const double rFacI = 1 / (1 + exp(-(r - rInner) / wInner));
     const double rFacO = 1 - 1 / (1 + exp(-(r - rOuter) / wOuter));
 
-    // (using lim r--> 0 (1-exp(-r^2))/r --> r - r^3/2 + ...)
+    // small-r limit
     const double rFac = r > 1e-5 * astro::pc ? (1 - exp(-r * r)) / r : r * (1 - r2 / 2);
     const double gdrTimesRrefByR = rRef * rFac * rFacO * rFacI;
 

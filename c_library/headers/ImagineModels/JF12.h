@@ -1,3 +1,10 @@
+// Reference: Jansson & Farrar 2012, arXiv:1204.3662; Planck variants: Planck XLII 2016, arXiv:1601.00546 (Table C.1)
+// Based on: hammurabiX; compared with CRPropa (JF12Field, PlanckJF12bField)
+// Deviations:
+// - b8 from flux conservation (2.755 muG; the paper rounds to 2.7)
+// - molecular ring field b_ring * 5 kpc / r as in CRPropa and hammurabiX (the paper gives no radial dependence)
+// - Planck variants: striation factor beta not modelled, b8 from flux conservation (CRPropa keeps 2.7)
+
 #pragma once
 
 #include <array>
@@ -37,21 +44,16 @@ IMAGINE_PARAMETERS(JF12Parameters, JF12_PARAMETERS)
 
 class JF12MagneticField : public RegularVectorModel<JF12MagneticField, JF12Parameters> {
 public:
-    // define fixed parameters
+    // fixed parameters
     const double Rmax = 20;   // outer boundary of GMF
     const double rho_GC = 1.; // interior boundary of GMF
 
     // fixed disk parameters
-    const double inc = 11.5; // inclination, in degrees
-    const double rmin = 5.;  // outer boundary of the molecular ring region
-    const double rcent = 3.; // inner boundary of the molecular ring region (field is
-                             // zero within this region)
-    const double f[8] = {0.130, 0.165, 0.094, 0.122,
-                         0.13,  0.118, 0.084, 0.156}; // fractions of circumference spanned by each
-                                                      // spiral, sums to unity
-    const double rc_B[8] = {5.1, 6.3,  7.1,  8.3,
-                            9.8, 11.4, 12.7, 15.5}; // the radii where the spiral arm boundaries cross the
-                                                    // negative x-axis
+    const double inc = 11.5;                                                     // inclination, in degrees
+    const double rmin = 5.;                                                      // molecular ring outer boundary
+    const double rcent = 3.;                                                     // molecular ring inner boundary
+    const double f[8] = {0.130, 0.165, 0.094, 0.122, 0.13, 0.118, 0.084, 0.156}; // arm fractions of circumference
+    const double rc_B[8] = {5.1, 6.3, 7.1, 8.3, 9.8, 11.4, 12.7, 15.5};          // arm boundaries on negative x-axis
 
     // toroidal halo parameters
     bool do_halo = true;

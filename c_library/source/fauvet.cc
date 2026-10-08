@@ -5,8 +5,6 @@
 
 namespace imagine {
 
-// Fauvet et al. 2012, https://arxiv.org/abs/1201.5742
-
 template <typename T>
 Vec3<T> FauvetMagneticField::field(const double &x, const double &y, const double &z,
                                    const FauvetParameters<T> &p) const {
@@ -23,7 +21,7 @@ Vec3<T> FauvetMagneticField::field(const double &x, const double &y, const doubl
 
     auto b_r = p.b_b0 * exp(-(r - p.b_Rsun) / p.b_RB);
 
-    // B-field in cylindrical coordinates:
+    // cylindrical components
     Vec3<T> B_cyl{{b_r * cos(phi + beta * log(r / p.b_r0)) * sin(p.b_p * (M_PI / 180.)) * cos(chi_z),
                    -b_r * cos(phi + beta * log(r / p.b_r0)) * cos(p.b_p * (M_PI / 180.)) * cos(chi_z),
                    b_r * sin(chi_z)}};

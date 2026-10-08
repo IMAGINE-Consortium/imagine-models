@@ -32,8 +32,7 @@ const double kilometer = kpc / 3.0856775807e+16;
 }
 
 namespace cgs {
-// constants in CGS units. This is adapted from Hammurabi X
-// (https://github.com/hammurabi-dev/hammurabiX/blob/master/LICENSE)
+// CGS constants, from hammurabiX
 const double erg = 1.;
 const double cm = 1.;
 const double sec = 1.;

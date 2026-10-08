@@ -1,3 +1,9 @@
+// Reference: Han et al. 2018, arXiv:1712.01997; XH24 variant: Xu & Han 2024, arXiv:2404.02038
+// Based on: XH24 variant: authors' code (GMFcal.c, diskB)
+// Deviations:
+// - XH24 variant: disk as in the authors' code, not in the papers: R_s(6) = 8.16 kpc, an extra zone 10.5-15 kpc with
+// B_s7 = 4.5 muG, disk to 20 kpc
+
 #pragma once
 
 #include <array>
@@ -8,18 +14,16 @@
 
 namespace imagine {
 
-// J. L. Han et al 2018 ApJS 234 11
-
-#define HAN_PARAMETERS(X)        \
-    X(B_p, 11) /* pitch angle */ \
-    X(A, 5.)                     \
-    X(H, 0.4)                    \
-    X(B_s1, 4.5)                 \
-    X(B_s2, -3.0)                \
-    X(B_s3, 6.3)                 \
-    X(B_s4, -4.7)                \
-    X(B_s5, 3.3)                 \
-    X(B_s6, -8.7)                \
+#define HAN_PARAMETERS(X)             \
+    X(B_p, 11) /* pitch angle, deg */ \
+    X(A, 5.)                          \
+    X(H, 0.4)                         \
+    X(B_s1, 4.5)                      \
+    X(B_s2, -3.0)                     \
+    X(B_s3, 6.3)                      \
+    X(B_s4, -4.7)                     \
+    X(B_s5, 3.3)                      \
+    X(B_s6, -8.7)                     \
     X(B_s7, 0.)
 
 IMAGINE_PARAMETERS(HanParameters, HAN_PARAMETERS)

@@ -12,7 +12,7 @@ const double cutoff = 6.;
 
 template <typename T>
 T YMW16::field(const double &x, const double &y, const double &z, const YMW16Parameters<T> &p) const {
-    // YMW16 using a different Cartesian frame from our default one
+    // YMW16 Cartesian frame
     const double xx = y;
     const double yy = -x;
     const double zz = z;
@@ -30,7 +30,7 @@ T YMW16::field(const double &x, const double &y, const double &z, const YMW16Par
     const T ne_thick = thick(zz_w, rr, gd, p);
     // longitude, in deg
     const double ec_l{atan2(xx, p.r0 - yy) * 180 / M_PI};
-    // since in YMW16, Fermi Bubble is not actually contributing, we ignore FB
+    // Fermi bubbles do not contribute
     if (do_thick_disc)
         ne_comp[1] = ne_thick;
     if (do_thin_disc)
@@ -77,7 +77,7 @@ T YMW16::field(const double &x, const double &y, const double &z, const YMW16Par
 
 template <typename T>
 auto YMW16::_z_scaling(const double &rr, const T &k, const double &h0, const double &h1, const double &h2) const {
-    double rr_pc = rr * 1000; // temporarily converting to pc, then back
+    double rr_pc = rr * 1000; // temporarily in pc
     return k * (h0 + h1 * rr_pc + h2 * rr_pc * rr_pc) * 0.001;
 }
 

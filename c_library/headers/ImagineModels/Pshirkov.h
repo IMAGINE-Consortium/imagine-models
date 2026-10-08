@@ -1,3 +1,6 @@
+// Reference: Pshirkov et al. 2011, arXiv:1103.0814 (ASS and BSS of Table 3)
+// Based on: CRPropa (PT11Field)
+
 #pragma once
 
 #include <array>
@@ -8,18 +11,18 @@
 
 namespace imagine {
 
-#define PSHIRKOV_PARAMETERS(X)                                                                        \
-    X(pitch, -6)   /* pitch angle parameters, deg (paper usues -5 for ASS and -6 for BSS) */          \
-    X(d, -0.6)     /* distance to first field reversal, kpc */                                        \
-    X(R_sun, 8.5)  /* distance between sun and galactic center, kpc */                                \
-    X(z0_D, 1.0)   /* vertical thickness in the galactic disk, kpc */                                 \
-    X(B0_D, 2.0)   /* magnetic field scale, muG */                                                    \
-    X(z0_H, 1.3)   /* halo vertical position, kpc */                                                  \
-    X(R0_H, 8.0)   /* halo radial position, kpc */                                                    \
-    X(B0_Hn, 4.0)  /* halo magnetic field scale (north), muG */                                       \
-    X(B0_Hs, 4.0)  /* halo magnetic field scale (south), muG (paper usues 2 for ASS and 4 for BSS) */ \
-    X(z11_H, 0.25) /* halo vertical thickness towards disc, kpc */                                    \
-    X(z12_H, 0.4)  /* halo vertical thickness off the disk, kpc */
+#define PSHIRKOV_PARAMETERS(X)                        \
+    X(pitch, -6)   /* pitch angle, deg */             \
+    X(d, -0.6)     /* first reversal distance, kpc */ \
+    X(R_sun, 8.5)  /* Sun distance, kpc */            \
+    X(z0_D, 1.0)   /* disk scale height, kpc */       \
+    X(B0_D, 2.0)   /* disk field, muG */              \
+    X(z0_H, 1.3)   /* halo height, kpc */             \
+    X(R0_H, 8.0)   /* halo radius, kpc */             \
+    X(B0_Hn, 4.0)  /* northern halo field, muG */     \
+    X(B0_Hs, 4.0)  /* southern halo field, muG */     \
+    X(z11_H, 0.25) /* inner halo thickness, kpc */    \
+    X(z12_H, 0.4)  /* outer halo thickness, kpc */
 
 IMAGINE_PARAMETERS(PshirkovParameters, PSHIRKOV_PARAMETERS)
 
@@ -32,11 +35,10 @@ public:
     void set_model(const std::string &model);
     const std::string &model() const { return active_model; }
 
-    bool useDisk = true; // switch for disk field
-    bool useHalo = true; // switch for halo field
+    bool useDisk = true; // disk switch
+    bool useHalo = true; // halo switch
 
-    // disk parameters
-    double R_c = 5.0; // radius of central region, kpc
+    double R_c = 5.0; // central region radius, kpc
 
     template <typename T>
     Vec3<T> field(const double &x, const double &y, const double &z, const PshirkovParameters<T> &p) const;

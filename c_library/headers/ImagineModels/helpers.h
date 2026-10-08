@@ -61,7 +61,7 @@ template <typename s> inline s Sigmoid(s &x, const double x0, const double w) {
     return 1 / (1 + std::exp(-(x - x0) / w));
 }
 
-// angle between v0 = (cos(phi0), sin(phi0)) and v1 = (cos(phi1), sin(phi1))
+// angle between phi0 and phi1
 template <typename out, typename in1, typename in2> inline out DeltaPhi(const in1 phi0, const in2 phi1) {
     return std::acos(std::cos(phi1) * std::cos(phi0) + std::sin(phi1) * std::sin(phi0));
 }

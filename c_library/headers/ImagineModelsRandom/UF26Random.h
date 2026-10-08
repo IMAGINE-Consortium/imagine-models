@@ -1,3 +1,7 @@
+// Reference: Unger & Farrar 2026, arXiv:2608.21293 (Sec. 8, Table 2)
+// Deviations:
+// - the paper constrains only the rms; the power spectrum is the library default
+
 #pragma once
 
 #include <array>

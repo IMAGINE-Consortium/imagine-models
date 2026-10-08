@@ -1,3 +1,9 @@
+// Reference: Jokipii, Levy & Hubbard 1977, ApJ 213, 861
+// Based on: CRPropa (ArchimedeanSpiralField)
+// Deviations:
+// - no fitted model; dimensionless parameters as in CRPropa (R_0 in kpc, Omega / v_w in 1/kpc, B_0 the radial field at
+// R_0)
+
 #pragma once
 
 #include <cmath>
@@ -6,8 +12,6 @@
 #include "ImagineModels/RegularModel.h"
 
 namespace imagine {
-
-// simple archimdeean sprial, implementation based on CRPropa
 
 #define ARCHIMEDES_PARAMETERS(X) \
     X(R_0, 3)                    \

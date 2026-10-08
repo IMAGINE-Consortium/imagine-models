@@ -1,3 +1,8 @@
+// Reference: Xu & Han 2024, arXiv:2404.02038 (eq. 2, Table 2)
+// Based on: authors' code (GMFcal.c, haloB)
+// Deviations:
+// - field set to zero beyond r = 20 kpc, as in the authors' code
+
 #pragma once
 
 #include <cmath>

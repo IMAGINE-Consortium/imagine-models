@@ -1,3 +1,7 @@
+// Reference: Shaw et al. 2022, MNRAS 517, 2534
+// Deviations:
+// - B_val = 3.72 muG; the published best fit is 3.96 muG (3 muG in arXiv v1)
+
 #pragma once
 
 #include <cassert>

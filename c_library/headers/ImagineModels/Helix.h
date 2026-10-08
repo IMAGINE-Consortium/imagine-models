@@ -16,7 +16,7 @@ IMAGINE_PARAMETERS(HelixParameters, HELIX_PARAMETERS)
 
 class HelixMagneticField : public RegularVectorModel<HelixMagneticField, HelixParameters> {
 public:
-    // non_differentiable parameters
+    // configuration
     double rmax = 20.;
     double rmin = 1.;
 

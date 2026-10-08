@@ -1,3 +1,6 @@
+// Reference: Fauvet et al. 2012, arXiv:1201.5742 (Sec. 2.1)
+// Based on: hammurabi v3.01 (old hammurabi)
+
 #pragma once
 
 #include <cmath>
@@ -6,8 +9,6 @@
 #include "ImagineModels/RegularModel.h"
 
 namespace imagine {
-
-// Fauvet magnetic field
 
 #define FAUVET_PARAMETERS(X)     \
     X(b_b0, 2.1)    /* muG */    \

@@ -6,7 +6,6 @@
 
 namespace imagine {
 
-// https://arxiv.org/abs/astro-ph/9607086, implementation from Hammurabi (old). Implemented is the bisymmetric model
 template <typename T>
 Vec3<T> StanevBSSMagneticField::field(const double &x, const double &y, const double &z,
                                       const StanevBSSParameters<T> &p) const {
@@ -19,7 +18,7 @@ Vec3<T> StanevBSSMagneticField::field(const double &x, const double &y, const do
         return B_vec3;
     }
 
-    auto phi_prime = p.b_phi0 - phi; // PHIprime running clock-wise from neg. x-axis
+    auto phi_prime = p.b_phi0 - phi; // clockwise from negative x-axis
     auto beta = 1. / tan(p.b_p * (M_PI / 180.));
 
     auto B_0 = 3 * p.b_Rsun / b_r_min;
@@ -32,7 +31,6 @@ Vec3<T> StanevBSSMagneticField::field(const double &x, const double &y, const do
         z_0 = p.b_z02;
     }
     // eq. 1, 3, 4
-    // minus sign before abs(z) added in eq. 4 -> would make no sense otherwise...
     Vec3<T> B_cyl{
         {B_0 * cos(phi_prime - beta * log(r / p.b_r0)) * sin(p.b_p * (M_PI / 180.)) * exp(-std::abs(z) / z_0),
          -B_0 * cos(phi_prime - beta * log(r / p.b_r0)) * cos(p.b_p * (M_PI / 180.)) * exp(-std::abs(z) / z_0), 0.}};

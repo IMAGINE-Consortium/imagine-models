@@ -2,7 +2,6 @@
 
 namespace imagine {
 
-// Archimedean spiral, implementation from CRPropa (ArchimedeanSpiralField)
 template <typename T>
 Vec3<T> ArchimedeanMagneticField::field(const double &x, const double &y, const double &z,
                                         const ArchimedeanParameters<T> &p) const {
@@ -31,7 +30,7 @@ Vec3<T> ArchimedeanMagneticField::field(const double &x, const double &y, const 
     B_cart[0] += c2 * (-sin_phi);
     B_cart[1] += c2 * cos_phi;
 
-    // magnetic field switch at z = 0
+    // reversal at z = 0
     auto B_0 = p.B_0;
 
     if (z < 0.) {

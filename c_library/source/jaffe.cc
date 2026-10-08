@@ -29,7 +29,7 @@ Vec3<T> JaffeMagneticField::field(const double &x, const double &y, const double
         btot[i] = bhat[i] * scaling;
     }
 
-    // compress factor for each arm or for ring/bar
+    // compression per arm, ring or bar
     std::vector<T> arm = arm_compress(x, y, z, p);
     // only inner region
     if (arm.size() == 1) {
@@ -37,7 +37,6 @@ Vec3<T> JaffeMagneticField::field(const double &x, const double &y, const double
             btot[i] += bhat[i] * arm[0] * inner_b;
         }
     }
-    // return btot;}
 
     // spiral arm region
     else {
@@ -84,7 +83,7 @@ Vec3<T> JaffeMagneticField::orientation(const double &x, const double &y, const 
             tmp[1] = (2 * bss - 1) * x / r; //-cos(phi)
         }
     }
-    // elliptical bar (replace molecular ring)
+    // elliptical bar, replaces ring
     else if (bar) {
         const auto cos_phi = cos(p.bar_phi0 * M_PI / 180);
         const auto sin_phi = sin(p.bar_phi0 * M_PI / 180);
@@ -123,7 +122,6 @@ Vec3<T> JaffeMagneticField::orientation(const double &x, const double &y, const 
 template <typename T>
 T JaffeMagneticField::radial_scaling(const double &x, const double &y, const JaffeParameters<T> &p) const {
     const double r2 = x * x + y * y;
-    // separate into 3 parts for better view
     const auto s1{1. - exp(-r2 / (p.r_inner * p.r_inner))};
     const auto s2{exp(-r2 / (p.r_scale * p.r_scale))};
     const auto s3 = p.r_peak == 0 ? 0. : exp(-r2 * r2 / (p.r_peak * p.r_peak * p.r_peak * p.r_peak));
@@ -163,7 +161,7 @@ std::vector<T> JaffeMagneticField::arm_compress_dust(const double &x, const doub
     std::vector<T> a0 = dist2arm(x, y, p);
     const auto r_scaling{radial_scaling(x, y, p)};
     const auto z_scaling{arm_scaling(z, p)};
-    // only difference from normal arm_compress
+    // differs from arm_compress
     const auto d0_inv{(r_scaling) / p.comp_d};
     auto factor{c0 * r_scaling * z_scaling};
     if (r > 1) {
@@ -199,11 +197,11 @@ std::vector<T> JaffeMagneticField::dist2arm(const double &x, const double &y, co
         theta += 2 * M_PI;
     // if molecular ring
     if (ring) {
-        // in molecular ring, return oly first element of d is used
+        // ring: first element only
         if (r < r_lim) {
             d.push_back(abs(p.ring_r - r));
         }
-        // in spiral arm, return vector with arm_num elements
+        // arms: arm_num elements
         else {
             // loop through arms
             std::vector<T> arm_phi{p.arm_phi1, p.arm_phi2, p.arm_phi3, p.arm_phi4};
@@ -225,14 +223,14 @@ std::vector<T> JaffeMagneticField::dist2arm(const double &x, const double &y, co
             // cos(phi)cos(phi0) - sin(phi)sin(phi0)
             const auto sin_tmp{cos(p.bar_phi0 * M_PI / 180) * y / r + sin(p.bar_phi0 * M_PI / 180) * x / r};
             // sin(phi)cos(phi0) + cos(phi)sin(phi0)
-            // in bar, return single element vector
+            // bar: single element
             if (r < bar_lim) {
                 d.push_back(
                     abs(p.bar_a * p.bar_b /
                             sqrt(p.bar_a * p.bar_a * sin_tmp * sin_tmp + p.bar_b * p.bar_b * cos_tmp * cos_tmp) -
                         r));
             }
-            // in spiral arm, return vector with arm_num elements
+            // arms: arm_num elements
             else {
                 // loop through arms
                 std::vector<T> arm_phi{p.arm_phi1, p.arm_phi2, p.arm_phi3, p.arm_phi4};

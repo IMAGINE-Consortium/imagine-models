@@ -24,7 +24,6 @@ void HanMagneticField::set_model(const std::string &model) {
     }
 }
 
-// J. L. Han et al 2018 ApJS 234 11
 template <typename T>
 Vec3<T> HanMagneticField::field(const double &x, const double &y, const double &z, const HanParameters<T> &p) const {
     Vec3<T> B_cyl{{0., 0., 0.}};
@@ -37,11 +36,11 @@ Vec3<T> HanMagneticField::field(const double &x, const double &y, const double &
     T B_0 = 0.;
 
     auto p_ang = p.B_p * M_PI / 180.;
-    const double phi_han = -(phi + M_PI); // nneeded to fix different coordinate system convention
+    const double phi_han = -(phi + M_PI); // Han azimuth convention
 
-    T R_0 = r * exp(phi_han * tan(p_ang)); // eq. 4 is wrong, need to change psi and phi!
+    T R_0 = r * exp(phi_han * tan(p_ang)); // eq. 4, Han azimuth
 
-    std::array<T, 7> B_s = {p.B_s1, p.B_s2, p.B_s3, p.B_s4, p.B_s5, p.B_s6, p.B_s7}; // table 5
+    std::array<T, 7> B_s = {p.B_s1, p.B_s2, p.B_s3, p.B_s4, p.B_s5, p.B_s6, p.B_s7}; // Table 5
 
     if (R_0 < R_s[0]) {
         R_0 = r * exp((phi_han + 2 * M_PI) * tan(p_ang)); // eq. 4

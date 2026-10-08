@@ -27,6 +27,9 @@ OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
+// Reference: Unger & Farrar 2024, arXiv:2311.12120
+// Based on: authors' code (UF23Field v1.1, doi:10.5281/zenodo.11321212, BSD-2)
+
 #pragma once
 
 #include <cassert>
@@ -71,15 +74,15 @@ IMAGINE_PARAMETERS(UFParameters, UF_PARAMETERS)
 
 class UFMagneticField : public RegularVectorModel<UFMagneticField, UFParameters> {
 public:
-    /// model variations (see Tab.2 of UF23 paper)
+    // variants, Table 2
     const std::array<std::string, 8> available_models{"base",  "neCL",  "expX",   "spur",
                                                       "cre10", "synCG", "twistX", "nebCor"};
 
-    /// maximum galacto-centric radius beyond which B=0
+    // B = 0 beyond this radius
 
     double fMaxRadius = 30;
 
-    /// model parameters, see Table 3 of UF23 paper
+    // parameters, Table 3
 
     std::map<std::string, std::map<std::string, double>> all_parameters = {
         {"base",
@@ -269,29 +272,29 @@ public:
     const std::string &model() const { return active_model; }
 
 private:
-    /// model type given in constructor
+    // active variant
     std::string active_model = "base";
 
-    /// major field components
+    // major field components
     template <typename T>
     Vec3<T> GetDiskField(const double &x, const double &y, const double &z, const UFParameters<T> &p) const;
     template <typename T>
     Vec3<T> GetHaloField(const double &x, const double &y, const double &z, const UFParameters<T> &p) const;
 
-    /// sub-components depending on model type
-    /// -- Sec. 5.2.2
+    // variant sub-components
+    // -- Sec. 5.2.2
     template <typename T>
     Vec3<T> GetSpiralField(const double x, const double y, const double z, const UFParameters<T> &p) const;
-    /// -- Sec. 5.2.3
+    // -- Sec. 5.2.3
     template <typename T>
     Vec3<T> GetSpurField(const double x, const double y, const double z, const UFParameters<T> &p) const;
-    /// -- Sec. 5.3.1
+    // -- Sec. 5.3.1
     template <typename T>
     Vec3<T> GetToroidalHaloField(const double x, const double y, const double z, const UFParameters<T> &p) const;
-    /// -- Sec. 5.3.2
+    // -- Sec. 5.3.2
     template <typename T>
     Vec3<T> GetPoloidalHaloField(const double x, const double y, const double z, const UFParameters<T> &p) const;
-    /// -- Sec. 5.3.3
+    // -- Sec. 5.3.3
     template <typename T>
     Vec3<T> GetTwistedHaloField(const double x, const double y, const double z, const UFParameters<T> &p) const;
 

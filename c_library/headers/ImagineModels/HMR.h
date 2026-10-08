@@ -1,3 +1,6 @@
+// Reference: Harari, Mollerach & Roulet 1999, arXiv:astro-ph/9906309; Kachelriess et al. 2007, arXiv:astro-ph/0510444
+// Based on: hammurabi v3.01 (old hammurabi)
+
 #pragma once
 
 #include <cmath>
@@ -6,9 +9,6 @@
 #include "ImagineModels/RegularModel.h"
 
 namespace imagine {
-
-// Harari, Mollerach, Roulet (HMR) see https://arxiv.org/abs/astro-ph/9906309, implementation of
-// https://arxiv.org/pdf/astro-ph/0510444.pdf
 
 #define HMR_PARAMETERS(X)             \
     X(b_Rsun, 8.5)       /* kpc */    \

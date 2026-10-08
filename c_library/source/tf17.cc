@@ -6,9 +6,6 @@
 
 namespace imagine {
 
-// Terral, Ferriere 2017 - Constraints from Faraday rotation on the magnetic field structure in the galactic halo,
-// DOI: 10.1051/0004-6361/201629572, arXiv:1611.10222, implementation adapted from CRPRopa
-
 template <typename T>
 Vec3<T> TFMagneticField::field(const double &x, const double &y, const double &z, const TFParameters<T> &p) const {
     const double r = sqrt(x * x + y * y);
@@ -37,47 +34,46 @@ Vec3<T> TFMagneticField::getDiskField(const double &r, const double &z, const do
     auto p_0 = p.p_0 * M_PI / 180;
     auto cot_p0 = cos(p_0) / sin(p_0);
 
-    if (active_disk_model == "Ad1") { // ==========================================================
+    if (active_disk_model == "Ad1") {
         if (r > p.r1_disk) {
             auto z1_disk_z = (1. + p.a_disk * p.r1_disk * p.r1_disk) / (1. + p.a_disk * r * r); // z1_disk / z, eq. 4
-            // B components in (r, phi, z)
+            // cylindrical components
             auto B_r0 = radialFieldScale(p.B1_disk, psd, z1_disk_z * z, phi, r, z, cot_p0, p);
             B_r = (p.r1_disk / r) * z1_disk_z * B_r0;
             B_z = 2 * p.a_disk * p.r1_disk * z1_disk_z * z / (1 + p.a_disk * r * r) * B_r0;
             B_phi = azimuthalFieldComponent(r, z, B_r, B_z, cot_p0, p);
         } else {
-            // within r = r1_disk, the field lines are straight in direction g_phi + phi_star_disk
-            // and thus z = z1
+            // straight field lines inside r1_disk
             auto phi1_disk = shiftedWindingFunction<T>(p.r1_disk, z, cot_p0, p) + psd;
             auto B_amp = p.B1_disk * exp(-fabs(z) / p.H_disk);
             B_r = cos(phi1_disk - phi) * B_amp;
             B_phi = sin(phi1_disk - phi) * B_amp;
         }
-    } else if (active_disk_model == "Bd1") { // ===================================================
-        // for model Bd1, best fit for n = 2
+    } else if (active_disk_model == "Bd1") {
+        // Bd1: n = 2
         if (r > epsilon) {
             auto r1_disk_r = p.r1_disk / r;
-            auto z1_disk_z = 5. / (r1_disk_r * r1_disk_r + 4. / sqrt(r1_disk_r)); // z1_disk / z -> remove z dependancy
+            auto z1_disk_z = 5. / (r1_disk_r * r1_disk_r + 4. / sqrt(r1_disk_r)); // z1_disk / z
             auto B_r0 = radialFieldScale(p.B1_disk, psd, z1_disk_z * z, phi, r, z, cot_p0, p);
             B_r = r1_disk_r * z1_disk_z * B_r0;
             B_z = -0.4 * r1_disk_r / r * z1_disk_z * z1_disk_z * z * (r1_disk_r * r1_disk_r - 1. / sqrt(r1_disk_r)) *
                   B_r0;
         } else {
-            auto z1_disk_z = 5. * r * r / (p.r1_disk * p.r1_disk); // z1_disk / z -> remove z dependancy
+            auto z1_disk_z = 5. * r * r / (p.r1_disk * p.r1_disk); // z1_disk / z
             auto B_r0 = radialFieldScale(p.B1_disk, psd, z1_disk_z * z, phi, r, z, cot_p0, p);
             B_r = 5. * r / p.r1_disk * B_r0;
             B_z = -10. * z / p.r1_disk * B_r0;
         }
         B_phi = azimuthalFieldComponent(r, z, B_r, B_z, cot_p0, p);
-    } else if (active_disk_model == "Dd1") { // ===================================================
-        // for model Dd1, best fit for n = 0.5
+    } else if (active_disk_model == "Dd1") {
+        // Dd1: n = 0.5
         double z_sign = z >= 0 ? 1. : -1.;
         double z_abs = fabs(z);
         if (z_abs > epsilon) {
             auto z1_disk_z = p.z1_disk / z_abs;
             auto r1_disk_r = 1.5 / (sqrt(z1_disk_z) + 0.5 / z1_disk_z); // r1_disk / r
             auto F_r = r1_disk_r * r <= p.L_disk ? 1. : exp(1. - r1_disk_r * r / p.L_disk);
-            // simplication of the equation in the cosinus
+            // cosine argument
             auto B_z0 = z_sign * p.B1_disk * F_r * cos(phi - shiftedWindingFunction<T>(r, z, cot_p0, p) - psd);
             B_r = -0.5 / 1.5 * r1_disk_r * r1_disk_r * r1_disk_r * r / z_abs * (sqrt(z1_disk_z) - 1 / z1_disk_z) * B_z0;
             B_z = z_sign * r1_disk_r * r1_disk_r * B_z0;
@@ -92,7 +88,7 @@ Vec3<T> TFMagneticField::getDiskField(const double &r, const double &z, const do
         B_phi = azimuthalFieldComponent(r, z, B_r, B_z, cot_p0, p);
     }
 
-    // Convert to (x, y, z) components
+    // Cartesian components
     B_cart[0] = -(B_r * cosPhi - B_phi * sinPhi); // flip x-component at the end
     B_cart[1] = B_r * sinPhi + B_phi * cosPhi;
     B_cart[2] = B_z;
@@ -105,7 +101,7 @@ Vec3<T> TFMagneticField::getHaloField(const double &r, const double &z, const do
     int m;
     Vec3<T> B_cart{{0., 0., 0.}};
     auto r1_halo_r = (1. + p.a_halo * p.z1_halo * p.z1_halo) / (1. + p.a_halo * z * z);
-    // B components in (r, phi, z)
+    // cylindrical components
     T B_z0;
 
     auto psd = p.phi_star_disk * M_PI / 180;
@@ -116,19 +112,17 @@ Vec3<T> TFMagneticField::getHaloField(const double &r, const double &z, const do
     if (active_halo_model == "C0") { // m = 0
         B_z0 = p.B1_halo * exp(-r1_halo_r * r / p.L_halo);
     } else if (active_halo_model == "C1") { // m = 1
-        // simplication of the equation in the cosinus
+        // cosine argument
         auto phi_prime = phi - shiftedWindingFunction<T>(r, z, cot_p0, p) - psh;
         B_z0 = p.B1_halo * exp(-r1_halo_r * r / p.L_halo) * cos(phi_prime);
     }
 
-    // Contrary to article, Br has been rewriten to a little bit by replacing
-    // (2 * a * r1**3 * z) / (r**2) by (2 * a * r1**2 * z) / (r * (1+a*z**2))
-    // but that is strictly equivalent except we can reintroduce the z1 in the expression via r1
+    // B_r rewritten, equivalent form
     auto B_r = 2 * p.a_halo * r1_halo_r * r1_halo_r * r * z / (1. + p.a_halo * z * z) * B_z0;
     auto B_z = r1_halo_r * r1_halo_r * B_z0;
     auto B_phi = azimuthalFieldComponent(r, z, B_r, B_z, cot_p0, p);
 
-    // Convert to (x, y, z) components
+    // Cartesian components
     B_cart[0] = -(B_r * cosPhi - B_phi * sinPhi); // flip x-component at the end
     B_cart[1] = B_r * sinPhi + B_phi * cosPhi;
     B_cart[2] = B_z;
@@ -149,9 +143,9 @@ T TFMagneticField::azimuthalFieldComponent(const double &r, const double &z, con
 template <typename T>
 T TFMagneticField::radialFieldScale(const T &B1, const T &phi_star, const T &z1, const double &phi, const double &r,
                                     const double &z, const T &cp0, const TFParameters<T> &p) const {
-    // simplication of the equation in the cosinus
+    // cosine argument
     auto phi_prime = phi - shiftedWindingFunction<T>(r, z, cp0, p) - phi_star;
-    // This term occures is parameterizations of models A and B always bisymmetric (m = 1)
+    // bisymmetric (m = 1) term
     return B1 * exp(-abs(z1) / p.H_disk) * cos(phi_prime);
 }
 

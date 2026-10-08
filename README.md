@@ -216,42 +216,67 @@ cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug && cmake --build build && ctest --t
 
 ## List of models
 
+Each model follows its reference publication; the publications are its documentation.
+"Based on" names the external code an implementation was ported from or compared with.
+Differences to the publications are listed under [Deviations from the publications](#deviations-from-the-publications).
+
 ### Magnetic (vector) fields
 
-| Model | Python class | C++ | Reference | Notes | Original implementation | Notebook |
-| ----- | ------------ | --- | --------- | ----- | ----------------------- | -------- |
-| **Regular models** | | | | | | |
-| Uniform | `UniformMagneticField` | &#x2714; | | used for unit tests | | |
-| Helix | `HelixMagneticField` | &#x2714; | | | | |
-| Axisymmetric spiral | `AxiSymmetricSpiral` | &#x2718; | Pelgrims, V. | pure Python | Pelgrims, V. | |
-| Archimedean spiral | `ArchimedeanMagneticField` | &#x2714; | | simple demonstrative ASS model; dimensionless as in CRPropa: with `R_0` in kpc, `Omega / v_w` is in 1/kpc and `B_0` is the radial field strength at `R_0` | [CRPropa](https://github.com/CRPropa/CRPropa3) | [ipynb](demos/python/model_examples/archimedes_demo.ipynb) |
-| Local Bubble | `LBMagneticField` | &#x2718; | [Pelgrims et al. (2020)](https://www.aanda.org/articles/aa/full_html/2020/04/aa37157-19/aa37157-19.html) | pure Python (`from ImagineModels.MagneticFields.LocalBubbleMagneticField import LBMagneticField`), only defined on the shell, requires healpy | Pelgrims, V. | |
-| Jaffe | `JaffeMagneticField` | &#x2714; | [Jaffe et al. (2010)](https://ui.adsabs.harvard.edu/abs/2010MNRAS.401.1013J/abstract) | based on ASS-A spiral with modifications, parameter values taken from hammurabi, not from any publication | [Hammurabi X](https://github.com/hammurabi-dev/hammurabiX) | [ipynb](demos/python/model_examples/jaffe_demo.ipynb) |
-| Sun2008 | `SunMagneticField` | &#x2714; | [Sun et al. (2008)](https://www.aanda.org/articles/aa/abs/2008/02/aa8671-07/aa8671-07.html) | ASS+Ring as disk field, toroidal asymmetric halo with updated halo parameters from [Sun et al. (2010)](https://iopscience.iop.org/article/10.1088/1674-4527/10/12/009), central part of disk field is constant in z-direction (unphysical) | [Hammurabi (old)](https://sourceforge.net/projects/hammurabicode/) | [ipynb](demos/python/model_examples/sun_demo.ipynb) |
-| Han2018 | `HanMagneticField` | &#x2714; | [Han et al. (2018)](https://iopscience.iop.org/article/10.3847/1538-4365/aa9c45) | BSS-S disk field; `set_model("XH24")` gives the disk of the Xu & Han (2024) combined model as in the authors' code (R_s(6) = 8.16 kpc, an extra zone 10.5–15 kpc with `B_s7` = 4.5 µG, disk to 20 kpc; these changes are not in the papers) | | [ipynb](demos/python/model_examples/han_demo.ipynb) |
-| Pshirkov | `PshirkovMagneticField` | &#x2714; | [Pshirkov et al. (2011)](https://iopscience.iop.org/article/10.1088/0004-637X/738/2/192) | ASS-S or BSS-S (`set_model("ASS")`/`set_model("BSS")`, default BSS; loads the published pitch angle and southern halo amplitude), disk and halo can be switched off (`useDisk`, `useHalo`); the halo is asymmetric w.r.t. the plane | [CRPropa](https://github.com/CRPropa/CRPropa3) | [ipynb](demos/python/model_examples/pshirkov_demo.ipynb) |
-| HMR | `HMRMagneticField` | &#x2714; | [Harari et al. (1999)](https://arxiv.org/abs/astro-ph/9906309) | BSS-S model | [Hammurabi (old)](https://sourceforge.net/projects/hammurabicode/) and [Kachelrieß (2007)](https://arxiv.org/pdf/astro-ph/0510444.pdf) | [ipynb](demos/python/model_examples/hmr_demo.ipynb) |
-| TT | `TTMagneticField` | &#x2714; | [Tinyakov and Tkachev (2002)](https://arxiv.org/abs/astro-ph/0111305) | BSS-A model (eq. 5 in ref.) | [Hammurabi (old)](https://sourceforge.net/projects/hammurabicode/) and [Kachelrieß (2007)](https://arxiv.org/pdf/astro-ph/0510444.pdf) | [ipynb](demos/python/model_examples/tt_demo.ipynb) |
-| TF17 | `TFMagneticField` | &#x2714; | [Terral and Ferrière (2017)](https://arxiv.org/abs/1611.10222) | disk models Ad1/Bd1/Dd1 and halo models C0/C1 (`set_model(disk, halo)`). Only the halo was fitted to data, which leads to very strong field strengths and unexpected features in the disk fields; the halo fields can diverge at large r/z. Better viewed as a mathematical exercise than a model for, e.g., cosmic-ray propagation. | [CRPropa](https://github.com/CRPropa/CRPropa3) | [ipynb](demos/python/model_examples/tf17_demo.ipynb) |
-| Fauvet | `FauvetMagneticField` | &#x2714; | [Fauvet et al. (2012)](https://arxiv.org/abs/1201.5742) | modified logarithmic spiral (MLS) with z-component and exponential radial profile `B0 exp(-(r - R_sun)/R_B)` (Sec. 2.1, no halo), pitch angle −30° as used for the simulations in the paper | [Hammurabi (old)](https://sourceforge.net/projects/hammurabicode/) | [ipynb](demos/python/model_examples/fauvet_demo.ipynb) |
-| Stanev | `StanevBSSMagneticField` | &#x2714; | [Stanev (1997)](https://arxiv.org/abs/astro-ph/9607086) | BSS-S model; the change in the halo field at \|z\| = 0.5 kpc was not in the hammurabi implementation | [Hammurabi (old)](https://sourceforge.net/projects/hammurabicode/) | [ipynb](demos/python/model_examples/stanev_demo.ipynb) |
-| WMAP | `WMAPMagneticField` | &#x2714; | [Page et al. (2007)](https://iopscience.iop.org/article/10.1086/513699) | logarithmic spiral with constant amplitude and z-component; parameters from the original publication, not from the update in [Ruiz-Granados et al. (2010)](https://www.aanda.org/articles/aa/full_html/2010/14/aa12733-09/aa12733-09.html) | | [ipynb](demos/python/model_examples/wmap_demo.ipynb) |
-| Jansson Farrar | `JF12MagneticField` | &#x2714; | [Jansson & Farrar (2012)](https://ui.adsabs.harvard.edu/abs/2012ApJ...757...14J/abstract) | regular JF12 field (disk + symmetric toroidal halo + X-field); `set_model("JF12" | "Planck12b" | "Planck12c")` selects the original or the Planck 2016 updates ([Planck XLII](https://arxiv.org/abs/1601.00546), "Jansson12b/c"; the striated-field factor β is not modelled) | [Hammurabi X](https://github.com/hammurabi-dev/hammurabiX) | [ipynb](demos/python/model_examples/jf12_demo.ipynb) |
-| Unger Farrar | `UFMagneticField` | &#x2714; | [Unger & Farrar (2024)](https://arxiv.org/abs/2311.12120) | variants base, neCL, expX, spur, cre10, synCG, twistX, nebCor (`set_model(name)`) | Unger & Farrar (BSD-2), see also [CRPropa](https://github.com/CRPropa/CRPropa3) | [ipynb](demos/python/model_examples/uf24_demo.ipynb) |
-| SVT22 | `SVT22MagneticField` | &#x2714; | [Shaw et al. (2022)](https://academic.oup.com/mnras/article/517/2/2534/6731784) | model for the Galactic halo bubble | | [ipynb](demos/python/model_examples/svt22_demo.ipynb) |
-| XH24 halo | `XH24MagneticField` | &#x2714; | [Xu & Han (2024)](https://arxiv.org/abs/2404.02038) | toroidal halo field ("huge magnetic toroids", eq. 2, Table 2), antisymmetric w.r.t. the plane; halo only; the authors' combined model is this halo plus `HanMagneticField("XH24")` | [authors' code](http://zmtt.bao.ac.cn/GMF/) | |
-| **Random models** | | | | | | |
-| Jansson Farrar | `JF12RandomField` | &#x2714; | [Jansson & Farrar (2012)](https://ui.adsabs.harvard.edu/abs/2012ApJ...761L..11J/abstract) | rms profile from JF12; anisotropy along the regular JF12 field (`anisotropy_rho`); `set_model("JF12" | "Planck12b" | "Planck12c")` as for the regular field (Planck: B_iso = 7.8 µG with relative arm, interior and halo strengths) | [Hammurabi X](https://github.com/hammurabi-dev/hammurabiX) | [ipynb](demos/python/model_examples/jf12_random_demo.ipynb) |
-| Ensslin Steininger | `ESRandomField` | &#x2714; | | rms `b0 * sqrt(exp(-(r - r_obs)/r0) exp(-(|z| - |z_obs|)/z0))` (energy density scaled exponentially, `b0` = rms at the observer), as in hammurabiX | [Hammurabi X](https://github.com/hammurabi-dev/hammurabiX) | |
-| Unger Farrar 2026 | `UF26RandomField` | &#x2714; | [Unger & Farrar (2026)](https://arxiv.org/abs/2608.21293) | isotropic random field, rms profile only (Sec. 8, Table 2): `set_model("expDisk")` (default; sech disk) or `set_model("ringDisk")` (disk + inner annulus, added in quadrature). The paper constrains only the rms; the power spectrum is the library default (`spectral_offset`, `spectral_slope`) | | |
+| Model | Class | Reference | Based on | Variants (`set_model`) | Notebook |
+| ----- | ----- | --------- | -------- | ---------------------- | -------- |
+| **Regular models** | | | | | |
+| Uniform | `UniformMagneticField` | | | | |
+| Helix | `HelixMagneticField` | | | | |
+| Archimedean spiral | `ArchimedeanMagneticField` | [Jokipii et al. (1977)](https://ui.adsabs.harvard.edu/abs/1977ApJ...213..861J/abstract) | [CRPropa](https://github.com/CRPropa/CRPropa3) | | [ipynb](demos/python/model_examples/archimedes_demo.ipynb) |
+| Axisymmetric spiral (Python only) | `AxiSymmetricSpiral` | | V. Pelgrims | | |
+| Local Bubble (Python only)¹ | `LBMagneticField` | [Pelgrims et al. (2020)](https://www.aanda.org/articles/aa/full_html/2020/04/aa37157-19/aa37157-19.html) | V. Pelgrims | | |
+| Fauvet | `FauvetMagneticField` | [Fauvet et al. (2012)](https://arxiv.org/abs/1201.5742) | [hammurabi v3.01](https://sourceforge.net/projects/hammurabicode/) | | [ipynb](demos/python/model_examples/fauvet_demo.ipynb) |
+| Han | `HanMagneticField` | [Han et al. (2018)](https://iopscience.iop.org/article/10.3847/1538-4365/aa9c45); XH24 disk: [Xu & Han (2024)](https://arxiv.org/abs/2404.02038) | XH24 disk: [authors' code](http://zmtt.bao.ac.cn/GMF/) | Han2018, XH24 | [ipynb](demos/python/model_examples/han_demo.ipynb) |
+| HMR | `HMRMagneticField` | [Harari et al. (1999)](https://arxiv.org/abs/astro-ph/9906309) | [hammurabi v3.01](https://sourceforge.net/projects/hammurabicode/) | | [ipynb](demos/python/model_examples/hmr_demo.ipynb) |
+| Jaffe | `JaffeMagneticField` | [Jaffe et al. (2010)](https://ui.adsabs.harvard.edu/abs/2010MNRAS.401.1013J/abstract) | [hammurabiX](https://github.com/hammurabi-dev/hammurabiX) | | [ipynb](demos/python/model_examples/jaffe_demo.ipynb) |
+| JF12 | `JF12MagneticField` | [Jansson & Farrar (2012)](https://ui.adsabs.harvard.edu/abs/2012ApJ...757...14J/abstract); Planck variants: [Planck XLII (2016)](https://arxiv.org/abs/1601.00546) | [hammurabiX](https://github.com/hammurabi-dev/hammurabiX), [CRPropa](https://github.com/CRPropa/CRPropa3) | JF12, Planck12b, Planck12c | [ipynb](demos/python/model_examples/jf12_demo.ipynb) |
+| Pshirkov | `PshirkovMagneticField` | [Pshirkov et al. (2011)](https://iopscience.iop.org/article/10.1088/0004-637X/738/2/192) | [CRPropa](https://github.com/CRPropa/CRPropa3) | ASS, BSS | [ipynb](demos/python/model_examples/pshirkov_demo.ipynb) |
+| Stanev | `StanevBSSMagneticField` | [Stanev (1997)](https://arxiv.org/abs/astro-ph/9607086) | [hammurabi v3.01](https://sourceforge.net/projects/hammurabicode/) | | [ipynb](demos/python/model_examples/stanev_demo.ipynb) |
+| Sun | `SunMagneticField` | [Sun et al. (2008)](https://www.aanda.org/articles/aa/abs/2008/02/aa8671-07/aa8671-07.html); halo: [Sun & Reich (2010)](https://arxiv.org/abs/1010.4394) | [hammurabi v3.01](https://sourceforge.net/projects/hammurabicode/) | | [ipynb](demos/python/model_examples/sun_demo.ipynb) |
+| SVT22 | `SVT22MagneticField` | [Shaw et al. (2022)](https://academic.oup.com/mnras/article/517/2/2534/6731784) | | | [ipynb](demos/python/model_examples/svt22_demo.ipynb) |
+| TF17 | `TFMagneticField` | [Terral & Ferrière (2017)](https://arxiv.org/abs/1611.10222) | [CRPropa](https://github.com/CRPropa/CRPropa3) | disk Ad1, Bd1, Dd1 × halo C0, C1 | [ipynb](demos/python/model_examples/tf17_demo.ipynb) |
+| TT | `TTMagneticField` | [Tinyakov & Tkachev (2002)](https://arxiv.org/abs/astro-ph/0111305) | [hammurabi v3.01](https://sourceforge.net/projects/hammurabicode/) | | [ipynb](demos/python/model_examples/tt_demo.ipynb) |
+| UF24 | `UFMagneticField` | [Unger & Farrar (2024)](https://arxiv.org/abs/2311.12120) | authors' code ([UF23Field v1.1](https://doi.org/10.5281/zenodo.11321212), BSD-2) | base, neCL, expX, spur, cre10, synCG, twistX, nebCor | [ipynb](demos/python/model_examples/uf24_demo.ipynb) |
+| WMAP | `WMAPMagneticField` | [Page et al. (2007)](https://iopscience.iop.org/article/10.1086/513699) | [hammurabi v3.01](https://sourceforge.net/projects/hammurabicode/) | | [ipynb](demos/python/model_examples/wmap_demo.ipynb) |
+| XH24 halo | `XH24MagneticField` | [Xu & Han (2024)](https://arxiv.org/abs/2404.02038) | [authors' code](http://zmtt.bao.ac.cn/GMF/) | | |
+| **Random models** | | | | | |
+| ES | `ESRandomField` | | [hammurabiX](https://github.com/hammurabi-dev/hammurabiX) | | |
+| JF12 | `JF12RandomField` | [Jansson & Farrar (2012)](https://ui.adsabs.harvard.edu/abs/2012ApJ...761L..11J/abstract); Planck variants: [Planck XLII (2016)](https://arxiv.org/abs/1601.00546) | [hammurabiX](https://github.com/hammurabi-dev/hammurabiX), [CRPropa](https://github.com/CRPropa/CRPropa3) | JF12, Planck12b, Planck12c | [ipynb](demos/python/model_examples/jf12_random_demo.ipynb) |
+| UF26 | `UF26RandomField` | [Unger & Farrar (2026)](https://arxiv.org/abs/2608.21293) | | expDisk, ringDisk | |
+
+¹ `from ImagineModels.MagneticFields.LocalBubbleMagneticField import LBMagneticField`; defined on the shell only, requires healpy.
 
 ### Thermal electron (scalar) fields
 
-| Model | Python class | C++ | Reference | Notes | Original implementation | Notebook |
-| ----- | ------------ | --- | --------- | ----- | ----------------------- | -------- |
-| **Regular models** | | | | | | |
-| Uniform | `UniformDensityField` | &#x2714; | | used for unit tests | | |
-| YMW16 | `YMW16` | &#x2714; | [Yao et al. (2017)](https://ui.adsabs.harvard.edu/abs/2017ApJ...835...29Y/abstract) | | [Hammurabi X](https://github.com/hammurabi-dev/hammurabiX) | [ipynb](demos/python/model_examples/ymw16_demo.ipynb) |
-| **Random models** | | | | | | |
-| Gaussian | `GaussianScalarField` | &#x2714; | | `mu + sigma · G` | | [ipynb](demos/python/model_examples/gaussian_scalar_demo.ipynb) |
-| Log-normal | `LogNormalScalarField` | &#x2714; | | `exp(log_mu + log_sigma · G)` | | |
+| Model | Class | Reference | Based on | Variants (`set_model`) | Notebook |
+| ----- | ----- | --------- | -------- | ---------------------- | -------- |
+| **Regular models** | | | | | |
+| Uniform | `UniformDensityField` | | | | |
+| YMW16 | `YMW16` | [Yao et al. (2017)](https://ui.adsabs.harvard.edu/abs/2017ApJ...835...29Y/abstract) | original C code v1.3.1 (via [pygedm](https://github.com/FRBs/pygedm)) | | [ipynb](demos/python/model_examples/ymw16_demo.ipynb) |
+| **Random models** | | | | | |
+| Gaussian | `GaussianScalarField` | | | | [ipynb](demos/python/model_examples/gaussian_scalar_demo.ipynb) |
+| Log-normal | `LogNormalScalarField` | | | | |
+
+### Deviations from the publications
+
+Models not listed here have no known deviations.
+
+- **Archimedean spiral**: no fitted model; dimensionless parameters as in CRPropa (`R_0` in kpc, `Omega / v_w` in 1/kpc, `B_0` the radial field at `R_0`).
+- **ES random field**: no publication; rms profile as in hammurabiX, `b0 * sqrt(exp(-(r - r_obs)/r0) exp(-(|z| - |z_obs|)/z0))`.
+- **Han, variant XH24**: disk as in the authors' code, not in the papers: `R_s(6)` = 8.16 kpc, an extra zone 10.5–15 kpc with `B_s7` = 4.5 µG, disk to 20 kpc.
+- **Jaffe**: 3D form and default parameters from the hammurabiX template, not from a publication (the 2010 model is 2D, with R1 = 3 kpc and an arm cutoff at 15 kpc).
+- **JF12 (regular)**: `b8` from flux conservation (2.755 µG; the paper rounds to 2.7). Molecular ring field `b_ring · 5 kpc / r` as in CRPropa and hammurabiX (the paper gives no radial dependence). Planck variants: striation factor β not modelled, `b8` from flux conservation (CRPropa keeps 2.7).
+- **JF12 (random)**: Planck variants without the striation factor β.
+- **Stanev**: eq. 4 used with exp(−|z|/z0) (sign missing in the paper); field cut at cylindrical r = 20 kpc (the paper: 20 kpc in all directions).
+- **Sun**: halo with the parameters of Sun & Reich (2010): `bH_B0` = 2 µG, `bH_z1a`/`bH_z1b` = 0.2/4 kpc.
+- **SVT22**: `B_val` = 3.72 µG; the published best fit is 3.96 µG (3 µG in arXiv v1).
+- **TF17**: lower limits of Table 2 used as values, as in CRPropa.
+- **UF26**: the paper constrains only the rms; the power spectrum is the library default.
+- **WMAP**: ψ0 = 27° and sin ψ on r̂ as corrected in Jansson et al. (2009, Sec. 5.3.6); amplitude `b_b0` = 6 µG not taken from the paper; `anti` (field reversed for z > 0) from hammurabi, not in the paper.
+- **XH24 halo**: field set to zero beyond r = 20 kpc, as in the authors' code.
+- **YMW16**: Galactic part only (no Magellanic Clouds or IGM), R ≤ 30 kpc as in the original code; exact π instead of the original's `RAD = 57.295779` (relative differences ≤ 4e-6), Gum Nebula limit θ → 0 instead of 0/0, no gap for azimuths in [6.28, 2π).

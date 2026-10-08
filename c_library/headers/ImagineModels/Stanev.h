@@ -1,3 +1,9 @@
+// Reference: Stanev 1997, arXiv:astro-ph/9607086 (bisymmetric model)
+// Based on: hammurabi v3.01 (old hammurabi)
+// Deviations:
+// - eq. 4 used with exp(-|z|/z0) (sign missing in the paper)
+// - field cut at cylindrical r = 20 kpc (the paper: 20 kpc in all directions)
+
 #pragma once
 
 #include <cmath>
@@ -6,8 +12,6 @@
 #include "ImagineModels/RegularModel.h"
 
 namespace imagine {
-
-// StanevBSS (HMR) see https://arxiv.org/abs/astro-ph/9607086
 
 #define STANEV_PARAMETERS(X)         \
     X(b_z01, 1.)        /* kpc */    \

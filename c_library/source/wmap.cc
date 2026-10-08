@@ -6,8 +6,6 @@
 
 namespace imagine {
 
-// https://iopscience.iop.org/article/10.1086/513699, implementation from Hammurabi (old)
-
 template <typename T>
 Vec3<T> WMAPMagneticField::field(const double &x, const double &y, const double &z, const WMAPParameters<T> &p) const {
 
@@ -28,9 +26,7 @@ Vec3<T> WMAPMagneticField::field(const double &x, const double &y, const double 
 
     B_vec3 = Cyl2Cart<Vec3<T>>(phi, B_cyl);
 
-    // Antisymmetric, swap the signs.  The way my pitch angle is defined,
-    // it seems this has to be swapped this way.  <------ hammurabi comment
-
+    // antisymmetric variant
     if (anti && z > 0) {
         B_vec3[0] *= (-1.);
         B_vec3[1] *= (-1.);

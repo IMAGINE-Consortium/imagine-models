@@ -1,3 +1,9 @@
+// Reference: Page et al. 2007, arXiv:astro-ph/0603450; corrected form: Jansson et al. 2009, arXiv:0905.2228
+// (Sec. 5.3.6) Based on: hammurabi v3.01 (old hammurabi) Deviations:
+// - psi0 = 27 deg and sin(psi) on the radial component, as corrected in Jansson et al. 2009
+// - amplitude b_b0 = 6 muG not taken from the paper
+// - anti (field reversed for z > 0) from hammurabi, not in the paper
+
 #pragma once
 
 #include <cmath>
@@ -7,16 +13,13 @@
 
 namespace imagine {
 
-// WMAP magnetic field
-
-#define WMAP_PARAMETERS(X)                                                                              \
-    X(b_Rsun, 8.)  /* kpc */                                                                            \
-    X(b_b0, 6.)    /* muG  -> not given in original paper? Could also be 3 according to                 \
-                      https://www.aanda.org/articles/aa/full_html/2010/14/aa12733-09/aa12733-09.html */ \
-    X(b_z0, 1.)    /* kpc */                                                                            \
-    X(b_r0, 8.)    /* kpc */                                                                            \
-    X(b_psi0, 27)  /* degree */                                                                         \
-    X(b_psi1, 0.9) /* degree */                                                                         \
+#define WMAP_PARAMETERS(X)      \
+    X(b_Rsun, 8.)  /* kpc */    \
+    X(b_b0, 6.)    /* muG */    \
+    X(b_z0, 1.)    /* kpc */    \
+    X(b_r0, 8.)    /* kpc */    \
+    X(b_psi0, 27)  /* degree */ \
+    X(b_psi1, 0.9) /* degree */ \
     X(b_xsi0, 25)  /* degree */
 
 IMAGINE_PARAMETERS(WMAPParameters, WMAP_PARAMETERS)
