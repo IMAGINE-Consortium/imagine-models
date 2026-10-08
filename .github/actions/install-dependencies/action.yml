@@ -39,7 +39,7 @@ runs:
       shell: bash
       run: |
         git clone --depth 1 --branch 5.0.1 https://gitlab.com/libeigen/eigen.git "$RUNNER_TEMP/eigen-src"
-        cmake -S "$RUNNER_TEMP/eigen-src" -B "$RUNNER_TEMP/eigen-build" -DCMAKE_INSTALL_PREFIX="$RUNNER_TEMP/eigen5" -DBUILD_TESTING=OFF -DEIGEN_BUILD_DOC=OFF
+        cmake -S "$RUNNER_TEMP/eigen-src" -B "$RUNNER_TEMP/eigen-build" -DCMAKE_INSTALL_PREFIX="$RUNNER_TEMP/eigen5" -DBUILD_TESTING=OFF -DEIGEN_BUILD_DOC=OFF -DEIGEN_BUILD_BLAS=OFF -DEIGEN_BUILD_LAPACK=OFF
         cmake --install "$RUNNER_TEMP/eigen-build"
         echo "CMAKE_PREFIX_PATH=$RUNNER_TEMP/eigen5${CMAKE_PREFIX_PATH:+:$CMAKE_PREFIX_PATH}" >> "$GITHUB_ENV"
     - name: autodiff
