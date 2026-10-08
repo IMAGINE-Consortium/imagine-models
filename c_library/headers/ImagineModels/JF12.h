@@ -1,9 +1,10 @@
-// Reference: Jansson & Farrar 2012, arXiv:1204.3662; Planck variants: Planck XLII 2016, arXiv:1601.00546 (Table C.1)
-// Based on: hammurabiX, GPL-3.0; compared with CRPropa (JF12Field, PlanckJF12bField), GPL-3.0
+// Reference: Jansson & Farrar 2012, arXiv:1204.3662; Planck variants: Planck XLII 2016, arXiv:1601.00546 (Table C.1); solenoidal switch: Kleimann et al. 2019, arXiv:1809.07528
+// Based on: hammurabiX, GPL-3.0; compared with CRPropa (JF12Field, PlanckJF12bField), GPL-3.0; solenoidal switch: CRPropa (JF12FieldSolenoidal), GPL-3.0
 // Deviations:
 // - b8 from flux conservation (2.755 muG; the paper rounds to 2.7)
 // - molecular ring field b_ring * 5 kpc / r as in CRPropa and hammurabiX (the paper gives no radial dependence)
 // - Planck variants: striation factor beta not modelled, b8 from flux conservation (CRPropa keeps 2.7)
+// - solenoidal switch: molecular ring kept as in the paper (CRPropa's JF12FieldSolenoidal omits it); b8 from the angular widths of the arm sectors at 5 kpc as in CRPropa, needed for exact solenoidality (paper eq. 3 uses the fractions f_j)
 
 #pragma once
 
@@ -66,11 +67,20 @@ public:
     const std::string &model() const { return active_model; }
     double arm_shift = 1.;
 
+    // Kleimann et al. 2019
+    bool solenoidal = false;
+    double solenoidal_delta = 3.; // kpc
+    double solenoidal_zs = 0.5;   // kpc
+    bool solenoidal_outer = true;
+
     template <typename T>
     Vec3<T> field(const double &x, const double &y, const double &z, const JF12Parameters<T> &p) const;
 
 private:
     std::string active_model = "JF12";
+
+    template <typename T> std::array<T, 2> solenoidal_disk(double r, double phi, const JF12Parameters<T> &p) const;
+    template <typename T> std::array<T, 2> solenoidal_x(double r, double z, const JF12Parameters<T> &p) const;
 };
 
 }

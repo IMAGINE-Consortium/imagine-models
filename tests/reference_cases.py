@@ -102,6 +102,7 @@ def _regular_cases():
         cases[f"UF24MagneticField__{variant}"] = ("UF24MagneticField", {"set_model": [variant]})
     cases["NE2025__NE2001"] = ("NE2025", {"set_model": ["NE2001"]})
     cases["JaffeMagneticField__Jaffe13"] = ("JaffeMagneticField", {"set_model": ["Jaffe13"]})
+    cases["JF12MagneticField__solenoidal"] = ("JF12MagneticField", {"solenoidal": True})
     cases["PlaneParallelDensity__Gaensler08"] = ("PlaneParallelDensity", {"set_model": ["Gaensler08"]})
     cases["AxiSymmetricSpiral__default"] = ("AxiSymmetricSpiral", {})
     return cases

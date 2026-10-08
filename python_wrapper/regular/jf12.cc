@@ -10,5 +10,9 @@ void bind_jf12(py::module_ &m) {
         .def("set_model", &JF12MagneticField::set_model, "model"_a, doc::set_model)
         .def_property_readonly("model", &JF12MagneticField::model)
         .def_readonly("available_models", &JF12MagneticField::available_models)
-        .def_readwrite("arm_shift", &JF12MagneticField::arm_shift);
+        .def_readwrite("arm_shift", &JF12MagneticField::arm_shift)
+        .def_readwrite("solenoidal", &JF12MagneticField::solenoidal)
+        .def_readwrite("solenoidal_delta", &JF12MagneticField::solenoidal_delta)
+        .def_readwrite("solenoidal_zs", &JF12MagneticField::solenoidal_zs)
+        .def_readwrite("solenoidal_outer", &JF12MagneticField::solenoidal_outer);
 }
