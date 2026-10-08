@@ -1,9 +1,8 @@
 #include "../bindings.h"
-#include "ImagineModels/YMW.h"
 #include "../model_bindings.h"
+#include "ImagineModels/YMW.h"
 
-void bind_ymw16(py::module_ &m)
-{
+void bind_ymw16(py::module_ &m) {
     bind_regular_model<YMW16>(m, "YMW16")
         .def_readwrite("max_radius", &YMW16::max_radius)
         .def_readwrite("r_warp", &YMW16::t0_r_warp)

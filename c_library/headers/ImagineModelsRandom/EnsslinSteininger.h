@@ -6,7 +6,7 @@
 namespace imagine {
 
 class ESRandomField : public RandomVectorField {
-  public:
+public:
     double b0 = 0.8; // muG
     double r0 = 8.;
     double z0 = 1.;

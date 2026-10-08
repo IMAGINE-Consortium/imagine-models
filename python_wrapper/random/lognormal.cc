@@ -1,8 +1,7 @@
-#include "../bindings.h"
 #include "ImagineModelsRandom/LogNormal.h"
+#include "../bindings.h"
 
-void bind_lognormal(py::module_ &m)
-{
+void bind_lognormal(py::module_ &m) {
     py::class_<LogNormalScalarField, RandomScalarField>(m, "LogNormalScalarField")
         .def(py::init<>())
         .def_readwrite("log_mu", &LogNormalScalarField::log_mu)

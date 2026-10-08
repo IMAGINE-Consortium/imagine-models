@@ -35,5 +35,6 @@ def test_external_reference(case):
     assert np.count_nonzero(data["values"]) > data["values"].size // 4
     model = rc.make_model(meta["model"], meta["settings"])
     actual = _evaluate(model, meta["quantity"], data["positions"])
-    np.testing.assert_allclose(actual, data["values"], rtol=meta["rtol"], atol=meta["atol"],
-                               err_msg=f"{case}: {meta['source']}")
+    np.testing.assert_allclose(
+        actual, data["values"], rtol=meta["rtol"], atol=meta["atol"], err_msg=f"{case}: {meta['source']}"
+    )

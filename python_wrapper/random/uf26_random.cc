@@ -1,8 +1,7 @@
 #include "../bindings.h"
 #include "ImagineModelsRandom/UF26Random.h"
 
-void bind_uf26_random(py::module_ &m)
-{
+void bind_uf26_random(py::module_ &m) {
     py::class_<UF26RandomField, RandomVectorField>(m, "UF26RandomField")
         .def(py::init<const std::string &>(), "model"_a = "expDisk")
         .def("set_model", &UF26RandomField::set_model, "model"_a)

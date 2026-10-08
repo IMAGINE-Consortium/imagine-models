@@ -1,8 +1,8 @@
 #ifndef HELIX_H
 #define HELIX_H
 
-#include <functional>
 #include <cmath>
+#include <functional>
 
 #include "ImagineModels/RegularModel.h"
 
@@ -15,8 +15,7 @@ namespace imagine {
 
 IMAGINE_PARAMETERS(HelixParameters, HELIX_PARAMETERS)
 
-class HelixMagneticField : public RegularVectorModel<HelixMagneticField, HelixParameters>
-{
+class HelixMagneticField : public RegularVectorModel<HelixMagneticField, HelixParameters> {
 public:
     // non_differentiable parameters
     double rmax = 20.;

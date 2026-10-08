@@ -18,31 +18,64 @@ BROKEN_DERIVATIVE_CASES = {}
 
 def _positions():
     rng = np.random.default_rng(20261006)
-    special = np.array([[0., 0., 0.], [-8.5, 0., 0.], [8.5, 0., 0.], [0., 8.5, 0.], [-8.5, 0., 1.],
-                        [-8.5, 0., -1.], [3., 4., 0.2], [-1., -1., -1.], [12., -9., 2.], [0., 0., 5.]])
-    box = rng.uniform([-20., -20., -5.], [20., 20., 5.], size=(54, 3))
+    special = np.array(
+        [
+            [0.0, 0.0, 0.0],
+            [-8.5, 0.0, 0.0],
+            [8.5, 0.0, 0.0],
+            [0.0, 8.5, 0.0],
+            [-8.5, 0.0, 1.0],
+            [-8.5, 0.0, -1.0],
+            [3.0, 4.0, 0.2],
+            [-1.0, -1.0, -1.0],
+            [12.0, -9.0, 2.0],
+            [0.0, 0.0, 5.0],
+        ]
+    )
+    box = rng.uniform([-20.0, -20.0, -5.0], [20.0, 20.0, 5.0], size=(54, 3))
     return np.vstack([special, box])
 
 
 POSITIONS = _positions()
 JACOBIAN_POSITIONS = POSITIONS[[1, 4, 6, 8, 11, 17, 23, 42]]
 
-REGULAR_GRID = dict(shape=[5, 4, 3], reference_point=[-15., -12., -3.], increment=[6., 6., 2.5])
-IRREGULAR_GRID = dict(grid_x=np.array([-17., -8.5, -2., 0.5, 6., 14.]),
-                      grid_y=np.array([-11., 0., 3.5, 9.]),
-                      grid_z=np.array([-2., 0., 0.4, 3.]))
+REGULAR_GRID = dict(shape=[5, 4, 3], reference_point=[-15.0, -12.0, -3.0], increment=[6.0, 6.0, 2.5])
+IRREGULAR_GRID = dict(
+    grid_x=np.array([-17.0, -8.5, -2.0, 0.5, 6.0, 14.0]),
+    grid_y=np.array([-11.0, 0.0, 3.5, 9.0]),
+    grid_z=np.array([-2.0, 0.0, 0.4, 3.0]),
+)
 
-RANDOM_GRIDS = {"even": dict(shape=[8, 8, 8], reference_point=[-4., -4., -4.], increment=[1., 1., 1.]),
-                "odd": dict(shape=[7, 6, 5], reference_point=[-3., -2., -1.], increment=[.5, .7, .9])}
+RANDOM_GRIDS = {
+    "even": dict(shape=[8, 8, 8], reference_point=[-4.0, -4.0, -4.0], increment=[1.0, 1.0, 1.0]),
+    "odd": dict(shape=[7, 6, 5], reference_point=[-3.0, -2.0, -1.0], increment=[0.5, 0.7, 0.9]),
+}
 RANDOM_SEEDS = [3, 7]
 
 
 def _regular_cases():
     cases = {}
-    for name in ["ArchimedeanMagneticField", "FauvetMagneticField", "HMRMagneticField", "HanMagneticField",
-                 "HelixMagneticField", "JF12RegularField", "JaffeMagneticField", "PshirkovMagneticField",
-                 "SVT22", "StanevBSSMagneticField", "SunMagneticField", "TFMagneticField", "TTMagneticField",
-                 "UFMagneticField", "UniformDensityField", "UniformMagneticField", "WMAPMagneticField", "XH24MagneticField", "YMW16"]:
+    for name in [
+        "ArchimedeanMagneticField",
+        "FauvetMagneticField",
+        "HMRMagneticField",
+        "HanMagneticField",
+        "HelixMagneticField",
+        "JF12RegularField",
+        "JaffeMagneticField",
+        "PshirkovMagneticField",
+        "SVT22",
+        "StanevBSSMagneticField",
+        "SunMagneticField",
+        "TFMagneticField",
+        "TTMagneticField",
+        "UFMagneticField",
+        "UniformDensityField",
+        "UniformMagneticField",
+        "WMAPMagneticField",
+        "XH24MagneticField",
+        "YMW16",
+    ]:
         cases[f"{name}__default"] = (name, {})
     cases["UniformMagneticField__set"] = ("UniformMagneticField", {"bx": -3.2, "by": 1.5, "bz": 0.25})
     cases["UniformDensityField__set"] = ("UniformDensityField", {"n0": 0.03})
@@ -123,18 +156,31 @@ def parameter_defaults(model):
     for key, prop in type(model).__dict__.items():
         if isinstance(prop, property) and prop.fset is not None:
             value = getattr(model, key)
-            if isinstance(value, (bool, int, float, str)) or (isinstance(value, list) and all(isinstance(v, (int, float)) for v in value)):
+            if isinstance(value, (bool, int, float, str)) or (
+                isinstance(value, list) and all(isinstance(v, (int, float)) for v in value)
+            ):
                 out[key] = value
     return out
 
 
-_SOURCE_FILES = {"ArchimedeanMagneticField": "archimedes.cc", "FauvetMagneticField": "fauvet.cc",
-                 "HMRMagneticField": "hararimollerachroulet.cc", "HanMagneticField": "han.cc",
-                 "HelixMagneticField": "helix.cc", "JF12RegularField": "regularjf12.cc",
-                 "JaffeMagneticField": "jaffe.cc", "PshirkovMagneticField": "pshirkov.cc", "SVT22": "svt22.cc",
-                 "StanevBSSMagneticField": "stanevbss.cc", "SunMagneticField": "sun.cc",
-                 "TFMagneticField": "tf17.cc", "TTMagneticField": "tinyakovtkachev.cc",
-                 "UFMagneticField": "ungerfarrar.cc", "WMAPMagneticField": "wmap.cc", "YMW16": "ymw16.cc"}
+_SOURCE_FILES = {
+    "ArchimedeanMagneticField": "archimedes.cc",
+    "FauvetMagneticField": "fauvet.cc",
+    "HMRMagneticField": "hararimollerachroulet.cc",
+    "HanMagneticField": "han.cc",
+    "HelixMagneticField": "helix.cc",
+    "JF12RegularField": "regularjf12.cc",
+    "JaffeMagneticField": "jaffe.cc",
+    "PshirkovMagneticField": "pshirkov.cc",
+    "SVT22": "svt22.cc",
+    "StanevBSSMagneticField": "stanevbss.cc",
+    "SunMagneticField": "sun.cc",
+    "TFMagneticField": "tf17.cc",
+    "TTMagneticField": "tinyakovtkachev.cc",
+    "UFMagneticField": "ungerfarrar.cc",
+    "WMAPMagneticField": "wmap.cc",
+    "YMW16": "ymw16.cc",
+}
 
 
 def jacobian_column_labels(name, model):

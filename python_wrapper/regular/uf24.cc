@@ -1,9 +1,8 @@
 #include "../bindings.h"
-#include "ImagineModels/UngerFarrar.h"
 #include "../model_bindings.h"
+#include "ImagineModels/UngerFarrar.h"
 
-void bind_uf24(py::module_ &m)
-{
+void bind_uf24(py::module_ &m) {
     bind_regular_model<UFMagneticField>(m, "UFMagneticField")
         .def(py::init<const std::string &>(), "model"_a)
         .def("set_model", &UFMagneticField::set_model, "model"_a)

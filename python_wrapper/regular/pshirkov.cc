@@ -1,9 +1,8 @@
-#include "../bindings.h"
 #include "ImagineModels/Pshirkov.h"
+#include "../bindings.h"
 #include "../model_bindings.h"
 
-void bind_pshirkov(py::module_ &m)
-{
+void bind_pshirkov(py::module_ &m) {
     bind_regular_model<PshirkovMagneticField>(m, "PshirkovMagneticField")
         .def(py::init<const std::string &>(), "model"_a)
         .def("set_model", &PshirkovMagneticField::set_model, "model"_a)

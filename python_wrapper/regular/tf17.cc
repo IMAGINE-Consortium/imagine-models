@@ -1,9 +1,8 @@
-#include "../bindings.h"
 #include "ImagineModels/TF17.h"
+#include "../bindings.h"
 #include "../model_bindings.h"
 
-void bind_tf17(py::module_ &m)
-{
+void bind_tf17(py::module_ &m) {
     bind_regular_model<TFMagneticField>(m, "TFMagneticField")
         .def(py::init<const std::string &, const std::string &>(), "disk_model"_a, "halo_model"_a = "C0")
         .def("set_model", &TFMagneticField::set_model, "disk_model"_a, "halo_model"_a)

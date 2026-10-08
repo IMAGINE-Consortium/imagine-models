@@ -6,10 +6,10 @@
 namespace imagine {
 
 class LogNormalScalarField : public RandomScalarField {
-  protected:
+protected:
     double transform(const double &g, const double &x, const double &y, const double &z) const override;
 
-  public:
+public:
     double log_mu = 0.;
     double log_sigma = 1.;
     double spectral_offset = 1.;

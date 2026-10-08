@@ -17,7 +17,7 @@ def cyl2cart(coordinate):
     y = coordinate[0] * np.sin(coordinate[1])
     z = coordinate[2]
 
-    return np.array([x,y,z])
+    return np.array([x, y, z])
 
 
 def cart2cyl(coordinate):
@@ -32,7 +32,7 @@ def cart2cyl(coordinate):
      - ouput : (3,npts)-array of cylindrical coordinates, [rho, phi, z] is assumed
     @author: V.Pelgrims, adapted S.Hutschenreuter
     """
-    rho = np.sqrt(coordinate[0]**2 + coordinate[1]**2)
+    rho = np.sqrt(coordinate[0] ** 2 + coordinate[1] ** 2)
     phi = np.arctan2(coordinate[1], coordinate[0])
     z = coordinate[2]
 

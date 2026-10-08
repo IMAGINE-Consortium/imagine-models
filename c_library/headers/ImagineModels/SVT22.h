@@ -1,9 +1,9 @@
 #ifndef SVT22_H
 #define SVT22_H
 
-#include <functional>
-#include <cmath>
 #include <cassert>
+#include <cmath>
+#include <functional>
 #include <iostream>
 
 #include "ImagineModels/RegularModel.h"
@@ -17,8 +17,7 @@ namespace imagine {
 
 IMAGINE_PARAMETERS(SVT22Parameters, SVT22_PARAMETERS)
 
-class SVT22MagneticField : public RegularVectorModel<SVT22MagneticField, SVT22Parameters>
-{
+class SVT22MagneticField : public RegularVectorModel<SVT22MagneticField, SVT22Parameters> {
 public:
     bool do_halo = true;
 

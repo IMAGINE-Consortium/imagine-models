@@ -6,7 +6,7 @@
 namespace imagine {
 
 namespace num {
-  // numerical constants 
+// numerical constants
 const double pi = 3.141592653589793238462643383279502884197;
 const double halfpi = 1.570796326794896619231321691639751442099;
 const double onethird = 0.333333333333333333333333333333333333333;
@@ -21,20 +21,20 @@ const double arcsec = (2. * pi / (360. * 60. * 60.));
 const double sterad = (4. * pi);
 }
 
-
 namespace astro {
-  // constants in CGS units
+// constants in CGS units
 const double kpc = 1;
 const double microgauss = 1;
 const double megayear = 1;
-const double gpc = 1e6*kpc;
-const double pc = 1e-3*kpc;
-const double second  = megayear / (1e6*60*60*24*365.25);
+const double gpc = 1e6 * kpc;
+const double pc = 1e-3 * kpc;
+const double second = megayear / (1e6 * 60 * 60 * 24 * 365.25);
 const double kilometer = kpc / 3.0856775807e+16;
 }
 
 namespace cgs {
-// constants in CGS units. This is adapted from Hammurabi X (https://github.com/hammurabi-dev/hammurabiX/blob/master/LICENSE)
+// constants in CGS units. This is adapted from Hammurabi X
+// (https://github.com/hammurabi-dev/hammurabiX/blob/master/LICENSE)
 const double erg = 1.;
 const double cm = 1.;
 const double sec = 1.;
@@ -65,11 +65,11 @@ const double mbarn = (1.e-27 * cm * cm);
 const double Jansky = (1.e-23 * erg / sec / (cm * cm) / Hz);
 const double Gauss = std::sqrt(erg / (cm * cm * cm));
 const double muGauss(1.e-6 * Gauss);
-const double ccm(cm *cm *cm);
+const double ccm(cm * cm * cm);
 
 const double c_light = (2.99792458e+10 * cm / sec);
 const double h_planck = (6.626075540e-27 * erg * sec); ///< Planck constant
-const double hq = (1.05457266e-27 * erg * sec); ///< Plancks constant/(2pi)
+const double hq = (1.05457266e-27 * erg * sec);        ///< Plancks constant/(2pi)
 const double qe = (4.80320425e-10 * esu);
 const double mec2 = (0.51099907e-3 * GeV); ///< Electron Mass times c^2
 const double mpc2 = (938.272310e-3 * GeV); ///< Proton Mass times c^2

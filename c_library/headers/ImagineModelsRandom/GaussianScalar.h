@@ -6,7 +6,7 @@
 namespace imagine {
 
 class GaussianScalarField : public RandomScalarField {
-  public:
+public:
     double mu = 0.;
     double sigma = 1.;
     double spectral_offset = .001;

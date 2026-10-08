@@ -40,6 +40,7 @@ Check what was built with:
 
 ```python
 import ImagineModels as img
+
 print(img.has_fftw, img.has_autodiff)
 ```
 
@@ -82,25 +83,27 @@ import ImagineModels as img
 jf12 = img.JF12RegularField()
 
 # a single position (Galactocentric Cartesian coordinates in kpc), result in µG
-jf12.at_position(-8.5, 0., 0.1)
+jf12.at_position(-8.5, 0.0, 0.1)
 
 # many positions at once, with numpy broadcasting (here: a line along x)
-jf12.at_positions(np.linspace(-20., 20., 401), 0., 0.1)        # shape (3, 401)
+jf12.at_positions(np.linspace(-20.0, 20.0, 401), 0.0, 0.1)  # shape (3, 401)
 
 # on a grid
-grid = img.RegularGrid(shape=[200, 200, 40], reference_point=[-20., -20., -4.], increment=[.2, .2, .2])
-b = jf12.evaluate(grid)                                          # shape (3, 200, 200, 40)
-irregular = img.IrregularGrid(x=[-10., 2.], y=[-5., 0., 4.], z=[0.])
-img.YMW16().evaluate(irregular)                                  # scalar field: shape (2, 3, 1)
+grid = img.RegularGrid(shape=[200, 200, 40], reference_point=[-20.0, -20.0, -4.0], increment=[0.2, 0.2, 0.2])
+b = jf12.evaluate(grid)  # shape (3, 200, 200, 40)
+irregular = img.IrregularGrid(x=[-10.0, 2.0], y=[-5.0, 0.0, 4.0], z=[0.0])
+img.YMW16().evaluate(irregular)  # scalar field: shape (2, 3, 1)
 
 # on an unstructured set of points (e.g. a catalogue)
-cloud = img.PointCloud.from_positions(np.array([[-8.5, 0., 0.1], [3., 4., -1.], [0., 12., 2.]]))   # or PointCloud(x, y, z)
-jf12.evaluate(cloud)                                             # shape (3, 3): (component, point)
+cloud = img.PointCloud.from_positions(
+    np.array([[-8.5, 0.0, 0.1], [3.0, 4.0, -1.0], [0.0, 12.0, 2.0]])
+)  # or PointCloud(x, y, z)
+jf12.evaluate(cloud)  # shape (3, 3): (component, point)
 
 # parameters
-jf12.parameter_names                  # ordered list
-jf12.b_arm_1 = 1.2                    # single parameter
-jf12.parameters = {"Bn": 1.5}         # several at once (partial update)
+jf12.parameter_names  # ordered list
+jf12.b_arm_1 = 1.2  # single parameter
+jf12.parameters = {"Bn": 1.5}  # several at once (partial update)
 
 # published model variants: set_model selects the variant and loads its parameters
 uf = img.UFMagneticField(model="expX")
@@ -108,13 +111,13 @@ uf.set_model("spur")
 
 # derivatives w.r.t. the parameters (if built with autodiff)
 jf12.active_parameters = ["b_arm_1", "Bn"]
-jf12.derivative(-8.5, 1., 0.1)        # shape (3, 2)
+jf12.derivative(-8.5, 1.0, 0.1)  # shape (3, 2)
 
 # random fields (if built with FFTW)
 random_field = img.JF12RandomField()
-sample = random_field.sample(grid, seed=23)       # shape (3, 200, 200, 40)
-random_field.rms(-8.5, 0., 0.)                    # analytic local rms amplitude
-random_field.rms(grid)                            # ... on a grid
+sample = random_field.sample(grid, seed=23)  # shape (3, 200, 200, 40)
+random_field.rms(-8.5, 0.0, 0.0)  # analytic local rms amplitude
+random_field.rms(grid)  # ... on a grid
 ```
 
 `demos/python/model_library_demo.ipynb` is a tutorial covering this in more detail, including how to prototype your own model in Python.

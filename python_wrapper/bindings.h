@@ -4,12 +4,12 @@
 #include <utility>
 #include <vector>
 
-#include <pybind11/pybind11.h>
 #include <pybind11/numpy.h>
+#include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
 
-#include "ImagineModels/config.h"
 #include "ImagineModels/Grid.h"
+#include "ImagineModels/config.h"
 
 #if IMAGINE_HAS_AUTODIFF
 #include <pybind11/eigen.h>
@@ -19,27 +19,25 @@ namespace py = pybind11;
 using namespace pybind11::literals;
 using namespace imagine;
 
-template <int N>
-py::array_t<double> to_numpy(GridData<N> &&grid_data) {
-  auto owned = new GridData<N>(std::move(grid_data));
-  py::capsule owner(owned, [](void *p) { delete static_cast<GridData<N> *>(p); });
-  std::vector<py::ssize_t> shape;
-  if (N > 1)
-    shape.push_back(N);
-  for (int s : owned->shape)
-    shape.push_back(s);
-  return py::array_t<double>(shape, owned->data.data(), owner);
+template <int N> py::array_t<double> to_numpy(GridData<N> &&grid_data) {
+    auto owned = new GridData<N>(std::move(grid_data));
+    py::capsule owner(owned, [](void *p) { delete static_cast<GridData<N> *>(p); });
+    std::vector<py::ssize_t> shape;
+    if (N > 1)
+        shape.push_back(N);
+    for (int s : owned->shape)
+        shape.push_back(s);
+    return py::array_t<double>(shape, owned->data.data(), owner);
 }
 
-template <int N>
-py::array_t<double> to_numpy_points(GridData<N> &&grid_data) {
-  auto owned = new GridData<N>(std::move(grid_data));
-  py::capsule owner(owned, [](void *p) { delete static_cast<GridData<N> *>(p); });
-  std::vector<py::ssize_t> shape;
-  if (N > 1)
-    shape.push_back(N);
-  shape.push_back(owned->shape[0]);
-  return py::array_t<double>(shape, owned->data.data(), owner);
+template <int N> py::array_t<double> to_numpy_points(GridData<N> &&grid_data) {
+    auto owned = new GridData<N>(std::move(grid_data));
+    py::capsule owner(owned, [](void *p) { delete static_cast<GridData<N> *>(p); });
+    std::vector<py::ssize_t> shape;
+    if (N > 1)
+        shape.push_back(N);
+    shape.push_back(owned->shape[0]);
+    return py::array_t<double>(shape, owned->data.data(), owner);
 }
 
 template <typename F>

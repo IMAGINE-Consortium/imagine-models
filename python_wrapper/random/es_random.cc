@@ -1,8 +1,7 @@
 #include "../bindings.h"
 #include "ImagineModelsRandom/EnsslinSteininger.h"
 
-void bind_es_random(py::module_ &m)
-{
+void bind_es_random(py::module_ &m) {
     py::class_<ESRandomField, RandomVectorField>(m, "ESRandomField")
         .def(py::init<>())
         .def_readwrite("b0", &ESRandomField::b0)

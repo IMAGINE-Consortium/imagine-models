@@ -86,8 +86,12 @@ def _column(jac, index, n_columns):
 
 
 def _finite_difference_cases():
-    return [pytest.param(c, marks=pytest.mark.xfail(strict=True, reason=f"issue {rc.BROKEN_DERIVATIVE_CASES[c]}"))
-            if c in rc.BROKEN_DERIVATIVE_CASES else c for c in _cases_with("jacobian")]
+    return [
+        pytest.param(c, marks=pytest.mark.xfail(strict=True, reason=f"issue {rc.BROKEN_DERIVATIVE_CASES[c]}"))
+        if c in rc.BROKEN_DERIVATIVE_CASES
+        else c
+        for c in _cases_with("jacobian")
+    ]
 
 
 @pytest.mark.parametrize("case", _finite_difference_cases())
@@ -98,13 +102,15 @@ def test_jacobian_matches_finite_differences(case):
     failures = []
     for position, jac in zip(data["jacobian_positions"], data["jacobian"]):
         for index, label in enumerate(labels):
-            scale = max(1., abs(getattr(model, label)))
+            scale = max(1.0, abs(getattr(model, label)))
             fine = _finite_difference(model, label, position, 1e-6 * scale)
             coarse = _finite_difference(model, label, position, 1e-4 * scale)
             if not np.allclose(fine, coarse, rtol=1e-2, atol=1e-6, equal_nan=True):
                 continue
             expected = _column(jac, index, len(labels))
-            if not np.allclose(expected, fine, rtol=1e-4, atol=1e-6 * max(1., np.nanmax(np.abs(fine), initial=0.)), equal_nan=True):
+            if not np.allclose(
+                expected, fine, rtol=1e-4, atol=1e-6 * max(1.0, np.nanmax(np.abs(fine), initial=0.0)), equal_nan=True
+            ):
                 failures.append((label, position.round(2).tolist(), expected.tolist(), fine.tolist()))
     assert not failures, failures
 

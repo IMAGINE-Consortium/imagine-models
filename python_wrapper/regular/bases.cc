@@ -6,8 +6,7 @@
 using DoubleArray = py::array_t<double, py::array::c_style | py::array::forcecast>;
 
 template <typename Field>
-py::array_t<double> at_positions(const Field &self, const py::object &x, const py::object &y, const py::object &z)
-{
+py::array_t<double> at_positions(const Field &self, const py::object &x, const py::object &y, const py::object &z) {
     constexpr bool is_vector = std::is_base_of_v<RegularVectorField, Field>;
     py::tuple broadcast = py::module_::import("numpy").attr("broadcast_arrays")(x, y, z);
     DoubleArray xs = broadcast[0].cast<DoubleArray>();
@@ -34,19 +33,36 @@ py::array_t<double> at_positions(const Field &self, const py::object &x, const p
     return out;
 }
 
-void bind_regular_bases(py::module_ &m)
-{
+void bind_regular_bases(py::module_ &m) {
     py::class_<RegularVectorField, PyRegularVectorField>(m, "RegularVectorField")
         .def(py::init<>())
-        .def("evaluate", [](const RegularVectorField &self, const RegularGrid &grid) { return to_numpy(self.evaluate(grid)); }, "grid"_a)
-        .def("evaluate", [](const RegularVectorField &self, const IrregularGrid &grid) { return to_numpy(self.evaluate(grid)); }, "grid"_a)
-        .def("evaluate", [](const RegularVectorField &self, const PointCloud &grid) { return to_numpy_points(self.evaluate(grid)); }, "grid"_a)
+        .def(
+            "evaluate",
+            [](const RegularVectorField &self, const RegularGrid &grid) { return to_numpy(self.evaluate(grid)); },
+            "grid"_a)
+        .def(
+            "evaluate",
+            [](const RegularVectorField &self, const IrregularGrid &grid) { return to_numpy(self.evaluate(grid)); },
+            "grid"_a)
+        .def(
+            "evaluate",
+            [](const RegularVectorField &self, const PointCloud &grid) { return to_numpy_points(self.evaluate(grid)); },
+            "grid"_a)
         .def("at_positions", &at_positions<RegularVectorField>, "x"_a, "y"_a, "z"_a);
 
     py::class_<RegularScalarField, PyRegularScalarField>(m, "RegularScalarField")
         .def(py::init<>())
-        .def("evaluate", [](const RegularScalarField &self, const RegularGrid &grid) { return to_numpy(self.evaluate(grid)); }, "grid"_a)
-        .def("evaluate", [](const RegularScalarField &self, const IrregularGrid &grid) { return to_numpy(self.evaluate(grid)); }, "grid"_a)
-        .def("evaluate", [](const RegularScalarField &self, const PointCloud &grid) { return to_numpy_points(self.evaluate(grid)); }, "grid"_a)
+        .def(
+            "evaluate",
+            [](const RegularScalarField &self, const RegularGrid &grid) { return to_numpy(self.evaluate(grid)); },
+            "grid"_a)
+        .def(
+            "evaluate",
+            [](const RegularScalarField &self, const IrregularGrid &grid) { return to_numpy(self.evaluate(grid)); },
+            "grid"_a)
+        .def(
+            "evaluate",
+            [](const RegularScalarField &self, const PointCloud &grid) { return to_numpy_points(self.evaluate(grid)); },
+            "grid"_a)
         .def("at_positions", &at_positions<RegularScalarField>, "x"_a, "y"_a, "z"_a);
 }

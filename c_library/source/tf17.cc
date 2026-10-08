@@ -6,11 +6,11 @@
 
 namespace imagine {
 
-// Terral, Ferriere 2017 - Constraints from Faraday rotation on the magnetic field structure in the galactic halo, DOI: 10.1051/0004-6361/201629572, arXiv:1611.10222, implementation adapted from CRPRopa
+// Terral, Ferriere 2017 - Constraints from Faraday rotation on the magnetic field structure in the galactic halo,
+// DOI: 10.1051/0004-6361/201629572, arXiv:1611.10222, implementation adapted from CRPRopa
 
 template <typename T>
-Vec3<T> TFMagneticField::field(const double &x, const double &y, const double &z, const TFParameters<T> &p) const
-{
+Vec3<T> TFMagneticField::field(const double &x, const double &y, const double &z, const TFParameters<T> &p) const {
     const double r = sqrt(x * x + y * y);
     double phi = M_PI - std::atan2(y, x);
 
@@ -24,10 +24,9 @@ Vec3<T> TFMagneticField::field(const double &x, const double &y, const double &z
     return B_cart;
 }
 
-
 template <typename T>
-Vec3<T> TFMagneticField::getDiskField(const double &r, const double &z, const double &phi, const double &sinPhi, const double &cosPhi, const TFParameters<T> &p) const
-{
+Vec3<T> TFMagneticField::getDiskField(const double &r, const double &z, const double &phi, const double &sinPhi,
+                                      const double &cosPhi, const TFParameters<T> &p) const {
     Vec3<T> B_cart{{0., 0., 0.}};
     T B_r = 0;
     T B_phi = 0;
@@ -38,19 +37,15 @@ Vec3<T> TFMagneticField::getDiskField(const double &r, const double &z, const do
     auto p_0 = p.p_0 * M_PI / 180;
     auto cot_p0 = cos(p_0) / sin(p_0);
 
-    if (active_disk_model == "Ad1")
-    { // ==========================================================
-        if (r > p.r1_disk)
-        {
+    if (active_disk_model == "Ad1") { // ==========================================================
+        if (r > p.r1_disk) {
             auto z1_disk_z = (1. + p.a_disk * p.r1_disk * p.r1_disk) / (1. + p.a_disk * r * r); // z1_disk / z, eq. 4
             // B components in (r, phi, z)
             auto B_r0 = radialFieldScale(p.B1_disk, psd, z1_disk_z * z, phi, r, z, cot_p0, p);
             B_r = (p.r1_disk / r) * z1_disk_z * B_r0;
             B_z = 2 * p.a_disk * p.r1_disk * z1_disk_z * z / (1 + p.a_disk * r * r) * B_r0;
             B_phi = azimuthalFieldComponent(r, z, B_r, B_z, cot_p0, p);
-        }
-        else
-        {
+        } else {
             // within r = r1_disk, the field lines are straight in direction g_phi + phi_star_disk
             // and thus z = z1
             auto phi1_disk = shiftedWindingFunction<T>(p.r1_disk, z, cot_p0, p) + psd;
@@ -58,34 +53,27 @@ Vec3<T> TFMagneticField::getDiskField(const double &r, const double &z, const do
             B_r = cos(phi1_disk - phi) * B_amp;
             B_phi = sin(phi1_disk - phi) * B_amp;
         }
-    }
-    else if (active_disk_model == "Bd1")
-    { // ===================================================
+    } else if (active_disk_model == "Bd1") { // ===================================================
         // for model Bd1, best fit for n = 2
-        if (r > epsilon)
-        {
+        if (r > epsilon) {
             auto r1_disk_r = p.r1_disk / r;
             auto z1_disk_z = 5. / (r1_disk_r * r1_disk_r + 4. / sqrt(r1_disk_r)); // z1_disk / z -> remove z dependancy
             auto B_r0 = radialFieldScale(p.B1_disk, psd, z1_disk_z * z, phi, r, z, cot_p0, p);
             B_r = r1_disk_r * z1_disk_z * B_r0;
-            B_z = -0.4 * r1_disk_r / r * z1_disk_z * z1_disk_z * z * (r1_disk_r * r1_disk_r - 1. / sqrt(r1_disk_r)) * B_r0;
-        }
-        else
-        {
+            B_z = -0.4 * r1_disk_r / r * z1_disk_z * z1_disk_z * z * (r1_disk_r * r1_disk_r - 1. / sqrt(r1_disk_r)) *
+                  B_r0;
+        } else {
             auto z1_disk_z = 5. * r * r / (p.r1_disk * p.r1_disk); // z1_disk / z -> remove z dependancy
             auto B_r0 = radialFieldScale(p.B1_disk, psd, z1_disk_z * z, phi, r, z, cot_p0, p);
             B_r = 5. * r / p.r1_disk * B_r0;
             B_z = -10. * z / p.r1_disk * B_r0;
         }
         B_phi = azimuthalFieldComponent(r, z, B_r, B_z, cot_p0, p);
-    }
-    else if (active_disk_model == "Dd1")
-    { // ===================================================
+    } else if (active_disk_model == "Dd1") { // ===================================================
         // for model Dd1, best fit for n = 0.5
         double z_sign = z >= 0 ? 1. : -1.;
         double z_abs = fabs(z);
-        if (z_abs > epsilon)
-        {
+        if (z_abs > epsilon) {
             auto z1_disk_z = p.z1_disk / z_abs;
             auto r1_disk_r = 1.5 / (sqrt(z1_disk_z) + 0.5 / z1_disk_z); // r1_disk / r
             auto F_r = r1_disk_r * r <= p.L_disk ? 1. : exp(1. - r1_disk_r * r / p.L_disk);
@@ -93,9 +81,7 @@ Vec3<T> TFMagneticField::getDiskField(const double &r, const double &z, const do
             auto B_z0 = z_sign * p.B1_disk * F_r * cos(phi - shiftedWindingFunction<T>(r, z, cot_p0, p) - psd);
             B_r = -0.5 / 1.5 * r1_disk_r * r1_disk_r * r1_disk_r * r / z_abs * (sqrt(z1_disk_z) - 1 / z1_disk_z) * B_z0;
             B_z = z_sign * r1_disk_r * r1_disk_r * B_z0;
-        }
-        else
-        {
+        } else {
             auto z_z1_disk = z_abs / p.z1_disk;
             auto r1_disk_r = 1.5 * sqrt(z_abs / p.z1_disk); // r1_disk / r
             auto F_r = r1_disk_r * r <= p.L_disk ? 1. : exp(1. - r1_disk_r * r / p.L_disk);
@@ -114,8 +100,8 @@ Vec3<T> TFMagneticField::getDiskField(const double &r, const double &z, const do
 }
 
 template <typename T>
-Vec3<T> TFMagneticField::getHaloField(const double &r, const double &z, const double &phi, const double &sinPhi, const double &cosPhi, const TFParameters<T> &p) const
-{
+Vec3<T> TFMagneticField::getHaloField(const double &r, const double &z, const double &phi, const double &sinPhi,
+                                      const double &cosPhi, const TFParameters<T> &p) const {
     int m;
     Vec3<T> B_cart{{0., 0., 0.}};
     auto r1_halo_r = (1. + p.a_halo * p.z1_halo * p.z1_halo) / (1. + p.a_halo * z * z);
@@ -127,12 +113,9 @@ Vec3<T> TFMagneticField::getHaloField(const double &r, const double &z, const do
     auto p_0 = p.p_0 * M_PI / 180;
     auto cot_p0 = cos(p_0) / sin(p_0);
 
-    if (active_halo_model == "C0")
-    { // m = 0
+    if (active_halo_model == "C0") { // m = 0
         B_z0 = p.B1_halo * exp(-r1_halo_r * r / p.L_halo);
-    }
-    else if (active_halo_model == "C1")
-    { // m = 1
+    } else if (active_halo_model == "C1") { // m = 1
         // simplication of the equation in the cosinus
         auto phi_prime = phi - shiftedWindingFunction<T>(r, z, cot_p0, p) - psh;
         B_z0 = p.B1_halo * exp(-r1_halo_r * r / p.L_halo) * cos(phi_prime);
@@ -154,8 +137,8 @@ Vec3<T> TFMagneticField::getHaloField(const double &r, const double &z, const do
 }
 
 template <typename T>
-T TFMagneticField::azimuthalFieldComponent(const double &r, const double &z, const T &B_r, const T &B_z, const T &cp0, const TFParameters<T> &p) const
-{
+T TFMagneticField::azimuthalFieldComponent(const double &r, const double &z, const T &B_r, const T &B_z, const T &cp0,
+                                           const TFParameters<T> &p) const {
     auto r_ = r / p.L_p;
     auto rscale = r > epsilon ? r_ * exp(-r_) / (1 - exp(-r_)) : 1 - r_ / 2. + r_ * r_ / 12.;
     auto B_phi = cp0 / zscale(z, p) * rscale * B_r;
@@ -164,8 +147,8 @@ T TFMagneticField::azimuthalFieldComponent(const double &r, const double &z, con
 }
 
 template <typename T>
-T TFMagneticField::radialFieldScale(const T &B1, const T &phi_star, const T &z1, const double &phi, const double &r, const double &z, const T &cp0, const TFParameters<T> &p) const
-{
+T TFMagneticField::radialFieldScale(const T &B1, const T &phi_star, const T &z1, const double &phi, const double &r,
+                                    const double &z, const T &cp0, const TFParameters<T> &p) const {
     // simplication of the equation in the cosinus
     auto phi_prime = phi - shiftedWindingFunction<T>(r, z, cp0, p) - phi_star;
     // This term occures is parameterizations of models A and B always bisymmetric (m = 1)
@@ -173,19 +156,15 @@ T TFMagneticField::radialFieldScale(const T &B1, const T &phi_star, const T &z1,
 }
 
 template <typename T>
-T TFMagneticField::shiftedWindingFunction(const T &r, const double &z, const T &cp0, const TFParameters<T> &p) const
-{
+T TFMagneticField::shiftedWindingFunction(const T &r, const double &z, const T &cp0, const TFParameters<T> &p) const {
     return cp0 * log(1 - exp(-r / p.L_p) + epsilon) / zscale(z, p);
 }
 
-template <typename T>
-T TFMagneticField::zscale(const double &z, const TFParameters<T> &p) const
-{
+template <typename T> T TFMagneticField::zscale(const double &z, const TFParameters<T> &p) const {
     return 1 + z * z / p.H_p / p.H_p;
 }
 
-void TFMagneticField::set_model(const std::string &dtype, const std::string &htype)
-{
+void TFMagneticField::set_model(const std::string &dtype, const std::string &htype) {
     if (std::find(available_disk_models.begin(), available_disk_models.end(), dtype) == available_disk_models.end())
         throw std::invalid_argument("Unknown TF17 disk model '" + dtype + "'.");
     if (std::find(available_halo_models.begin(), available_halo_models.end(), htype) == available_halo_models.end())
@@ -212,89 +191,86 @@ void TFMagneticField::set_model(const std::string &dtype, const std::string &hty
     active_disk_model = dtype;
     active_halo_model = htype;
 
-    if (isAd1andC0)
-    {
-        active_parameters = {"a_disk", "r1_disk", "B1_disk", "phi_star_disk", "H_disk", "a_halo", "z1_halo", "B1_halo", "L_halo", "p_0", "H_p", "L_p"};
+    if (isAd1andC0) {
+        active_parameters = {"a_disk",  "r1_disk", "B1_disk", "phi_star_disk", "H_disk", "a_halo",
+                             "z1_halo", "B1_halo", "L_halo",  "p_0",           "H_p",    "L_p"};
     }
 
-    if (isAd1andC1)
-    {
-        active_parameters = {"a_disk", "r1_disk", "B1_disk", "phi_star_disk", "H_disk", "a_halo", "z1_halo", "B1_halo", "L_halo", "phi_star_halo", "p_0", "H_p", "L_p"};
+    if (isAd1andC1) {
+        active_parameters = {"a_disk",  "r1_disk", "B1_disk",       "phi_star_disk", "H_disk", "a_halo", "z1_halo",
+                             "B1_halo", "L_halo",  "phi_star_halo", "p_0",           "H_p",    "L_p"};
     }
 
-    if (isBd1andC0)
-    {
-        active_parameters = {"r1_disk", "B1_disk", "phi_star_disk", "H_disk", "a_halo", "z1_halo", "B1_halo", "L_halo", "p_0", "H_p", "L_p"};
+    if (isBd1andC0) {
+        active_parameters = {"r1_disk", "B1_disk", "phi_star_disk", "H_disk", "a_halo", "z1_halo",
+                             "B1_halo", "L_halo",  "p_0",           "H_p",    "L_p"};
     }
 
-    if (isBd1andC1)
-    {
-        active_parameters = {"r1_disk", "B1_disk", "phi_star_disk", "H_disk", "a_halo", "z1_halo", "B1_halo", "L_halo", "phi_star_halo", "p_0", "H_p", "L_p"};
+    if (isBd1andC1) {
+        active_parameters = {"r1_disk", "B1_disk", "phi_star_disk", "H_disk", "a_halo", "z1_halo",
+                             "B1_halo", "L_halo",  "phi_star_halo", "p_0",    "H_p",    "L_p"};
     }
 
-    if (isDd1andC0)
-    {
-        active_parameters = {"z1_disk", "B1_disk", "L_disk", "phi_star_disk", "a_halo", "z1_halo", "B1_halo", "L_halo", "p_0", "H_p", "L_p"};
+    if (isDd1andC0) {
+        active_parameters = {"z1_disk", "B1_disk", "L_disk", "phi_star_disk", "a_halo", "z1_halo",
+                             "B1_halo", "L_halo",  "p_0",    "H_p",           "L_p"};
     }
 
-    if (isDd1andC1)
-    {
-        active_parameters = {"z1_disk", "B1_disk", "L_disk", "phi_star_disk", "a_halo", "z1_halo", "B1_halo", "L_halo", "phi_star_halo", "p_0", "H_p", "L_p"};
+    if (isDd1andC1) {
+        active_parameters = {"z1_disk", "B1_disk", "L_disk",        "phi_star_disk", "a_halo", "z1_halo",
+                             "B1_halo", "L_halo",  "phi_star_halo", "p_0",           "H_p",    "L_p"};
     }
     // disk parameters
-    parameters.a_disk = isAd1andC0 ? 0.9 : isAd1andC1 ? 0.031
-                                           : 0.;
+    parameters.a_disk = isAd1andC0 ? 0.9 : isAd1andC1 ? 0.031 : 0.;
     parameters.r1_disk = isDd1 ? 0. : 3.;
     parameters.z1_disk = isDd1 ? 1.5 : 0.;
-    parameters.B1_disk = isAd1andC0 ? 19. : isAd1andC1 ? 32.
-                             : isBd1andC0   ? 2.
-                             : isBd1andC1   ? 24.
-                             : isDd1andC0   ? 0.065
-                                            : 0.40;
-    parameters.H_disk = isAd1andC0 ? 0.055 : isAd1andC1 ? 0.054
-                              : isBd1andC0   ? .32
-                              : isBd1andC1   ? .09
-                                             : 0;
+    parameters.B1_disk = isAd1andC0   ? 19.
+                         : isAd1andC1 ? 32.
+                         : isBd1andC0 ? 2.
+                         : isBd1andC1 ? 24.
+                         : isDd1andC0 ? 0.065
+                                      : 0.40;
+    parameters.H_disk = isAd1andC0 ? 0.055 : isAd1andC1 ? 0.054 : isBd1andC0 ? .32 : isBd1andC1 ? .09 : 0;
 
-    parameters.phi_star_disk = isAd1andC0 ? -54. : isAd1andC1 ? -31.
-                                    : isBd1andC0   ? 153.
-                                    : isBd1andC1   ? -34.
-                                    : isDd1andC0   ? 14.
-                                                   : 120.;
-    parameters.L_disk = isDd1andC0 ? 9.8 : isDd1andC1 ? 2.9
-                                           : 0.;
+    parameters.phi_star_disk = isAd1andC0   ? -54.
+                               : isAd1andC1 ? -31.
+                               : isBd1andC0 ? 153.
+                               : isBd1andC1 ? -34.
+                               : isDd1andC0 ? 14.
+                                            : 120.;
+    parameters.L_disk = isDd1andC0 ? 9.8 : isDd1andC1 ? 2.9 : 0.;
 
     // halo parameters
 
     parameters.z1_halo = 0;
-    parameters.B1_halo = isAd1andC0 ? .36 : isAd1andC1 ? 9.
-                             : isBd1andC0   ? .29
-                             : isBd1andC1   ? 8.2
-                             : isDd1andC0   ? 0.18
-                                            : 9.5;
-    parameters.L_halo = isAd1andC0 ? 3.0 : isAd1andC1 ? 2.1
-                            : isBd1andC0   ? 3.4
-                            : isBd1andC1   ? 2.2
-                            : isDd1andC0   ? 4.8
-                                           : 2.1;
-    parameters.a_halo = isAd1andC0 ? 1.17 : isAd1andC1 ? 0.33
-                             : isBd1andC0   ? 0.88
-                             : isBd1andC1   ? 0.38
-                             : isDd1andC0   ? 0.61
-                                            : 0.45;
-    parameters.phi_star_halo = isAd1andC1 ? 198 : isBd1andC1 ? 197
-                                   : isDd1andC1   ? 179
-                                                  : 0;
+    parameters.B1_halo = isAd1andC0   ? .36
+                         : isAd1andC1 ? 9.
+                         : isBd1andC0 ? .29
+                         : isBd1andC1 ? 8.2
+                         : isDd1andC0 ? 0.18
+                                      : 9.5;
+    parameters.L_halo = isAd1andC0   ? 3.0
+                        : isAd1andC1 ? 2.1
+                        : isBd1andC0 ? 3.4
+                        : isBd1andC1 ? 2.2
+                        : isDd1andC0 ? 4.8
+                                     : 2.1;
+    parameters.a_halo = isAd1andC0   ? 1.17
+                        : isAd1andC1 ? 0.33
+                        : isBd1andC0 ? 0.88
+                        : isBd1andC1 ? 0.38
+                        : isDd1andC0 ? 0.61
+                                     : 0.45;
+    parameters.phi_star_halo = isAd1andC1 ? 198 : isBd1andC1 ? 197 : isDd1andC1 ? 179 : 0;
 
     // shared parameters
-    parameters.p_0 = isAd1andC0 ? -7.9 : isAd1andC1 ? -9.1
-                          : isBd1andC0   ? -7.2
-                          : isBd1andC1   ? -9.0
-                          : isDd1andC0   ? -7.4
-                                         : -8.4;
-    parameters.H_p = isAd1andC0 ? 5. : isBd1andC0 ? 9.
-                        : isDd1andC0   ? 4.2
-                                       : 1.2;
+    parameters.p_0 = isAd1andC0   ? -7.9
+                     : isAd1andC1 ? -9.1
+                     : isBd1andC0 ? -7.2
+                     : isBd1andC1 ? -9.0
+                     : isDd1andC0 ? -7.4
+                                  : -8.4;
+    parameters.H_p = isAd1andC0 ? 5. : isBd1andC0 ? 9. : isDd1andC0 ? 4.2 : 1.2;
 
     parameters.L_p = 50;
 }

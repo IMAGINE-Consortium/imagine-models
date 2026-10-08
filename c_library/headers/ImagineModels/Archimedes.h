@@ -1,16 +1,14 @@
 #ifndef ARCHIMEDES_H
 #define ARCHIMEDES_H
 
-
-#include <functional>
 #include <cmath>
+#include <functional>
 
 #include "ImagineModels/RegularModel.h"
 
 namespace imagine {
 
-//simple archimdeean sprial, implementation based on CRPropa
-
+// simple archimdeean sprial, implementation based on CRPropa
 
 #define ARCHIMEDES_PARAMETERS(X) \
     X(R_0, 3)                    \
@@ -20,8 +18,7 @@ namespace imagine {
 
 IMAGINE_PARAMETERS(ArchimedeanParameters, ARCHIMEDES_PARAMETERS)
 
-class ArchimedeanMagneticField : public RegularVectorModel<ArchimedeanMagneticField, ArchimedeanParameters>
-{
+class ArchimedeanMagneticField : public RegularVectorModel<ArchimedeanMagneticField, ArchimedeanParameters> {
 public:
     template <typename T>
     Vec3<T> field(const double &x, const double &y, const double &z, const ArchimedeanParameters<T> &p) const;

@@ -6,7 +6,8 @@
 int main() {
     imagine::JF12MagneticField jf12;
     imagine::Vec3<double> b = jf12.at_position(-8.5, 0., 0.1);
-    std::cout << "ImagineModels " << IMAGINE_VERSION << ": JF12 at sun " << double(b[0]) << " " << double(b[1]) << " " << double(b[2]) << std::endl;
+    std::cout << "ImagineModels " << IMAGINE_VERSION << ": JF12 at sun " << double(b[0]) << " " << double(b[1]) << " "
+              << double(b[2]) << std::endl;
     if (!std::isfinite(double(b[0])))
         return 1;
 #if IMAGINE_HAS_AUTODIFF

@@ -23,8 +23,13 @@ def regular(case, name, settings, commit):
     if case not in rc.NO_GRID_CASES:
         arrays["on_regular_grid"] = rc.on_regular_grid(model)
         arrays["on_irregular_grid"] = rc.on_irregular_grid(model)
-    meta = {"case": case, "model": name, "settings": settings, "commit": commit,
-            "defaults": rc.parameter_defaults(model)}
+    meta = {
+        "case": case,
+        "model": name,
+        "settings": settings,
+        "commit": commit,
+        "defaults": rc.parameter_defaults(model),
+    }
     if rc.has_jacobian(model):
         columns = rc.jacobian_column_labels(name, model)
         arrays["jacobian_positions"] = rc.JACOBIAN_POSITIONS
@@ -39,8 +44,13 @@ def random(case, name, settings, commit):
     for grid_name, grid in rc.RANDOM_GRIDS.items():
         for seed in rc.RANDOM_SEEDS:
             arrays[f"sample_{grid_name}_{seed}"] = rc.sample(rc.make_model(name, settings), grid, seed)
-    meta = {"case": case, "model": name, "settings": settings, "commit": commit,
-            "defaults": rc.parameter_defaults(rc.make_model(name, settings))}
+    meta = {
+        "case": case,
+        "model": name,
+        "settings": settings,
+        "commit": commit,
+        "defaults": rc.parameter_defaults(rc.make_model(name, settings)),
+    }
     _write(case, arrays, meta)
 
 

@@ -6,7 +6,7 @@
 class PyRegularVectorField : public RegularVectorField {
 public:
     using RegularVectorField::RegularVectorField;
-    Vec3<double> at_position(const double& x, const double& y, const double& z) const override {
+    Vec3<double> at_position(const double &x, const double &y, const double &z) const override {
         py::gil_scoped_acquire gil;
         py::function override = py::get_override(static_cast<const RegularVectorField *>(this), "at_position");
         if (!override)
@@ -19,7 +19,7 @@ public:
 class PyRegularScalarField : public RegularScalarField {
 public:
     using RegularScalarField::RegularScalarField;
-    double at_position(const double& x, const double& y, const double& z) const override {
+    double at_position(const double &x, const double &y, const double &z) const override {
         py::gil_scoped_acquire gil;
         py::function override = py::get_override(static_cast<const RegularScalarField *>(this), "at_position");
         if (!override)

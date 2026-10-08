@@ -1,16 +1,14 @@
 #ifndef SUN_H
 #define SUN_H
 
-
-#include <functional>
 #include <cmath>
+#include <functional>
 
 #include "ImagineModels/RegularModel.h"
 
 namespace imagine {
 
-//Sun et al. A&A V.477 2008 ASS+RING model magnetic field
-
+// Sun et al. A&A V.477 2008 ASS+RING model magnetic field
 
 #define SUN_PARAMETERS(X)                                                                      \
     X(b_Rsun, 8.5)                                                                             \
@@ -28,8 +26,7 @@ namespace imagine {
 
 IMAGINE_PARAMETERS(SunParameters, SUN_PARAMETERS)
 
-class SunMagneticField : public RegularVectorModel<SunMagneticField, SunParameters>
-{
+class SunMagneticField : public RegularVectorModel<SunMagneticField, SunParameters> {
 public:
     template <typename T>
     Vec3<T> field(const double &x, const double &y, const double &z, const SunParameters<T> &p) const;

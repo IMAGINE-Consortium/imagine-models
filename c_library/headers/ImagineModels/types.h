@@ -8,8 +8,8 @@
 #include "ImagineModels/config.h"
 
 #if IMAGINE_HAS_AUTODIFF
-    #include <autodiff/forward/real.hpp>
-    #include <autodiff/forward/real/eigen.hpp>
+#include <autodiff/forward/real.hpp>
+#include <autodiff/forward/real/eigen.hpp>
 #endif
 
 namespace imagine {
@@ -17,14 +17,12 @@ namespace imagine {
 using std::abs;
 
 #if IMAGINE_HAS_AUTODIFF
-    namespace ad = autodiff;
+namespace ad = autodiff;
 #endif
 
-template <typename T>
-using Vec3 = std::array<T, 3>;
+template <typename T> using Vec3 = std::array<T, 3>;
 
-template <typename T>
-using Scalar = T;
+template <typename T> using Scalar = T;
 
 }
 
