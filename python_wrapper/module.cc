@@ -7,6 +7,7 @@ PYBIND11_MODULE(_core, m) {
     m.attr("has_fftw") = bool(IMAGINE_HAS_FFTW);
 
     bind_grids(m);
+    bind_interpolation(m);
     bind_regular_bases(m);
     bind_archimedes(m);
     bind_fauvet(m);

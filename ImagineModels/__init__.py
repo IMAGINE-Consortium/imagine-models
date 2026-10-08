@@ -27,6 +27,7 @@ from ._core import (
     __version__,
     has_autodiff,
     has_fftw,
+    interpolate,
 )
 
 if has_fftw:

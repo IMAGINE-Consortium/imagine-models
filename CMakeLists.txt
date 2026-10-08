@@ -29,6 +29,7 @@ if(BUILD_PYTHON_PACKAGE)
     set(BINDING_SOURCES
         ${PW}/module.cc
         ${PW}/grids.cc
+        ${PW}/interpolation.cc
         ${PW}/regular/bases.cc
         ${PW}/regular/archimedes.cc
         ${PW}/regular/fauvet.cc

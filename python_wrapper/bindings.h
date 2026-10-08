@@ -27,7 +27,9 @@ inline constexpr const char *active_parameters = "Parameters included in derivat
 inline constexpr const char *parameters = "All parameters as a dict; assigning updates the given ones.";
 inline constexpr const char *parameter_names = "Names of the model parameters, in order.";
 inline constexpr const char *set_model = "Select a published variant and load its parameters.";
-inline constexpr const char *sample = "Random realisation on a RegularGrid for the given seed.";
+inline constexpr const char *sample = "Random realisation on a RegularGrid; use interpolate for other positions.";
+inline constexpr const char *interpolate =
+    "Linear or nearest-grid-point interpolation of grid data at positions; raises outside the grid unless nan_outside.";
 inline constexpr const char *random_numbers = "Unit-variance Gaussian random field before scaling.";
 inline constexpr const char *rms = "Expected rms amplitude at positions or on a grid.";
 inline constexpr const char *variance = "Expected variance at positions.";
@@ -71,6 +73,7 @@ py::array_t<double> map_positions(F &&f, const py::object &x, const py::object &
 }
 
 void bind_grids(py::module_ &m);
+void bind_interpolation(py::module_ &m);
 void bind_regular_bases(py::module_ &m);
 void bind_archimedes(py::module_ &m);
 void bind_fauvet(py::module_ &m);

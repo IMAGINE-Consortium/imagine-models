@@ -130,6 +130,7 @@ if(BUILD_TESTING)
     set(TEST_DIR ${CMAKE_CURRENT_SOURCE_DIR}/test)
     set(TEST_SOURCES
         ${TEST_DIR}/regular/test_grid.cc
+        ${TEST_DIR}/regular/test_interpolation.cc
         ${TEST_DIR}/regular/test_parameters.cc
         ${TEST_DIR}/regular/test_positions.cc
         ${TEST_DIR}/regular/test_models.cc

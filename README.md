@@ -118,6 +118,7 @@ random_field = img.JF12RandomField()
 sample = random_field.sample(grid, seed=23)  # shape (3, 200, 200, 40)
 random_field.rms(-8.5, 0.0, 0.0)  # analytic local rms amplitude
 random_field.rms(grid)  # ... on a grid
+img.interpolate(sample, grid, cloud)  # sample interpolated at other positions, shape (3, 3)
 ```
 
 `demos/python/model_library_demo.ipynb` is a tutorial covering this in more detail, including how to prototype your own model in Python.
@@ -166,6 +167,7 @@ A complete example is `demos/cpp/example.cc`.
 - **Units**: positions in kpc, magnetic fields in µG, thermal electron densities in cm⁻³, angles in degrees.
 - **Coordinates**: Galactocentric Cartesian (x, y, z), with z perpendicular to the Galactic plane.
 - **Grids**: a `RegularGrid` has `shape`, `reference_point` (the first grid point) and `increment`; an `IrregularGrid` has arbitrary x, y and z axes; a `PointCloud` is an unstructured list of N positions. Grid results are indexed `[component, i, j, k]`, point-cloud results `[component, point]` (in C++ the shape is `{N, 1, 1}`). Random fields can be sampled on a `RegularGrid` only (FFT); their `rms` works on all three.
+- **Interpolation**: `interpolate(data, grid, points)` (C++: `ImagineModels/Interpolation.h`) evaluates data on a `RegularGrid` (e.g. a random sample) at other positions, linearly or at the nearest grid point; positions outside the grid raise an error unless `nan_outside` is set. Linear interpolation reduces the variance between grid points and does not keep a divergence-free field divergence-free; it is only meaningful if the grid resolves the correlation length of the field.
 - **Random fields**: a random field is `rms(x) · G(x)`, where `G` is a zero-mean Gaussian random field with unit variance. The power spectrum only sets the correlation structure and is normalised on the given grid, so a sample realises exactly `rms(x)²` as local variance, independent of the grid. For vector fields `rms` is the total field strength `sqrt(E|B|²)`. Divergence cleaning (`clean_divergence`, on by default) keeps the total power, but with a spatially varying `rms` the local amplitude then follows `rms(x)` only approximately. `GaussianScalarField` is `mu + sigma · G`, `LogNormalScalarField` is `exp(log_mu + log_sigma · G)`.
 
 

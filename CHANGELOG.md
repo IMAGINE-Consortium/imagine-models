@@ -23,6 +23,7 @@ Results of many models changed because implementation errors were fixed. Results
 
 - Models: UF26 random field, XH24 halo, JF12 Planck variants (`Planck12b`, `Planck12c`, regular and random), Han XH24 disk variant.
 - `PointCloud` grids for evaluation at arbitrary positions.
+- `interpolate`: linear or nearest-grid-point interpolation of data on a `RegularGrid` (e.g. a random sample) at arbitrary positions.
 - `rms`, `variance` (and `mean` for scalar fields) for random fields.
 - Installable C++ library with a CMake package (`ImagineModels::ImagineModels`) and pkg-config file.
 

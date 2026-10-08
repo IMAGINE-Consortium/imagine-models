@@ -1,5 +1,6 @@
 #pragma once
 
+#include "ImagineModels/Interpolation.h"
 #include "ImagineModels/RegularModels.h"
 #include "ImagineModels/config.h"
 
