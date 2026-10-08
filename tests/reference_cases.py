@@ -63,6 +63,7 @@ def _regular_cases():
         "HelixMagneticField",
         "JF12MagneticField",
         "JaffeMagneticField",
+        "KST24MagneticField",
         "PshirkovMagneticField",
         "SVT22MagneticField",
         "StanevBSSMagneticField",

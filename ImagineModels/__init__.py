@@ -9,6 +9,7 @@ from ._core import (
     IrregularGrid,
     JaffeMagneticField,
     JF12MagneticField,
+    KST24MagneticField,
     PointCloud,
     PshirkovMagneticField,
     RegularGrid,

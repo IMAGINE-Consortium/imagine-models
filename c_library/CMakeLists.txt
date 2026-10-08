@@ -57,6 +57,7 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/config.h.in ${IM_GENERATED_DIR}/Imagi
 set(IM_SRC_FILES
     ${IM_SOURCE_DIR}/helix.cc
     ${IM_SOURCE_DIR}/jaffe.cc
+    ${IM_SOURCE_DIR}/kst24.cc
     ${IM_SOURCE_DIR}/jf12.cc
     ${IM_SOURCE_DIR}/ymw16.cc
     ${IM_SOURCE_DIR}/xh24.cc

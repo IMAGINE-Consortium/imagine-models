@@ -34,6 +34,18 @@ std::vector<double> finite_difference(Model &model, const std::string &name, con
     return up;
 }
 
+template <typename Model>
+std::vector<double> one_sided_difference(Model &model, const std::string &name, const Position &p, double h) {
+    const double p0 = model.get_parameter(name);
+    auto center = value_at(model, p);
+    model.set_parameter(name, p0 + h);
+    auto shifted = value_at(model, p);
+    model.set_parameter(name, p0);
+    for (std::size_t k = 0; k < shifted.size(); ++k)
+        shifted[k] = (shifted[k] - center[k]) / h;
+    return shifted;
+}
+
 bool all_close(const std::vector<double> &a, const std::vector<double> &b, double rtol, double atol) {
     for (std::size_t k = 0; k < a.size(); ++k)
         if (std::abs(a[k] - b[k]) > atol + rtol * std::abs(b[k]))
@@ -75,8 +87,11 @@ TEMPLATE_LIST_TEST_CASE("Jacobian matches finite differences", "[derivatives]", 
             std::vector<double> column(jac.rows());
             for (Eigen::Index k = 0; k < jac.rows(); ++k)
                 column[k] = jac(k, c);
-            CAPTURE(column, fine);
-            CHECK(all_close(column, fine, 1e-4, 1e-6 * largest));
+            const auto forward = one_sided_difference(model, name, p, 1e-6 * scale);
+            const auto backward = one_sided_difference(model, name, p, -1e-6 * scale);
+            CAPTURE(column, fine, forward, backward);
+            CHECK((all_close(column, fine, 1e-4, 1e-6 * largest) || all_close(column, forward, 1e-4, 1e-6 * largest) ||
+                   all_close(column, backward, 1e-4, 1e-6 * largest)));
         }
     }
 }

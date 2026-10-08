@@ -15,6 +15,7 @@ PYBIND11_MODULE(_core, m) {
     bind_hmr(m);
     bind_helix(m);
     bind_jaffe(m);
+    bind_kst24(m);
     bind_pshirkov(m);
     bind_jf12(m);
     bind_stanev(m);

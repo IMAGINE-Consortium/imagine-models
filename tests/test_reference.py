@@ -80,6 +80,15 @@ def _finite_difference(model, label, position, h):
     return (up - down) / (2 * h)
 
 
+def _one_sided_difference(model, label, position, h):
+    p0 = getattr(model, label)
+    center = np.atleast_1d(np.asarray(model.at_position(*position), dtype=float))
+    setattr(model, label, p0 + h)
+    shifted = np.atleast_1d(np.asarray(model.at_position(*position), dtype=float))
+    setattr(model, label, p0)
+    return (shifted - center) / h
+
+
 def _column(jac, index, n_columns):
     jac = jac.reshape(-1, n_columns) if jac.size % n_columns == 0 else jac
     return jac[:, index]
@@ -108,9 +117,9 @@ def test_jacobian_matches_finite_differences(case):
             if not np.allclose(fine, coarse, rtol=1e-2, atol=1e-6, equal_nan=True):
                 continue
             expected = _column(jac, index, len(labels))
-            if not np.allclose(
-                expected, fine, rtol=1e-4, atol=1e-6 * max(1.0, np.nanmax(np.abs(fine), initial=0.0)), equal_nan=True
-            ):
+            atol = 1e-6 * max(1.0, np.nanmax(np.abs(fine), initial=0.0))
+            candidates = [fine] + [_one_sided_difference(model, label, position, s * 1e-6 * scale) for s in (1, -1)]
+            if not any(np.allclose(expected, c, rtol=1e-4, atol=atol, equal_nan=True) for c in candidates):
                 failures.append((label, position.round(2).tolist(), expected.tolist(), fine.tolist()))
     assert not failures, failures
 

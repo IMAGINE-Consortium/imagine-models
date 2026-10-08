@@ -37,6 +37,7 @@ if(BUILD_PYTHON_PACKAGE)
         ${PW}/regular/helix.cc
         ${PW}/regular/hmr.cc
         ${PW}/regular/jaffe.cc
+        ${PW}/regular/kst24.cc
         ${PW}/regular/jf12.cc
         ${PW}/regular/pshirkov.cc
         ${PW}/regular/stanev.cc

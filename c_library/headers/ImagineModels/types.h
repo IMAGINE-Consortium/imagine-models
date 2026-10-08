@@ -23,4 +23,14 @@ template <typename T> using Vec3 = std::array<T, 3>;
 
 template <typename T> using Scalar = T;
 
+inline double value(double x) {
+    return x;
+}
+
+#if IMAGINE_HAS_AUTODIFF
+inline double value(const ad::real &x) {
+    return x[0];
+}
+#endif
+
 }
