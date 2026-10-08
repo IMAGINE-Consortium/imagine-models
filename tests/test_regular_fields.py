@@ -56,7 +56,7 @@ def test_at_position():
         for position, value in known_positions[model_string]:
             pos = mo.at_position(*position)
             for j in range(3):
-                assert pos[j] == value[j]
+                assert pos[j] == pytest.approx(value[j], rel=1e-12, abs=1e-14)
 
 
 @pytest.mark.parametrize("model_string", regular_models + scalar_models)

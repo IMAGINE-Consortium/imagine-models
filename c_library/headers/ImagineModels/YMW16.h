@@ -15,6 +15,7 @@
 #include <vector>
 
 #include "ImagineModels/RegularModel.h"
+#include "ImagineModels/units.h"
 
 namespace imagine {
 
@@ -90,8 +91,9 @@ public:
     bool do_spiral_arms = true;
 
     // Norma-Outer, Perseus, Carina-Sagittarius, Crux-Scutum, Local
-    std::array<double, 5> t3_rmin{3.35, 3.707, 3.56, 3.67, 8.21};  // initial radius, kpc
-    std::array<double, 5> t3_thmin{0.77, 2.093, 3.81, 5.76, 0.96}; // initial azimuth angle, rad
+    std::array<double, 5> t3_rmin{3.35, 3.707, 3.56, 3.67, 8.21}; // initial radius, kpc
+    std::array<double, 5> t3_thmin{0.77 / units::deg, 2.093 / units::deg, 3.81 / units::deg, 5.76 / units::deg,
+                                   0.96 / units::deg}; // initial azimuth angle, deg
     std::array<double, 5> t3_tan_pitch{0.202, 0.173, 0.183, 0.186, 0.0483};
     std::array<double, 5> t3_cos_pitch{0.98, 0.985, 0.9836, 0.983, 0.9988};
     std::array<double, 5> t3_narm{0.135, 0.129, 0.103, 0.116, 0.0057};

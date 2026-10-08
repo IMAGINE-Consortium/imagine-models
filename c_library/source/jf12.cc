@@ -63,13 +63,13 @@ Vec3<T> JF12MagneticField::field(const double &x, const double &y, const double 
 
             // find spiral region
             T b_disk = 0.;
-            double r_negx = r * exp(-1 / tan(M_PI / 180. * (90 - inc)) * (phi - M_PI));
+            double r_negx = r * exp(-1 / tan(units::deg * (90 - inc)) * (phi - units::pi));
 
             if (r_negx > rc_B[7] * arm_shift) {
-                r_negx = r * exp(-1 / tan(M_PI / 180. * (90 - inc)) * (phi + M_PI));
+                r_negx = r * exp(-1 / tan(units::deg * (90 - inc)) * (phi + units::pi));
             }
             if (r_negx > rc_B[7] * arm_shift) {
-                r_negx = r * exp(-1 / tan(M_PI / 180. * (90 - inc)) * (phi + 3 * M_PI));
+                r_negx = r * exp(-1 / tan(units::deg * (90 - inc)) * (phi + 3 * units::pi));
             }
             for (int i = 7; i >= 0; i--) {
                 if (r_negx < rc_B[i] * arm_shift) {
@@ -77,8 +77,8 @@ Vec3<T> JF12MagneticField::field(const double &x, const double &y, const double 
                 }
             } // "region 8,7,6,..,2"
 
-            B_cyl[0] = b_disk * B0 * sin(M_PI / 180. * inc) * (1 - zprofile);
-            B_cyl[1] = b_disk * B0 * cos(M_PI / 180. * inc) * (1 - zprofile);
+            B_cyl[0] = b_disk * B0 * sin(units::deg * inc) * (1 - zprofile);
+            B_cyl[1] = b_disk * B0 * cos(units::deg * inc) * (1 - zprofile);
         }
     }
 
@@ -117,16 +117,16 @@ Vec3<T> JF12MagneticField::field(const double &x, const double &y, const double 
         }
 
         // interior/exterior boundary
-        T rc_X = p.rpc_X + std::abs(z) / tan(p.Xtheta_const * M_PI / 180.);
+        T rc_X = p.rpc_X + std::abs(z) / tan(p.Xtheta_const * units::deg);
         if (r < rc_X) { // interior, varying elevation
             rp_X = r * p.rpc_X / rc_X;
             B_X = p.B0_X * pow(p.rpc_X / rc_X, 2.) * exp(-rp_X / p.r0_X);
             Xtheta = atan(std::abs(z) / (r - rp_X)); // interior elevation angle
             if (z == 0. or r == 0.) {
-                Xtheta = M_PI / 2.;
+                Xtheta = units::pi / 2.;
             } // to avoid some NaN
         } else { // exterior, constant elevation
-            Xtheta = p.Xtheta_const * M_PI / 180.;
+            Xtheta = p.Xtheta_const * units::deg;
             rp_X = r - std::abs(z) / tan(Xtheta);
             B_X = p.B0_X * rp_X / r * exp(-rp_X / p.r0_X);
         }

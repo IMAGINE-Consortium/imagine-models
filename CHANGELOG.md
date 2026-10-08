@@ -33,9 +33,10 @@ Results of many models changed because implementation errors were fixed. Results
 - Published variants are selected with `set_model` (UF24, TF17, Pshirkov, JF12, Han, UF26), which also loads their parameters.
 - Classes renamed: `JF12RegularField` → `JF12MagneticField`, `SVT22` → `SVT22MagneticField` (Python, now equal to the C++ names), `UFMagneticField` → `UF24MagneticField`, `TFMagneticField` → `TF17MagneticField` (C++ and Python).
 - Pshirkov: `set_model("ASS" | "BSS")` and `useDisk` replace `useASS` / `useBSS`.
-- YMW16: `t3_thmin` (rad), `t3_tan_pitch`, `t3_cos_pitch` replace `t3_phimin` / `t3_tpitch`.
+- All angle inputs are in degrees. Changed from radians: UF24 `fDiskPhase1-3`, `fDiskPitch`, `fSpurCenter`, `fSpurLength`, `fSpurWidth`; Stanev `b_phi0`; YMW16 `t3_thmin`. Derivatives w.r.t. these parameters are per degree.
+- YMW16: `t3_thmin`, `t3_tan_pitch`, `t3_cos_pitch` replace `t3_phimin` / `t3_tpitch`.
 - Fauvet: parameters `b_b0, b_RB, b_Rsun, b_z0, b_r0, b_p, b_chi0`.
 - ES random field: parameters `b0`, `observer`. `GaussianScalarField`: `mu`, `sigma`.
 - Jaffe: `arm_num` outside 2–4 raises an error.
-- C++: all code in `namespace imagine`; headers included as `"ImagineModels/X.h"`; feature macros `IMAGINE_HAS_AUTODIFF`, `IMAGINE_HAS_FFTW`. Header files renamed to one name per model (e.g. `JF12.h`, `UF24.h`, `YMW16.h`).
+- C++: constants in `imagine::units` (`ImagineModels/units.h`; the `num`, `astro` and `cgs` namespaces are removed); all code in `namespace imagine`; headers included as `"ImagineModels/X.h"`; feature macros `IMAGINE_HAS_AUTODIFF`, `IMAGINE_HAS_FFTW`. Header files renamed to one name per model (e.g. `JF12.h`, `UF24.h`, `YMW16.h`).
 - matplotlib is optional (extra `plot`) and no longer imported with the package.

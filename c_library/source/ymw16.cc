@@ -23,13 +23,13 @@ T YMW16::field(const double &x, const double &y, const double &z, const YMW16Par
     // warp
     double zz_w = zz;
     if (rr >= t0_r_warp)
-        zz_w -= t0_gamma_w * (rr - t0_r_warp) * cos(atan2(yy, xx) - t0_theta0 / 180 * M_PI);
+        zz_w -= t0_gamma_w * (rr - t0_r_warp) * cos(atan2(yy, xx) - t0_theta0 * units::deg);
 
     T ne_comp[8]{0.};
     T gd = 0.;
     const T ne_thick = thick(zz_w, rr, gd, p);
     // longitude, in deg
-    const double ec_l{atan2(xx, p.r0 - yy) * 180 / M_PI};
+    const double ec_l{atan2(xx, p.r0 - yy) / units::deg};
     // Fermi bubbles do not contribute
     if (do_thick_disc)
         ne_comp[1] = ne_thick;
@@ -119,28 +119,28 @@ T YMW16::spiral(const double &xx, const double &yy, const double &zz, const doub
     const T scaling = gd * _cosh_scaling(zz, k3h) * _cosh_scaling(rr, p.t3_aa, p.t3_b2s);
     double theta = atan2(yy, xx);
     if (theta < 0)
-        theta += 2 * M_PI;
+        theta += 2 * units::pi;
     auto arm_distance = [&](int i, double d_phi) { return std::abs(rr - t3_rmin[i] * exp(d_phi * t3_tan_pitch[i])); };
     T ne3s = 0.;
     // looping through arms
     for (int i = 0; i < 5; ++i) {
         double detrr;
         if (i != 4) {
-            const double d_phi = theta - t3_thmin[i];
-            detrr = arm_distance(i, d_phi + 2 * M_PI);
+            const double d_phi = theta - t3_thmin[i] * units::deg;
+            detrr = arm_distance(i, d_phi + 2 * units::pi);
             if (d_phi >= 0)
                 detrr = std::min(detrr, arm_distance(i, d_phi));
             else if (i >= 2)
-                detrr = std::min(detrr, arm_distance(i, d_phi + 4 * M_PI));
-        } else if (theta >= t3_thmin[i] and theta < 2.) { // Local arm
-            detrr = arm_distance(i, theta - t3_thmin[i]);
+                detrr = std::min(detrr, arm_distance(i, d_phi + 4 * units::pi));
+        } else if (theta >= t3_thmin[i] * units::deg and theta < 2.) { // Local arm
+            detrr = arm_distance(i, theta - t3_thmin[i] * units::deg);
         } else {
             continue;
         }
         if (detrr > cutoff * t3_warm[i])
             continue;
         const double sech2 = pow(1. / cosh(detrr * t3_cos_pitch[i] / t3_warm[i]), 2);
-        const double theta_deg = theta * 180 / M_PI;
+        const double theta_deg = theta / units::deg;
         if (i != 2) {
             ne3s += t3_narm[i] * scaling * sech2;
         } else if (rr > 6 and theta_deg > p.t3_thetacn) { // correction for Carina-Sagittarius
@@ -169,10 +169,10 @@ T YMW16::galcen(const double &xx, const double &yy, const double &zz, const YMW1
 template <typename T>
 T YMW16::gum(const double &xx, const double &yy, const double &zz, const YMW16Parameters<T> &p) const {
     // center of Gum Nebula
-    const double rgalc = t5_dc * cos(t5_bc * M_PI / 180);
-    const double xc = rgalc * sin(t5_lc * M_PI / 180);
-    const T yc = p.r0 - rgalc * cos(t5_lc * M_PI / 180);
-    const double zc = t5_dc * sin(t5_bc * M_PI / 180);
+    const double rgalc = t5_dc * cos(t5_bc * units::deg);
+    const double xc = rgalc * sin(t5_lc * units::deg);
+    const T yc = p.r0 - rgalc * cos(t5_lc * units::deg);
+    const double zc = t5_dc * sin(t5_bc * units::deg);
     const T theta = abs(atan((zz - zc) / sqrt((xx - xc) * (xx - xc) + (yy - yc) * (yy - yc))));
     const T RR = sqrt((xx - xc) * (xx - xc) + (yy - yc) * (yy - yc) + (zz - zc) * (zz - zc));
     T Dmin;
@@ -184,7 +184,7 @@ T YMW16::gum(const double &xx, const double &yy, const double &zz, const YMW16Pa
         const T xyp = zp / tantheta;
         T alpha;
         if (p.t5_agn - abs(xyp) < 1e-15)
-            alpha = M_PI / 2;
+            alpha = units::pi / 2;
         else
             alpha = atan(p.t5_kgn * xyp / sqrt(p.t5_agn * p.t5_agn - xyp * xyp));
         Dmin = abs((RR - sqrt(zp * zp + xyp * xyp)) * sin(theta + alpha));
@@ -217,7 +217,7 @@ T YMW16::localbubble(const double &xx, const double &yy, const double &zz, const
     if (dl2 <= cutoff * p.t6_detlb2)
         nel2 = p.t6_nlb2 * pow(1. / cosh(dl2 / p.t6_detlb2), 2) * pow(1. / cosh((rLB - Rlb) / p.t6_wlb2), 2) *
                pow(1. / cosh(zz / p.t6_hlb2), 2);
-    if (cos_a < cos(M_PI / 4))
+    if (cos_a < cos(units::pi / 4))
         nel1 = 0.;
     return nel1 + nel2;
 }
@@ -225,10 +225,10 @@ T YMW16::localbubble(const double &xx, const double &yy, const double &zz, const
 // north polar spur
 template <typename T>
 T YMW16::nps(const double &xx, const double &yy, const double &zz, const YMW16Parameters<T> &p) const {
-    const T theta_LI = p.t7_thetali / 180. * M_PI;
+    const T theta_LI = p.t7_thetali * units::deg;
     // r_LI in ref
     const double rLI = sqrt((xx - x_c) * (xx - x_c) + (yy - y_c) * (yy - y_c) + (zz - z_c) * (zz - z_c));
-    const T theta = acos(((xx - x_c) * cos(theta_LI) + (zz - z_c) * sin(theta_LI)) / rLI) * 180. / M_PI;
+    const T theta = acos(((xx - x_c) * cos(theta_LI) + (zz - z_c) * sin(theta_LI)) / rLI) / units::deg;
     if (abs(rLI - p.t7_rli) > cutoff * p.t7_wli or abs(theta) > cutoff * p.t7_detthetali)
         return 0.;
     return p.t7_nli * exp(-pow((rLI - p.t7_rli) / p.t7_wli, 2)) * exp(-pow(theta / p.t7_detthetali, 2));

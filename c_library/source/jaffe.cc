@@ -60,7 +60,7 @@ Vec3<T> JaffeMagneticField::orientation(const double &x, const double &y, const 
     const double r{sqrt(x * x + y * y)}; // cylindrical frame
     const auto r_lim = p.ring_r;
     const auto bar_lim{p.bar_a + 0.5 * p.comp_d};
-    auto arm_pitch = p.arm_pitch * M_PI / 180;
+    auto arm_pitch = p.arm_pitch * units::deg;
     const auto cos_p = cos(arm_pitch);
     const auto sin_p = sin(arm_pitch); // pitch angle
 
@@ -85,8 +85,8 @@ Vec3<T> JaffeMagneticField::orientation(const double &x, const double &y, const 
     }
     // elliptical bar, replaces ring
     else if (bar) {
-        const auto cos_phi = cos(p.bar_phi0 * M_PI / 180);
-        const auto sin_phi = sin(p.bar_phi0 * M_PI / 180);
+        const auto cos_phi = cos(p.bar_phi0 * units::deg);
+        const auto sin_phi = sin(p.bar_phi0 * units::deg);
         const auto x_rot = cos_phi * x - sin_phi * y;
         const auto y_rot = sin_phi * x + cos_phi * y;
         const double sgn_x = x_rot < 0 ? -1. : 1.;
@@ -182,7 +182,7 @@ std::vector<T> JaffeMagneticField::dist2arm(const double &x, const double &y, co
     const double r{sqrt(x * x + y * y)};
     const auto r_lim{p.ring_r};
     const auto bar_lim{p.bar_a + 0.5 * p.comp_d};
-    auto arm_pitch = p.arm_pitch * M_PI / 180;
+    auto arm_pitch = p.arm_pitch * units::deg;
     const auto cos_p = cos(arm_pitch);
     const auto sin_p = sin(arm_pitch); // pitch angle
     const auto beta_inv{-sin_p / cos_p};
@@ -194,7 +194,7 @@ std::vector<T> JaffeMagneticField::dist2arm(const double &x, const double &y, co
     std::vector<T> d;
 
     if (theta < 0)
-        theta += 2 * M_PI;
+        theta += 2 * units::pi;
     // if molecular ring
     if (ring) {
         // ring: first element only
@@ -206,10 +206,10 @@ std::vector<T> JaffeMagneticField::dist2arm(const double &x, const double &y, co
             // loop through arms
             std::vector<T> arm_phi{p.arm_phi1, p.arm_phi2, p.arm_phi3, p.arm_phi4};
             for (int i = 0; i < this->arm_num; ++i) {
-                auto d_ang{arm_phi[i] * M_PI / 180 - theta};
+                auto d_ang{arm_phi[i] * units::deg - theta};
                 auto d_rad{abs(p.arm_r0 * exp(d_ang * beta_inv) - r)};
-                auto d_rad_p{abs(p.arm_r0 * exp((d_ang + 2 * M_PI) * beta_inv) - r)};
-                auto d_rad_m{abs(p.arm_r0 * exp((d_ang - 2 * M_PI) * beta_inv) - r)};
+                auto d_rad_p{abs(p.arm_r0 * exp((d_ang + 2 * units::pi) * beta_inv) - r)};
+                auto d_rad_m{abs(p.arm_r0 * exp((d_ang - 2 * units::pi) * beta_inv) - r)};
                 d.push_back(std::min(std::min(d_rad, d_rad_p), d_rad_m) * cos_p);
             }
         }
@@ -219,9 +219,9 @@ std::vector<T> JaffeMagneticField::dist2arm(const double &x, const double &y, co
         if (r == 0.) {
             d.push_back(0.);
         } else {
-            const auto cos_tmp{cos(p.bar_phi0 * M_PI / 180) * x / r - sin(p.bar_phi0 * M_PI / 180) * y / r};
+            const auto cos_tmp{cos(p.bar_phi0 * units::deg) * x / r - sin(p.bar_phi0 * units::deg) * y / r};
             // cos(phi)cos(phi0) - sin(phi)sin(phi0)
-            const auto sin_tmp{cos(p.bar_phi0 * M_PI / 180) * y / r + sin(p.bar_phi0 * M_PI / 180) * x / r};
+            const auto sin_tmp{cos(p.bar_phi0 * units::deg) * y / r + sin(p.bar_phi0 * units::deg) * x / r};
             // sin(phi)cos(phi0) + cos(phi)sin(phi0)
             // bar: single element
             if (r < bar_lim) {
@@ -235,10 +235,10 @@ std::vector<T> JaffeMagneticField::dist2arm(const double &x, const double &y, co
                 // loop through arms
                 std::vector<T> arm_phi{p.arm_phi1, p.arm_phi2, p.arm_phi3, p.arm_phi4};
                 for (int i = 0; i < this->arm_num; ++i) {
-                    auto d_ang{arm_phi[i] * M_PI / 180 - theta};
+                    auto d_ang{arm_phi[i] * units::deg - theta};
                     auto d_rad{abs(p.arm_r0 * exp(d_ang * beta_inv) - r)};
-                    auto d_rad_p{abs(p.arm_r0 * exp((d_ang + 2 * M_PI) * beta_inv) - r)};
-                    auto d_rad_m{abs(p.arm_r0 * exp((d_ang - 2 * M_PI) * beta_inv) - r)};
+                    auto d_rad_p{abs(p.arm_r0 * exp((d_ang + 2 * units::pi) * beta_inv) - r)};
+                    auto d_rad_m{abs(p.arm_r0 * exp((d_ang - 2 * units::pi) * beta_inv) - r)};
                     d.push_back(std::min(std::min(d_rad, d_rad_p), d_rad_m) * cos_p);
                 }
             }

@@ -1,3 +1,4 @@
+#include "ImagineModels/units.h"
 #include <algorithm>
 #include <cmath>
 #include <stdexcept>
@@ -62,12 +63,12 @@ double JF12RandomField::rms(const double &x, const double &y, const double &z) c
     if (r < 5.) {
         scaling_disk = b0_int;
     } else {
-        double r_negx = r * exp(-1 / tan(M_PI / 180. * (90 - inc)) * (phi - M_PI));
+        double r_negx = r * exp(-1 / tan(units::deg * (90 - inc)) * (phi - units::pi));
         if (r_negx > rc_B[7] * arm_shift) {
-            r_negx = r * exp(-1 / tan(M_PI / 180. * (90 - inc)) * (phi + M_PI));
+            r_negx = r * exp(-1 / tan(units::deg * (90 - inc)) * (phi + units::pi));
         }
         if (r_negx > rc_B[7] * arm_shift) {
-            r_negx = r * exp(-1 / tan(M_PI / 180. * (90 - inc)) * (phi + 3 * M_PI));
+            r_negx = r * exp(-1 / tan(units::deg * (90 - inc)) * (phi + 3 * units::pi));
         }
         for (int i = 7; i >= 0; i--) {
             if (r_negx < rc_B[i] * arm_shift) {

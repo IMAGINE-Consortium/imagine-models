@@ -163,7 +163,7 @@ A complete example is `demos/cpp/example.cc`.
 
 ## Conventions
 
-- **Units**: positions in kpc, magnetic fields in µG, thermal electron densities in cm⁻³.
+- **Units**: positions in kpc, magnetic fields in µG, thermal electron densities in cm⁻³, angles in degrees.
 - **Coordinates**: Galactocentric Cartesian (x, y, z), with z perpendicular to the Galactic plane.
 - **Grids**: a `RegularGrid` has `shape`, `reference_point` (the first grid point) and `increment`; an `IrregularGrid` has arbitrary x, y and z axes; a `PointCloud` is an unstructured list of N positions. Grid results are indexed `[component, i, j, k]`, point-cloud results `[component, point]` (in C++ the shape is `{N, 1, 1}`). Random fields can be sampled on a `RegularGrid` only (FFT); their `rms` works on all three.
 - **Random fields**: a random field is `rms(x) · G(x)`, where `G` is a zero-mean Gaussian random field with unit variance. The power spectrum only sets the correlation structure and is normalised on the given grid, so a sample realises exactly `rms(x)²` as local variance, independent of the grid. For vector fields `rms` is the total field strength `sqrt(E|B|²)`. Divergence cleaning (`clean_divergence`, on by default) keeps the total power, but with a spatially varying `rms` the local amplitude then follows `rms(x)` only approximately. `GaussianScalarField` is `mu + sigma · G`, `LogNormalScalarField` is `exp(log_mu + log_sigma · G)`.
@@ -203,7 +203,7 @@ Quick prototypes can also be written in pure Python by subclassing `img.RegularV
 
 - Formatting is done by tools: `clang-format` (C++, `.clang-format`) and `ruff format` / `ruff check` (Python, `pyproject.toml`). CI checks both with the versions pinned in `.github/workflows/ci.yml`.
 - One file stem per model: `ModelName.h`, `model_name.cc`, `python_wrapper/regular/model_name.cc`, `model_name_demo.ipynb`. Headers use `#pragma once`. The Python class name equals the C++ class name.
-- Parameter names follow the symbols of the publication or reference code; units other than kpc and µG are given in the parameter list (`X(b_p, -12.) /* deg */`).
+- Parameter names follow the symbols of the publication or reference code; units other than kpc and µG are given in the parameter list (`X(b_p, -12.) /* deg */`). Angle inputs are in degrees and converted where used (`p.b_p * units::deg`); constants such as `units::pi` come from `ImagineModels/units.h` (no `M_PI`).
 - Call math functions on templated values unqualified (`sqrt(x)`, `exp(x)`) so that the autodiff overloads apply.
 - Each model header starts with its reference, the external code it is based on, and its deviations from the publication (also listed [above](#deviations-from-the-publications)):
 

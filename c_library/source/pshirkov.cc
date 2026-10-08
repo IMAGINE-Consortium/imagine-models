@@ -28,16 +28,16 @@ Vec3<T> PshirkovMagneticField::field(const double &x, const double &y, const dou
         return b;
     }
 
-    auto pitch = p.pitch * M_PI / 180;
+    auto pitch = p.pitch * units::deg;
 
     auto cos_pitch = cos(pitch);
     auto sin_pitch = sin(pitch);
-    auto PHI = cos_pitch / sin_pitch * log(1. + p.d / p.R_sun) - M_PI / 2;
+    auto PHI = cos_pitch / sin_pitch * log(1. + p.d / p.R_sun) - units::pi / 2;
     auto cos_PHI = cos(PHI);
 
     // disk field
     if (useDisk) {
-        auto theta = M_PI - phi; // PT11 azimuth convention
+        auto theta = units::pi - phi; // PT11 azimuth convention
         double cos_theta = -x / r;
         double sin_theta = y / r;
 

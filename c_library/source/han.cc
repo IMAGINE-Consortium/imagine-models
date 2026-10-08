@@ -1,4 +1,5 @@
 #include "ImagineModels/Han.h"
+#include "ImagineModels/units.h"
 
 #include "ImagineModels/helpers.h"
 
@@ -35,18 +36,18 @@ Vec3<T> HanMagneticField::field(const double &x, const double &y, const double &
 
     T B_0 = 0.;
 
-    auto p_ang = p.B_p * M_PI / 180.;
-    const double phi_han = -(phi + M_PI); // Han azimuth convention
+    auto p_ang = p.B_p * units::deg;
+    const double phi_han = -(phi + units::pi); // Han azimuth convention
 
     T R_0 = r * exp(phi_han * tan(p_ang)); // eq. 4, Han azimuth
 
     std::array<T, 7> B_s = {p.B_s1, p.B_s2, p.B_s3, p.B_s4, p.B_s5, p.B_s6, p.B_s7}; // Table 5
 
     if (R_0 < R_s[0]) {
-        R_0 = r * exp((phi_han + 2 * M_PI) * tan(p_ang)); // eq. 4
+        R_0 = r * exp((phi_han + 2 * units::pi) * tan(p_ang)); // eq. 4
     }
     if (R_0 > R_s[6]) {
-        R_0 = r * exp((phi_han - 2 * M_PI) * tan(p_ang)); // eq. 4
+        R_0 = r * exp((phi_han - 2 * units::pi) * tan(p_ang)); // eq. 4
     }
 
     for (int i = 0; i < 7; i++) {

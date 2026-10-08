@@ -1,3 +1,4 @@
+#include "ImagineModels/units.h"
 #include <algorithm>
 #include <stdexcept>
 
@@ -9,7 +10,7 @@ namespace imagine {
 template <typename T>
 Vec3<T> TF17MagneticField::field(const double &x, const double &y, const double &z, const TF17Parameters<T> &p) const {
     const double r = sqrt(x * x + y * y);
-    double phi = M_PI - std::atan2(y, x);
+    double phi = units::pi - std::atan2(y, x);
 
     double cosPhi = cos(phi);
     double sinPhi = sin(phi);
@@ -29,9 +30,9 @@ Vec3<T> TF17MagneticField::getDiskField(const double &r, const double &z, const 
     T B_phi = 0;
     T B_z = 0;
 
-    auto psd = p.phi_star_disk * M_PI / 180;
-    auto psh = p.phi_star_halo * M_PI / 180;
-    auto p_0 = p.p_0 * M_PI / 180;
+    auto psd = p.phi_star_disk * units::deg;
+    auto psh = p.phi_star_halo * units::deg;
+    auto p_0 = p.p_0 * units::deg;
     auto cot_p0 = cos(p_0) / sin(p_0);
 
     if (active_disk_model == "Ad1") {
@@ -104,9 +105,9 @@ Vec3<T> TF17MagneticField::getHaloField(const double &r, const double &z, const 
     // cylindrical components
     T B_z0;
 
-    auto psd = p.phi_star_disk * M_PI / 180;
-    auto psh = p.phi_star_halo * M_PI / 180;
-    auto p_0 = p.p_0 * M_PI / 180;
+    auto psd = p.phi_star_disk * units::deg;
+    auto psh = p.phi_star_halo * units::deg;
+    auto p_0 = p.p_0 * units::deg;
     auto cot_p0 = cos(p_0) / sin(p_0);
 
     if (active_halo_model == "C0") { // m = 0

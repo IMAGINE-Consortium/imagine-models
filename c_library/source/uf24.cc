@@ -106,7 +106,7 @@ Vec3<T> UF24MagneticField::GetTwistedHaloField(const double x, const double y, c
 
     if (p.fTwistingTime != 0 && r != 0) {
         // rotation curve, Reid+14
-        const double v0 = -240 * astro::kilometer / astro::second;
+        const double v0 = -240 * units::kilometer / units::second;
         const double r0 = 1.6; // kpc
         // vertical gradient (Levine+08)
         const double z0 = 10;
@@ -214,9 +214,9 @@ Vec3<T> UF24MagneticField::GetSpurField(const double x, const double y, const do
     // reference approximately at solar radius
     const double rRef = 8.2; // kpc
 
-    auto fSinPitch = sin(p.fDiskPitch);
-    auto fCosPitch = cos(p.fDiskPitch);
-    auto fTanPitch = tan(p.fDiskPitch);
+    auto fSinPitch = sin(p.fDiskPitch * units::deg);
+    auto fCosPitch = cos(p.fDiskPitch * units::deg);
+    auto fTanPitch = tan(p.fDiskPitch * units::deg);
     // cylindrical coordinates
     const double r2 = x * x + y * y;
     const double r = sqrt(r2);
@@ -225,13 +225,13 @@ Vec3<T> UF24MagneticField::GetSpurField(const double x, const double y, const do
 
     double phi = atan2(y, x);
     if (phi < 0)
-        phi += num::twopi;
+        phi += units::twopi;
 
-    T phiRef = p.fDiskPhase1;
+    T phiRef = p.fDiskPhase1 * units::deg;
     int iBest = -2;
     T bestDist = -1;
     for (int i = -1; i <= 1; ++i) {
-        T pphi = phi - phiRef + i * num::twopi;
+        T pphi = phi - phiRef + i * units::twopi;
         T rr = rRef * exp(pphi * fTanPitch);
         if (bestDist < 0 || abs(r - rr) < bestDist) {
             bestDist = abs(r - rr);
@@ -243,14 +243,14 @@ Vec3<T> UF24MagneticField::GetSpurField(const double x, const double y, const do
 
         // Eq. (16)
         T deltaPhi0 = acos(cos(phi0) * cos(phiRef) + sin(phi0) * sin(phiRef));
-        T delta = deltaPhi0 / p.fSpurWidth;
+        T delta = deltaPhi0 / (p.fSpurWidth * units::deg);
         T B = p.fDiskB1 * exp(-0.5 * pow(delta, 2));
 
         // Eq. (18)
-        const double wS = 5 * num::rad;
-        T phiC = p.fSpurCenter;
+        const double wS = 5 * units::deg;
+        T phiC = p.fSpurCenter * units::deg;
         T deltaPhiC = acos(cos(phi) * cos(phiC) + sin(phi) * sin(phiC));
-        T lC = p.fSpurLength;
+        T lC = p.fSpurLength * units::deg;
         T gS = 1 - 1 / (1 + exp(-(abs(deltaPhiC) - lC) / wS));
 
         // Eq. (13)
@@ -278,9 +278,9 @@ Vec3<T> UF24MagneticField::GetSpiralField(const double x, const double y, const 
     const double rOuter = 20;  // kpc
     const double wOuter = 0.5; // kpc
 
-    auto fSinPitch = sin(p.fDiskPitch);
-    auto fCosPitch = cos(p.fDiskPitch);
-    auto fTanPitch = tan(p.fDiskPitch);
+    auto fSinPitch = sin(p.fDiskPitch * units::deg);
+    auto fCosPitch = cos(p.fDiskPitch * units::deg);
+    auto fTanPitch = tan(p.fDiskPitch * units::deg);
 
     // cylindrical coordinates
     const double r2 = x * x + y * y;
@@ -298,15 +298,16 @@ Vec3<T> UF24MagneticField::GetSpiralField(const double x, const double y, const 
     const double rFacO = 1 - 1 / (1 + exp(-(r - rOuter) / wOuter));
 
     // small-r limit
-    const double rFac = r > 1e-5 * astro::pc ? (1 - exp(-r * r)) / r : r * (1 - r2 / 2);
+    const double rFac = r > 1e-5 * units::pc ? (1 - exp(-r * r)) / r : r * (1 - r2 / 2);
     const double gdrTimesRrefByR = rRef * rFac * rFacO * rFacI;
 
     // Eq. (12)
     T phi0 = phi - log(r / rRef) / fTanPitch;
 
     // Eq. (10)
-    T b = p.fDiskB1 * cos(1 * (phi0 - p.fDiskPhase1)) + p.fDiskB2 * cos(2 * (phi0 - p.fDiskPhase2)) +
-          p.fDiskB3 * cos(3 * (phi0 - p.fDiskPhase3));
+    T b = p.fDiskB1 * cos(1 * (phi0 - p.fDiskPhase1 * units::deg)) +
+          p.fDiskB2 * cos(2 * (phi0 - p.fDiskPhase2 * units::deg)) +
+          p.fDiskB3 * cos(3 * (phi0 - p.fDiskPhase3 * units::deg));
 
     // Eq. (11)
     T fac = hdz * gdrTimesRrefByR;

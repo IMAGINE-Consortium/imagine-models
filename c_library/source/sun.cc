@@ -32,7 +32,7 @@ Vec3<T> SunMagneticField::field(const double &x, const double &y, const double &
         D1 = p.b_Bc;
     }
 
-    auto p_ang = p.b_p * M_PI / 180.;
+    auto p_ang = p.b_p * units::deg;
     Vec3<T> B_cyl{{D1 * D2 * sin(p_ang), // eq. 6
                    -D1 * D2 * cos(p_ang), 0.}};
 

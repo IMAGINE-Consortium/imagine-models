@@ -20,7 +20,7 @@ namespace imagine {
     X(b_r0, 10.55)      /* kpc */    \
     X(b_p, -10)         /* degree */ \
     X(b_Rsun, 8.5)      /* kpc */    \
-    X(b_phi0, M_PI)     /* radians */
+    X(b_phi0, 180.)     /* deg */
 
 IMAGINE_PARAMETERS(StanevBSSParameters, STANEV_PARAMETERS)
 

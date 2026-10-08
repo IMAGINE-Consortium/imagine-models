@@ -18,8 +18,8 @@ Vec3<T> WMAPMagneticField::field(const double &x, const double &y, const double 
 
     double phi = atan2(y, x);
 
-    auto psi_r = p.b_psi0 * (M_PI / 180.) + p.b_psi1 * (M_PI / 180.) * log(r / p.b_r0);
-    auto xsi_z = p.b_xsi0 * (M_PI / 180.) * tanh(z / p.b_z0);
+    auto psi_r = p.b_psi0 * units::deg + p.b_psi1 * units::deg * log(r / p.b_r0);
+    auto xsi_z = p.b_xsi0 * units::deg * tanh(z / p.b_z0);
 
     Vec3<T> B_cyl{{p.b_b0 * sin(psi_r) * cos(xsi_z), // eq. 9
                    p.b_b0 * cos(psi_r) * cos(xsi_z), p.b_b0 * sin(xsi_z)}};

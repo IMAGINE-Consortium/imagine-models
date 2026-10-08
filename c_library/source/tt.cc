@@ -1,3 +1,4 @@
+#include "ImagineModels/units.h"
 #include <cmath>
 
 #include "ImagineModels/TT.h"
@@ -16,11 +17,11 @@ Vec3<T> TTMagneticField::field(const double &x, const double &y, const double &z
         return B_vec3;
     }
 
-    auto pitch = p.b_p * (M_PI / 180.);
+    auto pitch = p.b_p * units::deg;
 
     auto beta = 1. / tan(pitch);
 
-    auto phase = (beta * log(1. + p.b_d / p.b_Rsun)) - M_PI / 2.; // eq. 2
+    auto phase = (beta * log(1. + p.b_d / p.b_Rsun)) - units::pi / 2.; // eq. 2
 
     double sign = 1.;
     if (z < 0) { // antisymmetric halo, eq. 5
@@ -39,7 +40,7 @@ Vec3<T> TTMagneticField::field(const double &x, const double &y, const double &z
         b_r = p.b_b0 * (p.b_Rsun / (b_r_min * cos(phase))); // eq. 3
     }
 
-    const double theta = M_PI - phi;
+    const double theta = units::pi - phi;
     auto B_r_phi = b_r * cos(theta - beta * log(r / p.b_Rsun) + phase); // eq. 1
 
     // cylindrical components
