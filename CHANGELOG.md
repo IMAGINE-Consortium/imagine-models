@@ -23,6 +23,7 @@ Results of many models changed because implementation errors were fixed. Results
 
 - Models: UF26 random field, XH24 halo, JF12 Planck variants (`Planck12b`, `Planck12c`, regular and random), Han XH24 disk variant.
 - `PointCloud` grids for evaluation at arbitrary positions.
+- `derivative` on grids and point clouds, shape `(3, ..., n_active)`.
 - `interpolate`: linear or nearest-grid-point interpolation of data on a `RegularGrid` (e.g. a random sample) at arbitrary positions.
 - `rms`, `variance` (and `mean` for scalar fields) for random fields.
 - Eigen 5 support (Eigen 3.4 and 5.0 tested).

@@ -22,7 +22,8 @@ namespace doc {
 inline constexpr const char *evaluate = "Field on a RegularGrid, IrregularGrid or PointCloud.";
 inline constexpr const char *at_position = "Field at one position (kpc).";
 inline constexpr const char *at_positions = "Field at many positions, with NumPy broadcasting.";
-inline constexpr const char *derivative = "Jacobian w.r.t. the active parameters at one position.";
+inline constexpr const char *derivative =
+    "Jacobian w.r.t. the active parameters at one position or on a grid (parameters on the last axis).";
 inline constexpr const char *active_parameters = "Parameters included in derivative, in this order.";
 inline constexpr const char *parameters = "All parameters as a dict; assigning updates the given ones.";
 inline constexpr const char *parameter_names = "Names of the model parameters, in order.";
@@ -55,6 +56,18 @@ template <int N> py::array_t<double> to_numpy_points(GridData<N> &&grid_data) {
     if (N > 1)
         shape.push_back(N);
     shape.push_back(owned->shape[0]);
+    return py::array_t<double>(shape, owned->data.data(), owner);
+}
+
+template <int N> py::array_t<double> to_numpy_jacobian(JacobianData<N> &&jacobian, bool points) {
+    auto owned = new JacobianData<N>(std::move(jacobian));
+    py::capsule owner(owned, [](void *p) { delete static_cast<JacobianData<N> *>(p); });
+    std::vector<py::ssize_t> shape;
+    if (N > 1)
+        shape.push_back(N);
+    for (int a = 0; a < (points ? 1 : 3); ++a)
+        shape.push_back(owned->shape[a]);
+    shape.push_back(py::ssize_t(owned->columns));
     return py::array_t<double>(shape, owned->data.data(), owner);
 }
 

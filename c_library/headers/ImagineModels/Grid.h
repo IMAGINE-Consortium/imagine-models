@@ -120,4 +120,20 @@ template <int N> struct GridData {
 using ScalarGridData = GridData<1>;
 using VectorGridData = GridData<3>;
 
+template <int N> struct JacobianData {
+    std::array<int, 3> shape;
+    std::size_t columns;
+    std::vector<double> data;
+
+    JacobianData(const std::array<int, 3> &shape, std::size_t columns)
+        : shape(shape), columns(columns), data(N * std::size_t(shape[0]) * shape[1] * shape[2] * columns) {}
+
+    static constexpr int components = N;
+    std::size_t size() const { return std::size_t(shape[0]) * shape[1] * shape[2]; }
+    double &operator()(int c, std::size_t idx, std::size_t col) { return data[(c * size() + idx) * columns + col]; }
+    double operator()(int c, std::size_t idx, std::size_t col) const {
+        return data[(c * size() + idx) * columns + col];
+    }
+};
+
 }

@@ -72,6 +72,17 @@ protected:
         return out;
     }
 
+    template <int N> JacobianData<N> jacobian_on(const Grid &grid) const {
+        JacobianData<N> out(grid_shape(grid), active_parameters.size());
+        for_each_point(grid, [&](std::size_t idx, double x, double y, double z) {
+            const Eigen::MatrixXd j = derived().derivative(x, y, z);
+            for (int c = 0; c < N; ++c)
+                for (std::size_t col = 0; col < out.columns; ++col)
+                    out(c, idx, col) = j(c, col);
+        });
+        return out;
+    }
+
 private:
     static const ad::real &component(const ad::real &value, int) { return value; }
     static const ad::real &component(const std::array<ad::real, 3> &value, int k) { return value[k]; }
@@ -90,6 +101,8 @@ public:
         return this->template jacobian<3>(
             [&](const Params<ad::real> &p) { return this->derived().template field<ad::real>(x, y, z, p); });
     }
+
+    JacobianData<3> derivative(const Grid &grid) const { return this->template jacobian_on<3>(grid); }
 #endif
 };
 
@@ -105,6 +118,8 @@ public:
         return this->template jacobian<1>(
             [&](const Params<ad::real> &p) { return this->derived().template field<ad::real>(x, y, z, p); });
     }
+
+    JacobianData<1> derivative(const Grid &grid) const { return this->template jacobian_on<1>(grid); }
 #endif
 };
 

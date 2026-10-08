@@ -108,4 +108,28 @@ TEMPLATE_LIST_TEST_CASE("Jacobian is finite on the z-axis", "[derivatives]", All
     }
 }
 
+TEMPLATE_LIST_TEST_CASE("Jacobian on grids equals the Jacobian at each point", "[derivatives]", AllModels) {
+    TestType model;
+    model.active_parameters.resize(std::min<std::size_t>(model.active_parameters.size(), 3));
+    std::vector<double> x, y, z;
+    for (const auto &p : positions) {
+        x.push_back(p[0]);
+        y.push_back(p[1]);
+        z.push_back(p[2]);
+    }
+    const RegularGrid regular({3, 2, 2}, {-9., -1., -0.5}, {2., 1.5, 1.});
+    for (const Grid &grid :
+         std::vector<Grid>{PointCloud(x, y, z), regular, IrregularGrid({-8., 3.}, {0.5}, {0.1, -1.})}) {
+        const auto jac = model.derivative(grid);
+        REQUIRE(jac.shape == grid_shape(grid));
+        REQUIRE(jac.columns == model.active_parameters.size());
+        for_each_point(grid, [&](std::size_t idx, double px, double py, double pz) {
+            const auto single = model.derivative(px, py, pz);
+            for (int c = 0; c < single.rows(); ++c)
+                for (std::size_t col = 0; col < jac.columns; ++col)
+                    CHECK(jac(c, idx, col) == single(c, col));
+        });
+    }
+}
+
 #endif

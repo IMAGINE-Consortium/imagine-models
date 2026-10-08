@@ -112,6 +112,7 @@ uf.set_model("spur")
 # derivatives w.r.t. the parameters (if built with autodiff)
 jf12.active_parameters = ["b_arm_1", "Bn"]
 jf12.derivative(-8.5, 1.0, 0.1)  # shape (3, 2)
+jf12.derivative(cloud)  # shape (3, 3, 2): (component, point, parameter); also on grids
 
 # random fields (if built with FFTW)
 random_field = img.JF12RandomField()

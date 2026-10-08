@@ -278,3 +278,20 @@ def test_han_variants():
     assert np.array_equal(han.at_position(-8.3, 1.0, 0.1), xh24.at_position(-8.3, 1.0, 0.1))
     with pytest.raises(ValueError):
         han.set_model("unknown")
+
+
+@pytest.mark.parametrize("model_string", ["JF12MagneticField", "UF24MagneticField", "YMW16"])
+def test_derivative_on_grids(model_string):
+    if not img.has_autodiff:
+        pytest.skip("ImagineModels was built without autodiff")
+    model = getattr(img, model_string)()
+    model.active_parameters = model.parameter_names[:3]
+    vector = model_string != "YMW16"
+    x, y, z = np.array([-8.5, 3.0, 12.0]), np.array([1.0, 4.0, -9.0]), np.array([0.2, -1.0, 2.0])
+    single = np.stack([np.asarray(model.derivative(*p)) for p in zip(x, y, z)], axis=-2)
+    cloud = model.derivative(img.PointCloud(x, y, z))
+    np.testing.assert_array_equal(cloud, single if vector else single[0])
+    grid = img.RegularGrid(shape=[2, 3, 4], reference_point=[-9.0, -1.0, -0.5], increment=[1.0, 1.0, 0.5])
+    on_grid = model.derivative(grid)
+    assert on_grid.shape == ((3,) if vector else ()) + (2, 3, 4, 3)
+    np.testing.assert_array_equal(on_grid[..., 1, 2, 3, :], np.asarray(model.derivative(-8.0, 1.0, 1.0)).squeeze())

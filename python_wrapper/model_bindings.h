@@ -33,7 +33,25 @@ template <typename Model> auto bind_regular_model(py::module_ &m, const char *na
 
 #if IMAGINE_HAS_AUTODIFF
     cls.def_readwrite("active_parameters", &Model::active_parameters, doc::active_parameters);
-    cls.def("derivative", &Model::derivative, "x"_a, "y"_a, "z"_a, doc::derivative);
+    cls.def(
+        "derivative", [](const Model &self, double x, double y, double z) { return self.derivative(x, y, z); }, "x"_a,
+        "y"_a, "z"_a, doc::derivative);
+    cls.def(
+        "derivative",
+        [](const Model &self, const RegularGrid &grid) {
+            return to_numpy_jacobian(self.derivative(Grid(grid)), false);
+        },
+        "grid"_a);
+    cls.def(
+        "derivative",
+        [](const Model &self, const IrregularGrid &grid) {
+            return to_numpy_jacobian(self.derivative(Grid(grid)), false);
+        },
+        "grid"_a);
+    cls.def(
+        "derivative",
+        [](const Model &self, const PointCloud &grid) { return to_numpy_jacobian(self.derivative(Grid(grid)), true); },
+        "grid"_a);
 #endif
 
     if constexpr (is_vector)
