@@ -4,7 +4,6 @@ from pathlib import Path
 import numpy as np
 import pytest
 
-import ImagineModels as img
 import reference_cases as rc
 
 DATA_DIR = Path(__file__).resolve().parent / "external_data"
@@ -30,7 +29,7 @@ def test_cases_present():
 @pytest.mark.parametrize("case", CASES)
 def test_external_reference(case):
     data, meta = _load(case)
-    if not hasattr(img, meta["model"]):
+    if rc.model_class(meta["model"]) is None:
         pytest.skip(f"{meta['model']} not available in this build")
     assert np.count_nonzero(data["values"]) > data["values"].size // 4
     model = rc.make_model(meta["model"], meta["settings"])

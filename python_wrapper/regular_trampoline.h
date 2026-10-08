@@ -1,5 +1,4 @@
-#ifndef REGULAR_TRAMPOLINE_H
-#define REGULAR_TRAMPOLINE_H
+#pragma once
 
 #include "ImagineModels/RegularField.h"
 
@@ -27,5 +26,3 @@ public:
         return override(x, y, z).cast<double>();
     }
 };
-
-#endif

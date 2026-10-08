@@ -1,5 +1,4 @@
-#ifndef IMAGINE_GRID_H
-#define IMAGINE_GRID_H
+#pragma once
 
 #include <array>
 #include <cstddef>
@@ -122,5 +121,3 @@ using ScalarGridData = GridData<1>;
 using VectorGridData = GridData<3>;
 
 }
-
-#endif

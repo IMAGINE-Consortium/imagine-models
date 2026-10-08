@@ -1,5 +1,4 @@
-#ifndef ENSSLINSTEININGER_H
-#define ENSSLINSTEININGER_H
+#pragma once
 
 #include "ImagineModelsRandom/RandomVectorField.h"
 
@@ -19,5 +18,3 @@ public:
 };
 
 }
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef FAUVET_H
-#define FAUVET_H
+#pragma once
 
 #include <cmath>
 #include <functional>
@@ -31,5 +30,3 @@ public:
 };
 
 }
-
-#endif

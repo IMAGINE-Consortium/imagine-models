@@ -1,5 +1,4 @@
-#ifndef RANDOMMODELS_H
-#define RANDOMMODELS_H
+#pragma once
 
 #include "ImagineModelsRandom/RandomField.h"
 #include "ImagineModelsRandom/RandomScalarField.h"
@@ -8,8 +7,6 @@
 #include "ImagineModelsRandom/GaussianScalar.h"
 #include "ImagineModelsRandom/LogNormal.h"
 
-#include "ImagineModelsRandom/EnsslinSteininger.h"
-#include "ImagineModelsRandom/RandomJF12.h"
+#include "ImagineModelsRandom/ESRandom.h"
+#include "ImagineModelsRandom/JF12Random.h"
 #include "ImagineModelsRandom/UF26Random.h"
-
-#endif

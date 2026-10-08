@@ -1,6 +1,6 @@
 #include <cmath>
 
-#include "ImagineModelsRandom/EnsslinSteininger.h"
+#include "ImagineModelsRandom/ESRandom.h"
 
 namespace imagine {
 

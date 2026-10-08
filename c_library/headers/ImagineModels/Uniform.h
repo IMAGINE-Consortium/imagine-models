@@ -1,5 +1,4 @@
-#ifndef UNIFORM_H
-#define UNIFORM_H
+#pragma once
 
 #include "ImagineModels/RegularModel.h"
 
@@ -33,5 +32,3 @@ public:
 };
 
 }
-
-#endif

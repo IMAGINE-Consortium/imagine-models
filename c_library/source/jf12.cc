@@ -1,4 +1,4 @@
-#include "ImagineModels/RegularJF12.h"
+#include "ImagineModels/JF12.h"
 #include "ImagineModels/units.h"
 #include <algorithm>
 #include <cassert>

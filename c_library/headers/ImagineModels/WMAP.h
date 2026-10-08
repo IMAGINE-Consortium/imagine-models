@@ -1,5 +1,4 @@
-#ifndef WMAP_H
-#define WMAP_H
+#pragma once
 
 #include <cmath>
 #include <functional>
@@ -34,5 +33,3 @@ public:
 };
 
 }
-
-#endif

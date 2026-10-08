@@ -1,5 +1,4 @@
-#ifndef TERRALFERRIERE_H
-#define TERRALFERRIERE_H
+#pragma once
 
 #include <cmath>
 #include <functional>
@@ -76,5 +75,3 @@ private:
 };
 
 }
-
-#endif

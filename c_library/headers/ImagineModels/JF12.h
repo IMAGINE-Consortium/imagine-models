@@ -1,5 +1,4 @@
-#ifndef REGULARJF12_H
-#define REGULARJF12_H
+#pragma once
 
 #include <array>
 #include <cassert>
@@ -73,5 +72,3 @@ private:
 };
 
 }
-
-#endif

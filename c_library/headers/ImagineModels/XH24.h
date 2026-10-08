@@ -1,5 +1,4 @@
-#ifndef XH24_H
-#define XH24_H
+#pragma once
 
 #include <cmath>
 
@@ -24,5 +23,3 @@ public:
 };
 
 }
-
-#endif

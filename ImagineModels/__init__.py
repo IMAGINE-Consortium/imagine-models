@@ -1,5 +1,4 @@
 from ._core import (
-    SVT22,
     YMW16,
     ArchimedeanMagneticField,
     FauvetMagneticField,
@@ -9,7 +8,7 @@ from ._core import (
     HMRMagneticField,
     IrregularGrid,
     JaffeMagneticField,
-    JF12RegularField,
+    JF12MagneticField,
     PointCloud,
     PshirkovMagneticField,
     RegularGrid,
@@ -17,6 +16,7 @@ from ._core import (
     RegularVectorField,
     StanevBSSMagneticField,
     SunMagneticField,
+    SVT22MagneticField,
     TFMagneticField,
     TTMagneticField,
     UFMagneticField,

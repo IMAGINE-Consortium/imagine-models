@@ -190,7 +190,7 @@ def test_anisotropy(rho):
 
 def test_jf12_anisotropy_follows_regular_field():
     model = img.JF12RandomField()
-    regular = img.JF12RegularField()
+    regular = img.JF12MagneticField()
     assert np.allclose(model.anisotropy_direction(-8.5, 1.0, 0.2), regular.at_position(-8.5, 1.0, 0.2))
 
 

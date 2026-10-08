@@ -1,5 +1,4 @@
-#ifndef HMR_H
-#define HMR_H
+#pragma once
 
 #include <cmath>
 #include <functional>
@@ -30,5 +29,3 @@ public:
 };
 
 }
-
-#endif

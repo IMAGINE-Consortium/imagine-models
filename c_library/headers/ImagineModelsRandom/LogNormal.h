@@ -1,5 +1,4 @@
-#ifndef LOGNORMAL_H
-#define LOGNORMAL_H
+#pragma once
 
 #include "ImagineModelsRandom/RandomScalarField.h"
 
@@ -21,5 +20,3 @@ public:
 };
 
 }
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef TT_H
-#define TT_H
+#pragma once
 
 #include <cmath>
 #include <functional>
@@ -29,5 +28,3 @@ public:
 };
 
 }
-
-#endif

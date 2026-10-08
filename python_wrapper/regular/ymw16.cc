@@ -1,6 +1,6 @@
+#include "ImagineModels/YMW16.h"
 #include "../bindings.h"
 #include "../model_bindings.h"
-#include "ImagineModels/YMW.h"
 
 void bind_ymw16(py::module_ &m) {
     bind_regular_model<YMW16>(m, "YMW16")

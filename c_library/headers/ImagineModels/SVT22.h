@@ -1,5 +1,4 @@
-#ifndef SVT22_H
-#define SVT22_H
+#pragma once
 
 #include <cassert>
 #include <cmath>
@@ -26,5 +25,3 @@ public:
 };
 
 }
-
-#endif

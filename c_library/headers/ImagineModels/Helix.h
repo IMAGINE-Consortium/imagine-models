@@ -1,5 +1,4 @@
-#ifndef HELIX_H
-#define HELIX_H
+#pragma once
 
 #include <cmath>
 #include <functional>
@@ -26,5 +25,3 @@ public:
 };
 
 }
-
-#endif

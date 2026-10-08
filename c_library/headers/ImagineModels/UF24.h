@@ -27,8 +27,7 @@ OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#ifndef UNGERFARRAR_H
-#define UNGERFARRAR_H
+#pragma once
 
 #include <cassert>
 #include <cmath>
@@ -302,5 +301,3 @@ public:
 };
 
 }
-
-#endif

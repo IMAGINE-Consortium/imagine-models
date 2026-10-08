@@ -33,7 +33,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <limits>
 #include <stdexcept>
 
-#include "ImagineModels/UngerFarrar.h"
+#include "ImagineModels/UF24.h"
 #include "ImagineModels/helpers.h"
 #include "ImagineModels/units.h"
 

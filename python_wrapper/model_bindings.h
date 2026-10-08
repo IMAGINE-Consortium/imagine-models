@@ -1,5 +1,4 @@
-#ifndef MODEL_BINDINGS_H
-#define MODEL_BINDINGS_H
+#pragma once
 
 #include <map>
 #include <string>
@@ -54,5 +53,3 @@ template <typename Model> auto bind_regular_model(py::module_ &m, const char *na
 
     return cls;
 }
-
-#endif

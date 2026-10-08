@@ -1,5 +1,4 @@
-#ifndef RANDOM_TRAMPOLINE_H
-#define RANDOM_TRAMPOLINE_H
+#pragma once
 
 #include "ImagineModelsRandom/RandomScalarField.h"
 #include "ImagineModelsRandom/RandomVectorField.h"
@@ -31,5 +30,3 @@ public:
         PYBIND11_OVERRIDE(double, RandomScalarField, mean, x, y, z);
     }
 };
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef STANEVBSS_H
-#define STANEVBSS_H
+#pragma once
 
 #include <cmath>
 #include <functional>
@@ -31,5 +30,3 @@ public:
 };
 
 }
-
-#endif

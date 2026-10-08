@@ -1,5 +1,4 @@
-#ifndef HAN_H
-#define HAN_H
+#pragma once
 
 #include <array>
 #include <cmath>
@@ -44,5 +43,3 @@ private:
 };
 
 }
-
-#endif

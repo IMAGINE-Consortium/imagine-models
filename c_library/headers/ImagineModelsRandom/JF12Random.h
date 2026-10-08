@@ -1,11 +1,10 @@
-#ifndef RANDOMJF12_H
-#define RANDOMJF12_H
+#pragma once
 
 #include <array>
 #include <cmath>
 #include <string>
 
-#include "ImagineModels/RegularJF12.h"
+#include "ImagineModels/JF12.h"
 #include "ImagineModelsRandom/RandomVectorField.h"
 
 namespace imagine {
@@ -49,5 +48,3 @@ private:
 };
 
 }
-
-#endif

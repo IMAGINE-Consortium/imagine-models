@@ -1,4 +1,4 @@
-#include "ImagineModels/HarariMollerachRoulet.h"
+#include "ImagineModels/HMR.h"
 #include "ImagineModels/units.h"
 #include <cmath>
 

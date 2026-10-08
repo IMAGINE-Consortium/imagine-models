@@ -1,6 +1,6 @@
+#include "ImagineModels/TT.h"
 #include "../bindings.h"
 #include "../model_bindings.h"
-#include "ImagineModels/TinyakovTkachev.h"
 
 void bind_tt(py::module_ &m) {
     bind_regular_model<TTMagneticField>(m, "TTMagneticField")

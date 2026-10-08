@@ -1,5 +1,4 @@
-#ifndef UNITS_H
-#define UNITS_H
+#pragma once
 
 #include <cmath>
 
@@ -84,5 +83,3 @@ const double GV = (GeV / qe); ///< rigidity for cosmic-rays
 } // namespace cgs
 
 }
-
-#endif

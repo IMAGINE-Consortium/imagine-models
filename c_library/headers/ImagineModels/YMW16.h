@@ -1,5 +1,4 @@
-#ifndef YMW16_H
-#define YMW16_H
+#pragma once
 
 #include <cassert>
 #include <cmath>
@@ -139,5 +138,3 @@ public:
 };
 
 }
-
-#endif

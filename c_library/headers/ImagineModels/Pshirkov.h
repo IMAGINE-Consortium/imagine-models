@@ -1,5 +1,4 @@
-#ifndef PSHIRKOV_H
-#define PSHIRKOV_H
+#pragma once
 
 #include <array>
 #include <cmath>
@@ -47,5 +46,3 @@ private:
 };
 
 }
-
-#endif

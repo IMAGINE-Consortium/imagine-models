@@ -1,5 +1,4 @@
-#ifndef REGULARFIELD_H
-#define REGULARFIELD_H
+#pragma once
 
 #include <cstddef>
 
@@ -41,5 +40,3 @@ public:
 };
 
 }
-
-#endif

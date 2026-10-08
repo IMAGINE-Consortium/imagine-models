@@ -1,5 +1,5 @@
 #include "../bindings.h"
-#include "ImagineModelsRandom/EnsslinSteininger.h"
+#include "ImagineModelsRandom/ESRandom.h"
 
 void bind_es_random(py::module_ &m) {
     py::class_<ESRandomField, RandomVectorField>(m, "ESRandomField")

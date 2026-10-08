@@ -1,5 +1,4 @@
-#ifndef RANDOMSCALARFIELD_H
-#define RANDOMSCALARFIELD_H
+#pragma once
 
 #include "ImagineModelsRandom/RandomField.h"
 
@@ -20,5 +19,3 @@ public:
 };
 
 }
-
-#endif /* RANDOMSCALARFIELD_H */

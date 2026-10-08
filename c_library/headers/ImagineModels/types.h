@@ -1,5 +1,4 @@
-#ifndef IMAGINE_TYPES_H
-#define IMAGINE_TYPES_H
+#pragma once
 
 #include <array>
 #include <cmath>
@@ -25,5 +24,3 @@ template <typename T> using Vec3 = std::array<T, 3>;
 template <typename T> using Scalar = T;
 
 }
-
-#endif

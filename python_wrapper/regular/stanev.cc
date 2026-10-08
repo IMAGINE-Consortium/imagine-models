@@ -1,6 +1,6 @@
+#include "ImagineModels/Stanev.h"
 #include "../bindings.h"
 #include "../model_bindings.h"
-#include "ImagineModels/StanevBSS.h"
 
 void bind_stanev(py::module_ &m) {
     bind_regular_model<StanevBSSMagneticField>(m, "StanevBSSMagneticField")

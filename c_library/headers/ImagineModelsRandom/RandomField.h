@@ -1,5 +1,4 @@
-#ifndef RANDOMFIELD_H
-#define RANDOMFIELD_H
+#pragma once
 
 #include <array>
 
@@ -38,5 +37,3 @@ public:
 };
 
 }
-
-#endif /* RANDOMFIELD_H */

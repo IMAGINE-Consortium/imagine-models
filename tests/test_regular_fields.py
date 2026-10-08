@@ -5,11 +5,17 @@ import pytest
 
 import ImagineModels as img
 
-regular_models = ["JaffeMagneticField", "HelixMagneticField", "JF12RegularField", "SunMagneticField", "UFMagneticField"]
+regular_models = [
+    "JaffeMagneticField",
+    "HelixMagneticField",
+    "JF12MagneticField",
+    "SunMagneticField",
+    "UFMagneticField",
+]
 scalar_models = ["YMW16", "UniformDensityField"]
 
 known_positions = {
-    "JF12RegularField": [
+    "JF12MagneticField": [
         ([0, 0, 0], [0, 0, 0]),  # Galactic center
         ([0.1, 0.3, 0.4], [0, 0, 0]),  # Within inner boundary
         (
@@ -68,8 +74,8 @@ def test_grid_consistency(model_string):
 
 
 def test_return_shapes():
-    assert img.JF12RegularField().evaluate(regular_grid).shape == (3, 2, 3, 4)
-    assert img.JF12RegularField().evaluate(irregular_grid).shape == (3, 4, 3, 3)
+    assert img.JF12MagneticField().evaluate(regular_grid).shape == (3, 2, 3, 4)
+    assert img.JF12MagneticField().evaluate(irregular_grid).shape == (3, 4, 3, 3)
     assert img.YMW16().evaluate(regular_grid).shape == (2, 3, 4)
     assert img.YMW16().evaluate(irregular_grid).shape == (4, 3, 3)
 
@@ -151,7 +157,7 @@ def test_at_positions(model_string):
 
 
 def test_at_positions_broadcasting():
-    mo = img.JF12RegularField()
+    mo = img.JF12MagneticField()
     line = np.linspace(-10.0, 10.0, 7)
     values = mo.at_positions(line, 2.0, 0.1)
     assert values.shape == (3, 7)
@@ -215,7 +221,7 @@ def test_point_cloud():
     assert len(cloud) == cloud.size == 20
     assert np.array_equal(cloud.y, positions[:, 1])
     same = img.PointCloud(positions[:, 0], positions[:, 1], positions[:, 2])
-    for model in [img.JF12RegularField(), img.UFMagneticField(), img.YMW16()]:
+    for model in [img.JF12MagneticField(), img.UFMagneticField(), img.YMW16()]:
         on_cloud = model.evaluate(cloud)
         expected = model.at_positions(positions[:, 0], positions[:, 1], positions[:, 2])
         assert on_cloud.shape == expected.shape
@@ -237,13 +243,13 @@ def test_point_cloud():
 
 
 def test_jf12_variants():
-    jf12 = img.JF12RegularField()
+    jf12 = img.JF12MagneticField()
     assert jf12.model == "JF12" and jf12.arm_shift == 1.0 and jf12.b_arm_6 == -4.2 and jf12.B0_X == 4.6
     reference = jf12.at_position(-8.5, 1.0, 0.3)
     jf12.b_arm_2 = 9.0
     jf12.set_model("Planck12b")
     assert (jf12.b_arm_2, jf12.b_arm_6, jf12.B0_X, jf12.arm_shift) == (3.0, -3.5, 1.8, 1.0)
-    planck_c = img.JF12RegularField("Planck12c")
+    planck_c = img.JF12MagneticField("Planck12c")
     assert (
         planck_c.Bn,
         planck_c.Bs,

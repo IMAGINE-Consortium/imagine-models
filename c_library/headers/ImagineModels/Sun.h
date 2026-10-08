@@ -1,5 +1,4 @@
-#ifndef SUN_H
-#define SUN_H
+#pragma once
 
 #include <cmath>
 #include <functional>
@@ -33,5 +32,3 @@ public:
 };
 
 }
-
-#endif

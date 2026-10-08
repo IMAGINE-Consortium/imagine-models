@@ -1,5 +1,4 @@
-#ifndef IMAGINE_PARAMETERS_H
-#define IMAGINE_PARAMETERS_H
+#pragma once
 
 #include <array>
 #include <cstddef>
@@ -22,5 +21,3 @@
             return out;                                                                             \
         }                                                                                           \
     };
-
-#endif

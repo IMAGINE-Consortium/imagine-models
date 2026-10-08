@@ -1,4 +1,4 @@
-#include "ImagineModels/StanevBSS.h"
+#include "ImagineModels/Stanev.h"
 #include "ImagineModels/units.h"
 #include <cmath>
 

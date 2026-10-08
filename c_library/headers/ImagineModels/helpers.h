@@ -1,5 +1,4 @@
-#ifndef HELPERS_H
-#define HELPERS_H
+#pragma once
 
 #include <array>
 #include <cmath>
@@ -68,5 +67,3 @@ template <typename out, typename in1, typename in2> inline out DeltaPhi(const in
 }
 
 }
-
-#endif

@@ -2,7 +2,7 @@
 #include <cmath>
 #include <stdexcept>
 
-#include "ImagineModelsRandom/RandomJF12.h"
+#include "ImagineModelsRandom/JF12Random.h"
 
 namespace imagine {
 

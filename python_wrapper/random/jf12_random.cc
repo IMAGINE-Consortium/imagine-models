@@ -1,5 +1,5 @@
 #include "../bindings.h"
-#include "ImagineModelsRandom/RandomJF12.h"
+#include "ImagineModelsRandom/JF12Random.h"
 
 void bind_jf12_random(py::module_ &m) {
     py::class_<JF12RandomField, RandomVectorField>(m, "JF12RandomField")

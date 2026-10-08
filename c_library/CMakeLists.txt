@@ -57,7 +57,7 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/config.h.in ${IM_GENERATED_DIR}/Imagi
 set(IM_SRC_FILES
     ${IM_SOURCE_DIR}/helix.cc
     ${IM_SOURCE_DIR}/jaffe.cc
-    ${IM_SOURCE_DIR}/regularjf12.cc
+    ${IM_SOURCE_DIR}/jf12.cc
     ${IM_SOURCE_DIR}/ymw16.cc
     ${IM_SOURCE_DIR}/xh24.cc
     ${IM_SOURCE_DIR}/tf17.cc
@@ -66,24 +66,24 @@ set(IM_SRC_FILES
     ${IM_SOURCE_DIR}/archimedes.cc
     ${IM_SOURCE_DIR}/han.cc
     ${IM_SOURCE_DIR}/wmap.cc
-    ${IM_SOURCE_DIR}/stanevbss.cc
+    ${IM_SOURCE_DIR}/stanev.cc
     ${IM_SOURCE_DIR}/fauvet.cc
-    ${IM_SOURCE_DIR}/tinyakovtkachev.cc
-    ${IM_SOURCE_DIR}/hararimollerachroulet.cc
+    ${IM_SOURCE_DIR}/tt.cc
+    ${IM_SOURCE_DIR}/hmr.cc
     ${IM_SOURCE_DIR}/svt22.cc
-    ${IM_SOURCE_DIR}/ungerfarrar.cc
+    ${IM_SOURCE_DIR}/uf24.cc
 )
 
 if(IMAGINE_HAS_FFTW)
     list(APPEND IM_SRC_FILES
-        ${IM_SOURCE_DIR}/randomfield.cc
-        ${IM_SOURCE_DIR}/randomscalarfield.cc
-        ${IM_SOURCE_DIR}/randomvectorfield.cc
-        ${IM_SOURCE_DIR}/gaussianscalar.cc
-        ${IM_SOURCE_DIR}/lognormal.cc
-        ${IM_SOURCE_DIR}/randomjf12.cc
-        ${IM_SOURCE_DIR}/ensslinsteininger.cc
-        ${IM_SOURCE_DIR}/uf26random.cc
+        ${IM_SOURCE_DIR}/random_field.cc
+        ${IM_SOURCE_DIR}/random_scalar_field.cc
+        ${IM_SOURCE_DIR}/random_vector_field.cc
+        ${IM_SOURCE_DIR}/gaussian_scalar.cc
+        ${IM_SOURCE_DIR}/log_normal.cc
+        ${IM_SOURCE_DIR}/jf12_random.cc
+        ${IM_SOURCE_DIR}/es_random.cc
+        ${IM_SOURCE_DIR}/uf26_random.cc
     )
 endif()
 

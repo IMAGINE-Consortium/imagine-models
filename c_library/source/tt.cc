@@ -1,6 +1,6 @@
 #include <cmath>
 
-#include "ImagineModels/TinyakovTkachev.h"
+#include "ImagineModels/TT.h"
 #include "ImagineModels/helpers.h"
 
 namespace imagine {

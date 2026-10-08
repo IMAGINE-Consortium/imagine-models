@@ -1,5 +1,4 @@
-#ifndef IMAGINE_FFTW_H
-#define IMAGINE_FFTW_H
+#pragma once
 
 #include <array>
 #include <cstddef>
@@ -64,5 +63,3 @@ private:
 };
 
 }
-
-#endif

@@ -1,7 +1,7 @@
 #include <algorithm>
 #include <cmath>
 
-#include "ImagineModels/YMW.h"
+#include "ImagineModels/YMW16.h"
 #include "ImagineModels/units.h"
 
 namespace imagine {

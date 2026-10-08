@@ -61,10 +61,10 @@ def _regular_cases():
         "HMRMagneticField",
         "HanMagneticField",
         "HelixMagneticField",
-        "JF12RegularField",
+        "JF12MagneticField",
         "JaffeMagneticField",
         "PshirkovMagneticField",
-        "SVT22",
+        "SVT22MagneticField",
         "StanevBSSMagneticField",
         "SunMagneticField",
         "TFMagneticField",
@@ -79,12 +79,12 @@ def _regular_cases():
         cases[f"{name}__default"] = (name, {})
     cases["UniformMagneticField__set"] = ("UniformMagneticField", {"bx": -3.2, "by": 1.5, "bz": 0.25})
     cases["UniformDensityField__set"] = ("UniformDensityField", {"n0": 0.03})
-    cases["JF12RegularField__no_halo"] = ("JF12RegularField", {"do_halo": False})
-    cases["JF12RegularField__no_X"] = ("JF12RegularField", {"do_X": False})
+    cases["JF12MagneticField__no_halo"] = ("JF12MagneticField", {"do_halo": False})
+    cases["JF12MagneticField__no_X"] = ("JF12MagneticField", {"do_X": False})
     cases["HanMagneticField__XH24"] = ("HanMagneticField", {"set_model": ["XH24"]})
-    cases["JF12RegularField__Planck12b"] = ("JF12RegularField", {"set_model": ["Planck12b"]})
-    cases["JF12RegularField__Planck12c"] = ("JF12RegularField", {"set_model": ["Planck12c"]})
-    cases["SVT22__no_halo"] = ("SVT22", {"do_halo": False})
+    cases["JF12MagneticField__Planck12b"] = ("JF12MagneticField", {"set_model": ["Planck12b"]})
+    cases["JF12MagneticField__Planck12c"] = ("JF12MagneticField", {"set_model": ["Planck12c"]})
+    cases["SVT22MagneticField__no_halo"] = ("SVT22MagneticField", {"do_halo": False})
     cases["JaffeMagneticField__ring_no_bar"] = ("JaffeMagneticField", {"ring": True, "bar": False})
     cases["JaffeMagneticField__bss"] = ("JaffeMagneticField", {"bss": True})
     cases["JaffeMagneticField__quadruple"] = ("JaffeMagneticField", {"quadruple": True})
@@ -115,8 +115,15 @@ REGULAR_CASES = _regular_cases()
 RANDOM_CASES = _random_cases() if img.__has_random_fields__ else {}
 
 
+RENAMED = {"JF12RegularField": "JF12MagneticField", "SVT22": "SVT22MagneticField"}
+
+
+def model_class(name):
+    return getattr(img, RENAMED.get(name, name), None)
+
+
 def make_model(name, settings):
-    model = getattr(img, name)()
+    model = model_class(name)()
     for key, value in settings.items():
         if key == "set_model":
             model.set_model(*value)
@@ -166,18 +173,18 @@ def parameter_defaults(model):
 _SOURCE_FILES = {
     "ArchimedeanMagneticField": "archimedes.cc",
     "FauvetMagneticField": "fauvet.cc",
-    "HMRMagneticField": "hararimollerachroulet.cc",
+    "HMRMagneticField": "hmr.cc",
     "HanMagneticField": "han.cc",
     "HelixMagneticField": "helix.cc",
-    "JF12RegularField": "regularjf12.cc",
+    "JF12MagneticField": "jf12.cc",
     "JaffeMagneticField": "jaffe.cc",
     "PshirkovMagneticField": "pshirkov.cc",
-    "SVT22": "svt22.cc",
-    "StanevBSSMagneticField": "stanevbss.cc",
+    "SVT22MagneticField": "svt22.cc",
+    "StanevBSSMagneticField": "stanev.cc",
     "SunMagneticField": "sun.cc",
     "TFMagneticField": "tf17.cc",
-    "TTMagneticField": "tinyakovtkachev.cc",
-    "UFMagneticField": "ungerfarrar.cc",
+    "TTMagneticField": "tt.cc",
+    "UFMagneticField": "uf24.cc",
     "WMAPMagneticField": "wmap.cc",
     "YMW16": "ymw16.cc",
 }

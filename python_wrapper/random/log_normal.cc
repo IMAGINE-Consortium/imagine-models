@@ -1,5 +1,5 @@
-#include "ImagineModelsRandom/LogNormal.h"
 #include "../bindings.h"
+#include "ImagineModelsRandom/LogNormal.h"
 
 void bind_lognormal(py::module_ &m) {
     py::class_<LogNormalScalarField, RandomScalarField>(m, "LogNormalScalarField")

@@ -1,5 +1,4 @@
-#ifndef IMAGINE_TEST_HELPERS_H
-#define IMAGINE_TEST_HELPERS_H
+#pragma once
 
 #include <array>
 #include <cmath>
@@ -52,5 +51,3 @@ inline std::string to_string(const Position &p) {
 }
 
 }
-
-#endif

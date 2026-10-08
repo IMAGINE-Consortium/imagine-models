@@ -1,5 +1,4 @@
-#ifndef JAFFE_H
-#define JAFFE_H
+#pragma once
 
 #include <cmath>
 #include <iostream>
@@ -77,5 +76,3 @@ public:
 };
 
 }
-
-#endif

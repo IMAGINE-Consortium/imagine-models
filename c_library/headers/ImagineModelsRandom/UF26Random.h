@@ -1,5 +1,4 @@
-#ifndef UF26RANDOM_H
-#define UF26RANDOM_H
+#pragma once
 
 #include <array>
 #include <string>
@@ -39,5 +38,3 @@ private:
 };
 
 }
-
-#endif

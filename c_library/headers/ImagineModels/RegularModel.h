@@ -1,5 +1,4 @@
-#ifndef IMAGINE_REGULARMODEL_H
-#define IMAGINE_REGULARMODEL_H
+#pragma once
 
 #include <array>
 #include <cstddef>
@@ -126,5 +125,3 @@ public:
 
 #define IMAGINE_INSTANTIATE_VECTOR_MODEL(Model) IMAGINE_INSTANTIATE_MODEL(Model, imagine::Vec3)
 #define IMAGINE_INSTANTIATE_SCALAR_MODEL(Model) IMAGINE_INSTANTIATE_MODEL(Model, imagine::Scalar)
-
-#endif

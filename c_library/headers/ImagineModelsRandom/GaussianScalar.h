@@ -1,5 +1,4 @@
-#ifndef GAUSSIANSCALAR_H
-#define GAUSSIANSCALAR_H
+#pragma once
 
 #include "ImagineModelsRandom/RandomScalarField.h"
 
@@ -18,5 +17,3 @@ public:
 };
 
 }
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef ARCHIMEDES_H
-#define ARCHIMEDES_H
+#pragma once
 
 #include <cmath>
 #include <functional>
@@ -25,5 +24,3 @@ public:
 };
 
 }
-
-#endif
