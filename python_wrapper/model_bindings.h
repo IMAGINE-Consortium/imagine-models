@@ -27,12 +27,13 @@ template <typename Model> auto bind_regular_model(py::module_ &m, const char *na
                 out[parameter.c_str()] = self.get_parameter(parameter);
             return out;
         },
-        &Model::set_parameter_map);
-    cls.def_property_readonly_static("parameter_names", [](py::object) { return Model::parameter_names(); });
+        &Model::set_parameter_map, doc::parameters);
+    cls.def_property_readonly_static(
+        "parameter_names", [](py::object) { return Model::parameter_names(); }, doc::parameter_names);
 
 #if IMAGINE_HAS_AUTODIFF
-    cls.def_readwrite("active_parameters", &Model::active_parameters);
-    cls.def("derivative", &Model::derivative, "x"_a, "y"_a, "z"_a);
+    cls.def_readwrite("active_parameters", &Model::active_parameters, doc::active_parameters);
+    cls.def("derivative", &Model::derivative, "x"_a, "y"_a, "z"_a, doc::derivative);
 #endif
 
     if constexpr (is_vector)
@@ -42,14 +43,14 @@ template <typename Model> auto bind_regular_model(py::module_ &m, const char *na
                 auto b = self.at_position(x, y, z);
                 return std::make_tuple(static_cast<double>(b[0]), static_cast<double>(b[1]), static_cast<double>(b[2]));
             },
-            "x"_a, "y"_a, "z"_a);
+            "x"_a, "y"_a, "z"_a, doc::at_position);
     else
         cls.def(
             "at_position",
             [](const Model &self, double x, double y, double z) {
                 return static_cast<double>(self.at_position(x, y, z));
             },
-            "x"_a, "y"_a, "z"_a);
+            "x"_a, "y"_a, "z"_a, doc::at_position);
 
     return cls;
 }

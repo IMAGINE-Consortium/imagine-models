@@ -1,7 +1,7 @@
 #include "bindings.h"
 
 void bind_grids(py::module_ &m) {
-    py::class_<RegularGrid>(m, "RegularGrid")
+    py::class_<RegularGrid>(m, "RegularGrid", "Regular grid: shape, reference_point (first point), increment.")
         .def(py::init<const std::array<int, 3> &, const std::array<double, 3> &, const std::array<double, 3> &>(),
              py::arg("shape").noconvert(), "reference_point"_a, "increment"_a)
         .def_readonly("shape", &RegularGrid::shape)
@@ -13,7 +13,7 @@ void bind_grids(py::module_ &m) {
                 .format(g.shape, g.reference_point, g.increment);
         });
 
-    py::class_<IrregularGrid>(m, "IrregularGrid")
+    py::class_<IrregularGrid>(m, "IrregularGrid", "Grid spanned by arbitrary x, y and z axes.")
         .def(py::init<const std::vector<double> &, const std::vector<double> &, const std::vector<double> &>(), "x"_a,
              "y"_a, "z"_a)
         .def_property_readonly("x", [](const IrregularGrid &g) { return py::array_t<double>(g.x.size(), g.x.data()); })
@@ -23,7 +23,7 @@ void bind_grids(py::module_ &m) {
         .def_property_readonly("size", &IrregularGrid::size)
         .def("__repr__", [](const IrregularGrid &g) { return py::str("IrregularGrid(shape={})").format(g.shape()); });
 
-    py::class_<PointCloud>(m, "PointCloud")
+    py::class_<PointCloud>(m, "PointCloud", "Unstructured set of N positions.")
         .def(py::init<const std::vector<double> &, const std::vector<double> &, const std::vector<double> &>(), "x"_a,
              "y"_a, "z"_a)
         .def_static(

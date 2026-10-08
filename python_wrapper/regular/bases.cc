@@ -39,7 +39,7 @@ void bind_regular_bases(py::module_ &m) {
         .def(
             "evaluate",
             [](const RegularVectorField &self, const RegularGrid &grid) { return to_numpy(self.evaluate(grid)); },
-            "grid"_a)
+            "grid"_a, doc::evaluate)
         .def(
             "evaluate",
             [](const RegularVectorField &self, const IrregularGrid &grid) { return to_numpy(self.evaluate(grid)); },
@@ -48,14 +48,14 @@ void bind_regular_bases(py::module_ &m) {
             "evaluate",
             [](const RegularVectorField &self, const PointCloud &grid) { return to_numpy_points(self.evaluate(grid)); },
             "grid"_a)
-        .def("at_positions", &at_positions<RegularVectorField>, "x"_a, "y"_a, "z"_a);
+        .def("at_positions", &at_positions<RegularVectorField>, "x"_a, "y"_a, "z"_a, doc::at_positions);
 
     py::class_<RegularScalarField, PyRegularScalarField>(m, "RegularScalarField")
         .def(py::init<>())
         .def(
             "evaluate",
             [](const RegularScalarField &self, const RegularGrid &grid) { return to_numpy(self.evaluate(grid)); },
-            "grid"_a)
+            "grid"_a, doc::evaluate)
         .def(
             "evaluate",
             [](const RegularScalarField &self, const IrregularGrid &grid) { return to_numpy(self.evaluate(grid)); },
@@ -64,5 +64,5 @@ void bind_regular_bases(py::module_ &m) {
             "evaluate",
             [](const RegularScalarField &self, const PointCloud &grid) { return to_numpy_points(self.evaluate(grid)); },
             "grid"_a)
-        .def("at_positions", &at_positions<RegularScalarField>, "x"_a, "y"_a, "z"_a);
+        .def("at_positions", &at_positions<RegularScalarField>, "x"_a, "y"_a, "z"_a, doc::at_positions);
 }

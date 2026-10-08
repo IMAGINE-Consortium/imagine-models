@@ -5,7 +5,7 @@
 void bind_pshirkov(py::module_ &m) {
     bind_regular_model<PshirkovMagneticField>(m, "PshirkovMagneticField")
         .def(py::init<const std::string &>(), "model"_a)
-        .def("set_model", &PshirkovMagneticField::set_model, "model"_a)
+        .def("set_model", &PshirkovMagneticField::set_model, "model"_a, doc::set_model)
         .def_property_readonly("model", &PshirkovMagneticField::model)
         .def_readonly("available_models", &PshirkovMagneticField::available_models)
         .def_readwrite("useDisk", &PshirkovMagneticField::useDisk)

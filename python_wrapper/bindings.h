@@ -18,6 +18,23 @@ namespace py = pybind11;
 using namespace pybind11::literals;
 using namespace imagine;
 
+namespace doc {
+inline constexpr const char *evaluate = "Field on a RegularGrid, IrregularGrid or PointCloud.";
+inline constexpr const char *at_position = "Field at one position (kpc).";
+inline constexpr const char *at_positions = "Field at many positions, with NumPy broadcasting.";
+inline constexpr const char *derivative = "Jacobian w.r.t. the active parameters at one position.";
+inline constexpr const char *active_parameters = "Parameters included in derivative, in this order.";
+inline constexpr const char *parameters = "All parameters as a dict; assigning updates the given ones.";
+inline constexpr const char *parameter_names = "Names of the model parameters, in order.";
+inline constexpr const char *set_model = "Select a published variant and load its parameters.";
+inline constexpr const char *sample = "Random realisation on a RegularGrid for the given seed.";
+inline constexpr const char *random_numbers = "Unit-variance Gaussian random field before scaling.";
+inline constexpr const char *rms = "Expected rms amplitude at positions or on a grid.";
+inline constexpr const char *variance = "Expected variance at positions.";
+inline constexpr const char *mean = "Expected mean at positions.";
+inline constexpr const char *spectrum = "Power spectrum at wave number |k|.";
+}
+
 template <int N> py::array_t<double> to_numpy(GridData<N> &&grid_data) {
     auto owned = new GridData<N>(std::move(grid_data));
     py::capsule owner(owned, [](void *p) { delete static_cast<GridData<N> *>(p); });

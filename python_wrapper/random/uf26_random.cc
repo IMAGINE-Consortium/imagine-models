@@ -4,7 +4,7 @@
 void bind_uf26_random(py::module_ &m) {
     py::class_<UF26RandomField, RandomVectorField>(m, "UF26RandomField")
         .def(py::init<const std::string &>(), "model"_a = "expDisk")
-        .def("set_model", &UF26RandomField::set_model, "model"_a)
+        .def("set_model", &UF26RandomField::set_model, "model"_a, doc::set_model)
         .def_property_readonly("model", &UF26RandomField::model)
         .def_readonly("available_models", &UF26RandomField::available_models)
         .def_readwrite("spectral_offset", &UF26RandomField::spectral_offset)

@@ -4,7 +4,7 @@
 void bind_jf12_random(py::module_ &m) {
     py::class_<JF12RandomField, RandomVectorField>(m, "JF12RandomField")
         .def(py::init<const std::string &>(), "model"_a = "JF12")
-        .def("set_model", &JF12RandomField::set_model, "model"_a)
+        .def("set_model", &JF12RandomField::set_model, "model"_a, doc::set_model)
         .def_property_readonly("model", &JF12RandomField::model)
         .def_readonly("available_models", &JF12RandomField::available_models)
         .def_readwrite("arm_shift", &JF12RandomField::arm_shift)
