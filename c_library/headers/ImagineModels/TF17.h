@@ -1,4 +1,4 @@
-// Reference: Terral & Ferriere 2017, arXiv:1611.10222
+// Reference: Terral & Ferriere 2017, arXiv:1611.10222; field forms: Ferriere & Terral 2014, arXiv:1312.1974
 // Based on: CRPropa (TF17Field), GPL-3.0
 // Deviations:
 // - lower limits of Table 2 used as values, as in CRPropa
