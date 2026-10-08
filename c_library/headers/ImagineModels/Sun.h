@@ -1,5 +1,5 @@
 // Reference: Sun et al. 2008, arXiv:0711.1572 (ASS+RING); halo: Sun & Reich 2010, arXiv:1010.4394
-// Based on: hammurabi v3.01 (old hammurabi)
+// Based on: hammurabi v3.01 (old hammurabi), GPL-3.0
 // Deviations:
 // - halo with the parameters of Sun & Reich 2010: bH_B0 = 2 muG, bH_z1a/bH_z1b = 0.2/4 kpc
 

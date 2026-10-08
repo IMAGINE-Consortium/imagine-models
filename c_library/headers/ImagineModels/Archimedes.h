@@ -1,8 +1,7 @@
 // Reference: Jokipii, Levy & Hubbard 1977, ApJ 213, 861
-// Based on: CRPropa (ArchimedeanSpiralField)
+// Based on: CRPropa (ArchimedeanSpiralField), GPL-3.0
 // Deviations:
-// - no fitted model; dimensionless parameters as in CRPropa (R_0 in kpc, Omega / v_w in 1/kpc, B_0 the radial field at
-// R_0)
+// - no fitted model; dimensionless parameters as in CRPropa (R_0 in kpc, Omega / v_w in 1/kpc, B_0 the radial field at R_0)
 
 #pragma once
 

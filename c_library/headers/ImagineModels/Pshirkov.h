@@ -1,5 +1,5 @@
 // Reference: Pshirkov et al. 2011, arXiv:1103.0814 (ASS and BSS of Table 3)
-// Based on: CRPropa (PT11Field)
+// Based on: CRPropa (PT11Field), GPL-3.0
 
 #pragma once
 

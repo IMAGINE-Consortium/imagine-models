@@ -1,5 +1,5 @@
 // Reference: none
-// Based on: hammurabiX (brnd_es)
+// Based on: hammurabiX (brnd_es), GPL-3.0
 // Deviations:
 // - no publication; rms profile as in hammurabiX, b0 * sqrt(exp(-(r - r_obs)/r0) exp(-(|z| - |z_obs|)/z0))
 

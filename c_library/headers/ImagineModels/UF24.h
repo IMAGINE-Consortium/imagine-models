@@ -28,7 +28,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 // Reference: Unger & Farrar 2024, arXiv:2311.12120
-// Based on: authors' code (UF23Field v1.1, doi:10.5281/zenodo.11321212, BSD-2)
+// Based on: authors' code (UF23Field v1.1, doi:10.5281/zenodo.11321212), BSD-2-Clause
 
 #pragma once
 

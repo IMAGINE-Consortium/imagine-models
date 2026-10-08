@@ -1,5 +1,5 @@
 // Reference: Stanev 1997, arXiv:astro-ph/9607086 (bisymmetric model)
-// Based on: hammurabi v3.01 (old hammurabi)
+// Based on: hammurabi v3.01 (old hammurabi), GPL-3.0
 // Deviations:
 // - eq. 4 used with exp(-|z|/z0) (sign missing in the paper)
 // - field cut at cylindrical r = 20 kpc (the paper: 20 kpc in all directions)

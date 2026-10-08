@@ -1,5 +1,6 @@
-// Reference: Page et al. 2007, arXiv:astro-ph/0603450; corrected form: Jansson et al. 2009, arXiv:0905.2228
-// (Sec. 5.3.6) Based on: hammurabi v3.01 (old hammurabi) Deviations:
+// Reference: Page et al. 2007, arXiv:astro-ph/0603450; corrected form: Jansson et al. 2009, arXiv:0905.2228 (Sec. 5.3.6)
+// Based on: hammurabi v3.01 (old hammurabi), GPL-3.0
+// Deviations:
 // - psi0 = 27 deg and sin(psi) on the radial component, as corrected in Jansson et al. 2009
 // - the paper gives no amplitude, b_b0 = 6 muG is a default
 // - anti (field reversed for z > 0) from hammurabi, not in the paper

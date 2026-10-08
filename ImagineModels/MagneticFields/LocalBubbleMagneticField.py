@@ -281,7 +281,7 @@ def u_sph(coord):
     Created on Jun 22 2016
     @author: V.Pelgrims
 
-    # # #       STOLLEN from GalaxyBasics in gpempy     # # #
+    # # #       from GalaxyBasics in gpempy (V. Pelgrims)     # # #
 
     """
 

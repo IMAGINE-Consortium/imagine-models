@@ -1,5 +1,5 @@
 // Reference: Fauvet et al. 2012, arXiv:1201.5742 (Sec. 2.1)
-// Based on: hammurabi v3.01 (old hammurabi)
+// Based on: hammurabi v3.01 (old hammurabi), GPL-3.0
 
 #pragma once
 

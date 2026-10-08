@@ -1,8 +1,7 @@
 // Reference: Jaffe et al. 2010, arXiv:0907.3994
-// Based on: hammurabiX (breg_jaffe)
+// Based on: hammurabiX (breg_jaffe), GPL-3.0
 // Deviations:
-// - 3D form and default parameters from the hammurabiX template, not from a publication (the 2010 model is 2D, with R1
-// = 3 kpc and an arm cutoff at 15 kpc)
+// - 3D form and default parameters from the hammurabiX template, not from a publication (the 2010 model is 2D, with R1 = 3 kpc and an arm cutoff at 15 kpc)
 
 #pragma once
 

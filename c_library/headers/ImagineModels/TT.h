@@ -1,5 +1,5 @@
 // Reference: Tinyakov & Tkachev 2002, arXiv:astro-ph/0111305; Kachelriess et al. 2007, arXiv:astro-ph/0510444
-// Based on: hammurabi v3.01 (old hammurabi)
+// Based on: hammurabi v3.01 (old hammurabi), GPL-3.0
 
 #pragma once
 

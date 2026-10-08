@@ -3,6 +3,7 @@ IndentWidth: 4
 ColumnLimit: 120
 AccessModifierOffset: -4
 AlignEscapedNewlines: Left
+ReflowComments: false
 BreakBeforeBraces: Attach
 AllowShortFunctionsOnASingleLine: Inline
 AllowShortIfStatementsOnASingleLine: Never

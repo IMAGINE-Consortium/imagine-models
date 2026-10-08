@@ -1,5 +1,5 @@
 // Reference: Xu & Han 2024, arXiv:2404.02038 (eq. 2, Table 2)
-// Based on: authors' code (GMFcal.c, haloB)
+// Based on: the paper; compared with the authors' code (GMFcal.c, haloB; no licence stated, no code copied)
 // Deviations:
 // - field set to zero beyond r = 20 kpc, as in the authors' code
 

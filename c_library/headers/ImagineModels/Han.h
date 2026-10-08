@@ -1,8 +1,7 @@
 // Reference: Han et al. 2018, arXiv:1712.01997; XH24 variant: Xu & Han 2024, arXiv:2404.02038
-// Based on: XH24 variant: authors' code (GMFcal.c, diskB)
+// Based on: XH24 variant: parameter values from the authors' code (GMFcal.c, diskB; no licence stated, no code copied)
 // Deviations:
-// - XH24 variant: disk as in the authors' code, not in the papers: R_s(6) = 8.16 kpc, an extra zone 10.5-15 kpc with
-// B_s7 = 4.5 muG, disk to 20 kpc
+// - XH24 variant: disk as in the authors' code, not in the papers: R_s(6) = 8.16 kpc, an extra zone 10.5-15 kpc with B_s7 = 4.5 muG, disk to 20 kpc
 
 #pragma once
 

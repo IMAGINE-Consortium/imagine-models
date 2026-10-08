@@ -4,6 +4,8 @@
 
 Results of many models changed because implementation errors were fixed. Results computed with earlier versions should be checked.
 
+The library is licensed GPL-3.0-or-later; the README lists the origin and licence of every adapted model.
+
 ### Changed results
 
 - **YMW16**: now follows the original C code v1.3.1. The outer-disk cutoff had its arguments swapped (densities beyond 15 kpc were too high), the Local arm never contributed, arm widths lacked the factor cos(pitch), the Local Bubble used a wrong scaling and centre, θ_sg was 78.8° instead of 75.8°. Also the warp now acts on the disk components only, and the model is limited to R ≤ 30 kpc, as in the original.

@@ -1,5 +1,5 @@
 // Reference: Jansson & Farrar 2012, arXiv:1210.7820; Planck variants: Planck XLII 2016, arXiv:1601.00546 (Table C.1)
-// Based on: hammurabiX; compared with CRPropa (JF12Field, PlanckJF12bField)
+// Based on: hammurabiX, GPL-3.0; compared with CRPropa (JF12Field, PlanckJF12bField), GPL-3.0
 // Deviations:
 // - Planck variants without the striation factor beta
 

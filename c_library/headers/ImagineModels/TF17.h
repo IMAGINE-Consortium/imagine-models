@@ -1,5 +1,5 @@
 // Reference: Terral & Ferriere 2017, arXiv:1611.10222
-// Based on: CRPropa (TF17Field)
+// Based on: CRPropa (TF17Field), GPL-3.0
 // Deviations:
 // - lower limits of Table 2 used as values, as in CRPropa
 

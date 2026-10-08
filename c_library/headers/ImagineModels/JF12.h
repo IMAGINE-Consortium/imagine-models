@@ -1,5 +1,5 @@
 // Reference: Jansson & Farrar 2012, arXiv:1204.3662; Planck variants: Planck XLII 2016, arXiv:1601.00546 (Table C.1)
-// Based on: hammurabiX; compared with CRPropa (JF12Field, PlanckJF12bField)
+// Based on: hammurabiX, GPL-3.0; compared with CRPropa (JF12Field, PlanckJF12bField), GPL-3.0
 // Deviations:
 // - b8 from flux conservation (2.755 muG; the paper rounds to 2.7)
 // - molecular ring field b_ring * 5 kpc / r as in CRPropa and hammurabiX (the paper gives no radial dependence)
