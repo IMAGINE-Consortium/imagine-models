@@ -1,12 +1,16 @@
-// Reference: Jaffe et al. 2010, arXiv:0907.3994
-// Based on: hammurabiX (breg_jaffe), GPL-3.0
+// Reference: Jaffe et al. 2010, arXiv:0907.3994; Jaffe13 variant: Jaffe et al. 2013, arXiv:1302.0143 (Table A1)
+// Based on: hammurabiX (breg_jaffe), GPL-3.0; Jaffe13 variant: hammurabi v3.01 (field_bb), GPL-3.0
 // Deviations:
 // - 3D form and default parameters from the hammurabiX template, not from a publication (the 2010 model is 2D, with R1 = 3 kpc and an arm cutoff at 15 kpc)
+// - Jaffe13: Table A1 azimuths read as clockwise, so the arms are at 350, 260, 170, 80 deg (amplitudes 3, 0.5, -4, 1.2 muG); this matches the NE2001 arms and puts the -4 muG arm at the Sagittarius-Carina arm
+// - Jaffe13: arm height h_c = 2 kpc from Table A1 (Planck XLII quotes 0.5 kpc as the original value)
+// - Jaffe13: field directions, arm distances and the reversal inside a negative ring as in hammurabi v3.01; no reversal above the disk (introduced only for Jaffe13b)
 
 #pragma once
 
+#include <array>
 #include <cmath>
-#include <iostream>
+#include <string>
 #include <vector>
 
 #include "ImagineModels/RegularModel.h"
@@ -47,6 +51,11 @@ IMAGINE_PARAMETERS(JaffeParameters, JAFFE_PARAMETERS)
 
 class JaffeMagneticField : public RegularVectorModel<JaffeMagneticField, JaffeParameters> {
 public:
+    const std::array<std::string, 2> available_models{"hammurabiX", "Jaffe13"};
+    explicit JaffeMagneticField(const std::string &model = "hammurabiX") { set_model(model); }
+    void set_model(const std::string &model);
+    const std::string &model() const { return active_model; }
+
     bool quadruple = false; // quadruple pattern in halo
     bool bss = false;       // bi-symmetric
 
@@ -54,6 +63,9 @@ public:
     bool bar = true;   // elliptical bar, replaces ring
 
     int arm_num = 4; // # of spiral arms
+
+    bool hammurabi_v3 = false; // hammurabi v3.01 conventions
+    double r_max = 0.;         // kpc, 0 means none
 
     template <typename T>
     Vec3<T> orientation(const double &x, const double &y, const double &z, const JaffeParameters<T> &p) const;
@@ -77,6 +89,9 @@ public:
 
     template <typename T>
     Vec3<T> field(const double &x, const double &y, const double &z, const JaffeParameters<T> &p) const;
+
+private:
+    std::string active_model = "hammurabiX";
 };
 
 }
