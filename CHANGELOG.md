@@ -23,7 +23,7 @@ The library is licensed GPL-3.0-or-later; the README lists the origin and licenc
 
 ### Added
 
-- Models: NE2025 and NE2001 electron densities (`NE2025`, variant `NE2001`), KST24 (Korochkin, Semikoz & Tinyakov 2025), UF26 random field, XH24 halo, JF12 Planck variants (`Planck12b`, `Planck12c`, regular and random), Han XH24 disk variant.
+- Models: NE2025 and NE2001 electron densities (`NE2025`, variant `NE2001`), YT20 hot-gas halo (`YT20`), plane-parallel thick disks (`PlaneParallelDensity`, Ocker et al. 2020 and Gaensler et al. 2008), KST24 (Korochkin, Semikoz & Tinyakov 2025), UF26 random field, XH24 halo, JF12 Planck variants (`Planck12b`, `Planck12c`, regular and random), Han XH24 disk variant.
 - `PointCloud` grids for evaluation at arbitrary positions.
 - `derivative` on grids and point clouds, shape `(3, ..., n_active)`.
 - `interpolate`: linear or nearest-grid-point interpolation of data on a `RegularGrid` (e.g. a random sample) at arbitrary positions.

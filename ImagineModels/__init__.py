@@ -1,6 +1,7 @@
 from ._core import (
     NE2025,
     YMW16,
+    YT20,
     ArchimedeanMagneticField,
     FauvetMagneticField,
     GridError,
@@ -11,6 +12,7 @@ from ._core import (
     JaffeMagneticField,
     JF12MagneticField,
     KST24MagneticField,
+    PlaneParallelDensity,
     PointCloud,
     PshirkovMagneticField,
     RegularGrid,

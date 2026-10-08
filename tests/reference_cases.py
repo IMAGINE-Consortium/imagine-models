@@ -65,6 +65,7 @@ def _regular_cases():
         "JaffeMagneticField",
         "KST24MagneticField",
         "NE2025",
+        "PlaneParallelDensity",
         "PshirkovMagneticField",
         "SVT22MagneticField",
         "StanevBSSMagneticField",
@@ -77,6 +78,7 @@ def _regular_cases():
         "WMAPMagneticField",
         "XH24MagneticField",
         "YMW16",
+        "YT20",
     ]:
         cases[f"{name}__default"] = (name, {})
     cases["UniformMagneticField__set"] = ("UniformMagneticField", {"bx": -3.2, "by": 1.5, "bz": 0.25})
@@ -99,6 +101,7 @@ def _regular_cases():
     for variant in ["base", "neCL", "expX", "spur", "cre10", "synCG", "twistX", "nebCor"]:
         cases[f"UF24MagneticField__{variant}"] = ("UF24MagneticField", {"set_model": [variant]})
     cases["NE2025__NE2001"] = ("NE2025", {"set_model": ["NE2001"]})
+    cases["PlaneParallelDensity__Gaensler08"] = ("PlaneParallelDensity", {"set_model": ["Gaensler08"]})
     cases["AxiSymmetricSpiral__default"] = ("AxiSymmetricSpiral", {})
     return cases
 

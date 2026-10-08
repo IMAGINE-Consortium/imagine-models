@@ -16,7 +16,7 @@ using VectorModels =
                JaffeMagneticField, JF12MagneticField, KST24MagneticField, PshirkovMagneticField, StanevBSSMagneticField,
                SunMagneticField, SVT22MagneticField, TF17MagneticField, TTMagneticField, UF24MagneticField,
                UniformMagneticField, WMAPMagneticField, XH24MagneticField>;
-using ScalarModels = std::tuple<NE2025, UniformDensityField, YMW16>;
+using ScalarModels = std::tuple<NE2025, PlaneParallelDensity, UniformDensityField, YMW16, YT20>;
 using AllModels = decltype(std::tuple_cat(std::declval<VectorModels>(), std::declval<ScalarModels>()));
 
 using Position = std::array<double, 3>;

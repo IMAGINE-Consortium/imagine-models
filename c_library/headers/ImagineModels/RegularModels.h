@@ -11,6 +11,7 @@
 #include "ImagineModels/Jaffe.h"
 #include "ImagineModels/KST24.h"
 #include "ImagineModels/NE2025.h"
+#include "ImagineModels/PlaneParallel.h"
 #include "ImagineModels/Pshirkov.h"
 #include "ImagineModels/SVT22.h"
 #include "ImagineModels/Stanev.h"
@@ -23,3 +24,4 @@
 #include "ImagineModels/XH24.h"
 
 #include "ImagineModels/YMW16.h"
+#include "ImagineModels/YT20.h"

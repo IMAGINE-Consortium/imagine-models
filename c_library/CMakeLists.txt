@@ -60,6 +60,8 @@ set(IM_SRC_FILES
     ${IM_SOURCE_DIR}/kst24.cc
     ${IM_SOURCE_DIR}/ne2025.cc
     ${IM_SOURCE_DIR}/ne2025_tables.cc
+    ${IM_SOURCE_DIR}/plane_parallel.cc
+    ${IM_SOURCE_DIR}/yt20.cc
     ${IM_SOURCE_DIR}/jf12.cc
     ${IM_SOURCE_DIR}/ymw16.cc
     ${IM_SOURCE_DIR}/xh24.cc

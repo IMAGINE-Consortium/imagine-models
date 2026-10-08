@@ -282,7 +282,9 @@ Differences to the publications are listed under [Deviations from the publicatio
 | **Regular models** | | | | | |
 | Uniform | `UniformDensityField` | | | | |
 | NE2025 | `NE2025` | [Ocker & Cordes (2026)](https://arxiv.org/abs/2602.11838); NE2001: [Cordes & Lazio (2002)](https://arxiv.org/abs/astro-ph/0207156) | authors' Fortran code in [mwprop](https://github.com/stella-ocker/mwprop) (GPL-3.0-or-later) | NE2025, NE2001 | |
+| Plane-parallel | `PlaneParallelDensity` | [Ocker, Cordes & Chatterjee (2020)](https://arxiv.org/abs/2004.11921); Gaensler08: [Gaensler et al. (2008)](https://arxiv.org/abs/0808.2550) | | Ocker20, Gaensler08 | |
 | YMW16 | `YMW16` | [Yao et al. (2017)](https://ui.adsabs.harvard.edu/abs/2017ApJ...835...29Y/abstract) | original C code v1.3.1 (via [pygedm](https://github.com/FRBs/pygedm)) (GPL-3.0-or-later) | | [ipynb](demos/python/model_examples/ymw16_demo.ipynb) |
+| YT20 halo | `YT20` | [Yamasaki & Totani (2020)](https://arxiv.org/abs/1909.00849) | | | |
 | **Random models** | | | | | |
 | Gaussian | `GaussianScalarField` | | | | [ipynb](demos/python/model_examples/gaussian_scalar_demo.ipynb) |
 | Log-normal | `LogNormalScalarField` | | | | |
@@ -299,6 +301,7 @@ Models not listed here have no known deviations.
 - **JF12 (random)**: Planck variants without the striation factor β.
 - **KST24**: from the authors' code, not in the paper: Sagittarius-Carina arm widening by 3° along the arm, radial (3–17 kpc) and vertical arm cut-offs, arm widths capped at 1.2 kpc, spiral scale a = 3 kpc; Sagittarius-Carina `rdisk_sagcar` = 0.79 kpc as in the code (Table 2: 0.8); outer Perseus field −3.5 µG as in Table 2 and CRPropa (the authors' Zenodo code uses −2.5 µG).
 - **NE2025 / NE2001**: electron density only (the fluctuation parameters F and scattering are not included); double instead of single precision; position parameters (Galactic Centre, local ISM) in the NE2001 frame: x towards l = 90°, Sun at (0, 8.5, 0) kpc.
+- **Plane-parallel, Ocker20**: smooth plane-parallel component only; the paper's clumps and voids are specific to single lines of sight.
 - **Stanev**: eq. 4 used with exp(−|z|/z0) (sign missing in the paper); field cut at cylindrical r = 20 kpc (the paper: 20 kpc in all directions).
 - **Sun**: halo with the parameters of Sun & Reich (2010): `bH_B0` = 2 µG, `bH_z1a`/`bH_z1b` = 0.2/4 kpc.
 - **SVT22**: `B_val` = 3.72 µG; the published best fit is 3.96 µG (3 µG in arXiv v1).
@@ -306,6 +309,7 @@ Models not listed here have no known deviations.
 - **UF26**: the paper constrains only the rms; the power spectrum is the library default.
 - **WMAP**: ψ0 = 27° and sin ψ on r̂ as corrected in Jansson et al. (2009, Sec. 5.3.6); the paper gives no amplitude, `b_b0` = 6 µG is a default; `anti` (field reversed for z > 0) from hammurabi, not in the paper.
 - **XH24 halo**: field set to zero beyond r = 20 kpc, as in the authors' code.
+- **YT20**: physical constants at full precision (the authors' script and pygedm use three digits), Υ = 2.61; density set to zero beyond r_vir, where the paper ends the DM integration.
 - **YMW16**: Galactic part only (no Magellanic Clouds or IGM), R ≤ 30 kpc as in the original code; exact π instead of the original's `RAD = 57.295779` (relative differences ≤ 4e-6), Gum Nebula limit θ → 0 instead of 0/0, no gap for azimuths in [6.28, 2π).
 
 

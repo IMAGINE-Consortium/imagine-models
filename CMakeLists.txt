@@ -39,6 +39,8 @@ if(BUILD_PYTHON_PACKAGE)
         ${PW}/regular/jaffe.cc
         ${PW}/regular/kst24.cc
         ${PW}/regular/ne2025.cc
+        ${PW}/regular/plane_parallel.cc
+        ${PW}/regular/yt20.cc
         ${PW}/regular/jf12.cc
         ${PW}/regular/pshirkov.cc
         ${PW}/regular/stanev.cc
