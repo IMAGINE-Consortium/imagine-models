@@ -64,6 +64,7 @@ def _regular_cases():
         "JF12MagneticField",
         "JaffeMagneticField",
         "KST24MagneticField",
+        "NE2025",
         "PshirkovMagneticField",
         "SVT22MagneticField",
         "StanevBSSMagneticField",
@@ -97,6 +98,7 @@ def _regular_cases():
             cases[f"TF17MagneticField__{disk}_{halo}"] = ("TF17MagneticField", {"set_model": [disk, halo]})
     for variant in ["base", "neCL", "expX", "spur", "cre10", "synCG", "twistX", "nebCor"]:
         cases[f"UF24MagneticField__{variant}"] = ("UF24MagneticField", {"set_model": [variant]})
+    cases["NE2025__NE2001"] = ("NE2025", {"set_model": ["NE2001"]})
     cases["AxiSymmetricSpiral__default"] = ("AxiSymmetricSpiral", {})
     return cases
 

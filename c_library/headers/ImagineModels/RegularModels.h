@@ -10,6 +10,7 @@
 #include "ImagineModels/JF12.h"
 #include "ImagineModels/Jaffe.h"
 #include "ImagineModels/KST24.h"
+#include "ImagineModels/NE2025.h"
 #include "ImagineModels/Pshirkov.h"
 #include "ImagineModels/SVT22.h"
 #include "ImagineModels/Stanev.h"

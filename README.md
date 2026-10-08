@@ -229,7 +229,7 @@ cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug && cmake --build build && ctest --t
 ```
 
 - `tests/test_reference.py` compares every model against stored reference data (`tests/reference_data/`) and checks derivatives against finite differences. If a change alters a model's output on purpose, regenerate the affected cases with `python tests/generate_reference.py --force CASE...`.
-- `tests/test_external.py` compares models with values computed by their external reference implementations (`tests/external_data/`, values only): the original YMW16 code, hammurabiX (Jaffe), CRPropa (TF17, Pshirkov, JF12, Archimedes, KST24), the KST24 authors' code, the authors' UF23 code and the old hammurabi (Sun disk, Stanev, Fauvet). Each file records the source, tolerance and any deliberate difference.
+- `tests/test_external.py` compares models with values computed by their external reference implementations (`tests/external_data/`, values only): the original YMW16 code, hammurabiX (Jaffe), CRPropa (TF17, Pshirkov, JF12, Archimedes, KST24), the KST24 authors' code, the NE2025/NE2001 Fortran code, the authors' UF23 code and the old hammurabi (Sun disk, Stanev, Fauvet). Each file records the source, tolerance and any deliberate difference.
 - `tests/test_random_fields.py` checks the statistics of the random fields (variance, amplitude, divergence, anisotropy).
 - The C++ tests (`c_library/test/`, [Catch2](https://github.com/catchorg/Catch2) v3: an installed copy is used if found, otherwise it is downloaded at configure time) check every model for grid consistency, finite values, the parameter registry and derivatives against finite differences, plus the random-field statistics. `build/c_library/imagine_tests --list-tests` lists them; a tag such as `"[random]"` runs a subset.
 - CI (`.github/workflows/ci.yml`) checks formatting and lint, runs the C++ and Python tests with all optional dependencies and without them, and builds a wheel from the source distribution.
@@ -281,6 +281,7 @@ Differences to the publications are listed under [Deviations from the publicatio
 | ----- | ----- | --------- | -------- | ---------------------- | -------- |
 | **Regular models** | | | | | |
 | Uniform | `UniformDensityField` | | | | |
+| NE2025 | `NE2025` | [Ocker & Cordes (2026)](https://arxiv.org/abs/2602.11838); NE2001: [Cordes & Lazio (2002)](https://arxiv.org/abs/astro-ph/0207156) | authors' Fortran code in [mwprop](https://github.com/stella-ocker/mwprop) (GPL-3.0-or-later) | NE2025, NE2001 | |
 | YMW16 | `YMW16` | [Yao et al. (2017)](https://ui.adsabs.harvard.edu/abs/2017ApJ...835...29Y/abstract) | original C code v1.3.1 (via [pygedm](https://github.com/FRBs/pygedm)) (GPL-3.0-or-later) | | [ipynb](demos/python/model_examples/ymw16_demo.ipynb) |
 | **Random models** | | | | | |
 | Gaussian | `GaussianScalarField` | | | | [ipynb](demos/python/model_examples/gaussian_scalar_demo.ipynb) |
@@ -297,6 +298,7 @@ Models not listed here have no known deviations.
 - **JF12 (regular)**: `b8` from flux conservation (2.755 µG; the paper rounds to 2.7). Molecular ring field `b_ring · 5 kpc / r` as in CRPropa and hammurabiX (the paper gives no radial dependence). Planck variants: striation factor β not modelled, `b8` from flux conservation (CRPropa keeps 2.7).
 - **JF12 (random)**: Planck variants without the striation factor β.
 - **KST24**: from the authors' code, not in the paper: Sagittarius-Carina arm widening by 3° along the arm, radial (3–17 kpc) and vertical arm cut-offs, arm widths capped at 1.2 kpc, spiral scale a = 3 kpc; Sagittarius-Carina `rdisk_sagcar` = 0.79 kpc as in the code (Table 2: 0.8); outer Perseus field −3.5 µG as in Table 2 and CRPropa (the authors' Zenodo code uses −2.5 µG).
+- **NE2025 / NE2001**: electron density only (the fluctuation parameters F and scattering are not included); double instead of single precision; position parameters (Galactic Centre, local ISM) in the NE2001 frame: x towards l = 90°, Sun at (0, 8.5, 0) kpc.
 - **Stanev**: eq. 4 used with exp(−|z|/z0) (sign missing in the paper); field cut at cylindrical r = 20 kpc (the paper: 20 kpc in all directions).
 - **Sun**: halo with the parameters of Sun & Reich (2010): `bH_B0` = 2 µG, `bH_z1a`/`bH_z1b` = 0.2/4 kpc.
 - **SVT22**: `B_val` = 3.72 µG; the published best fit is 3.96 µG (3 µG in arXiv v1).

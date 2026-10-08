@@ -1,4 +1,5 @@
 from ._core import (
+    NE2025,
     YMW16,
     ArchimedeanMagneticField,
     FauvetMagneticField,
