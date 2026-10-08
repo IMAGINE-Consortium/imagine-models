@@ -5,7 +5,6 @@ import numpy as np
 
 import ImagineModels as img
 
-
 REPO = Path(__file__).resolve().parents[1]
 DATA_DIR = Path(__file__).resolve().parent / "reference_data"
 

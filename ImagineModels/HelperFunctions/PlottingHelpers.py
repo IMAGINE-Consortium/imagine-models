@@ -24,18 +24,13 @@ def plot_slice(array, slice_dim, shp, rfp, inc, vmin, vmax, vec_dim=0, show_cbar
     :param cmap: string to select a matplotlib colormap, the default
     """
     import matplotlib.pyplot as plt
-    try:
-        import cmasher as cm
-        has_cmasher = True
-    except ImportError:
-        has_cmasher = False
     plt.ion()
 
    #
     is_vector = False
     if isinstance(array, list) or np.ndim(array) == 4:
         is_vector = True
-   
+
     if cmap is None:
         cmap = "plasma"
         if is_vector:
@@ -43,9 +38,9 @@ def plot_slice(array, slice_dim, shp, rfp, inc, vmin, vmax, vec_dim=0, show_cbar
                 cmap = 'RdBu_r'
             else:
                 cmap = "PuOr_r"
-    
+
     fig, ax = plt.subplots()
-    
+
     slices = [slice(0, shp[0], None), slice(0, shp[1], None), slice(0, shp[2], None)]
     if cut_index is None:
         try:
@@ -60,10 +55,10 @@ def plot_slice(array, slice_dim, shp, rfp, inc, vmin, vmax, vec_dim=0, show_cbar
     dims = [0, 1, 2]
     dims.remove(slice_dim)
     dims_label = ['x', 'y', 'z']
-    
+
     coord1 = [i for i in range(shp[dims[0]])]
     coord2 = [i for i in range(shp[dims[1]])]
-    
+
     if is_vector:
         if amplitude:
             comp_label = 'amplitude'
@@ -77,8 +72,8 @@ def plot_slice(array, slice_dim, shp, rfp, inc, vmin, vmax, vec_dim=0, show_cbar
 
             B1 = np.squeeze(array[0][slices])  # need Bx and By to calculate Bphi
             B2 = np.squeeze(array[1][slices])
-    
-            # calculate cross product between vec(position) and vec(B_horizontal) to get direction of Bphi 
+
+            # calculate cross product between vec(position) and vec(B_horizontal) to get direction of Bphi
             cross = np.cross(np.array([B1.T, B2.T, np.zeros_like(B1.T)]), vec, axis=0)
             sign = np.sign(cross[-1, :, :])
             array_plot = np.squeeze(np.linalg.norm(array, axis=0)[slices]).T*np.squeeze(sign)
@@ -87,16 +82,16 @@ def plot_slice(array, slice_dim, shp, rfp, inc, vmin, vmax, vec_dim=0, show_cbar
             array_plot = np.squeeze(array[vec_dim][slices]).T
     else:
         array_plot = np.squeeze(array[slices]).T
-        
+
     ax.imshow(array_plot, cmap=cmap, origin='lower', vmin=vmin, vmax=vmax)
 
-    if is_vector:    
+    if is_vector:
         if quiver:  # add arrows indicating B-field direction
             # only every fifth cell gets an arrow for better overview
             B1_quiv = np.squeeze(array[dims[0]][slices])
             B2_quiv = np.squeeze(array[dims[1]][slices])
             plt.quiver(coord1[::5], coord2[::5], B1_quiv[::5, ::5].T, B2_quiv[::5, ::5].T, pivot='mid')
-    
+
     slice_dim_label = dims_label[slice_dim]
     dims_label.remove(slice_dim_label)
 
@@ -105,7 +100,7 @@ def plot_slice(array, slice_dim, shp, rfp, inc, vmin, vmax, vec_dim=0, show_cbar
         plt.scatter((abs(rfp[dims[0]]-earth[dims[0]])) / (inc[dims[0]]*shp[dims[0]]) * shp[dims[0]],
                     (abs(rfp[dims[1]]-earth[dims[1]])) / (inc[dims[1]]*shp[dims[1]]) * shp[dims[1]],
                     marker='o', s=20, c='0.5')
-    
+
     xticks_label = ['%.2f' % (rfp[dims[0]] + i*shp[dims[0]]/4*inc[dims[0]]) for i in range(5)]
     if float(int(rfp[dims[0]])) != 0:
         if rfp[dims[0]] / float(int(rfp[dims[0]])) - 1 < 1e-3:
@@ -117,14 +112,14 @@ def plot_slice(array, slice_dim, shp, rfp, inc, vmin, vmax, vec_dim=0, show_cbar
         if rfp[dims[1]] / float(int(rfp[dims[1]])) - 1 < 1e-3:
             yticks_label = [int(rfp[dims[1]] + i*shp[dims[1]]/4*inc[dims[1]]) for i in range(5)]
     yticks_loc = [i*shp[dims[1]]/4 for i in range(5)]
-        
+
 
     if show_labels:
         ax.set_yticks(yticks_loc, labels=yticks_label)
         ax.set_ylabel(r"$%s$ / kpc" % dims_label[1])
         ax.set_xticks(xticks_loc, labels=xticks_label)
         ax.set_xlabel(r"$%s$ / kpc" % dims_label[0])
-        keyword = '%s = %.3f kpc' % (slice_dim_label, sliced_at) 
+        keyword = '%s = %.3f kpc' % (slice_dim_label, sliced_at)
         keyword = field_name + ', ' + keyword if field_name is not None else keyword
         ax.text(0, 1, keyword, va='bottom', transform = ax.transAxes)
     else:
@@ -140,14 +135,14 @@ def plot_slice(array, slice_dim, shp, rfp, inc, vmin, vmax, vec_dim=0, show_cbar
                         label = r'$|B|$ sign($B_\phi$) / $\mu$G'
                     else:
                         label = r'$B_%s$ / $\mu$G' % comp_label[0]
-                else: 
-                    label = r'$n_\mathrm{th}$ / $\mathrm{cm}^-3$'                 
+                else:
+                    label = r'$n_\mathrm{th}$ / $\mathrm{cm}^-3$'
             cbar.set_label(label)
     plt.tight_layout()
     if save_fig:
         name = comp_label + "_" + dims_label[0] + "_" + dims_label[1] + "_plane"
         if not is_vector:
             name = name[1:]
-        plt.savefig(name)    
+        plt.savefig(name)
     plt.show()
     plt.close()

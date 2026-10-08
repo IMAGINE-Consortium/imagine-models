@@ -1,6 +1,6 @@
 import numpy as np
 
-from ImagineModels import RegularVectorField, cyl2cart, cart2cyl
+from ImagineModels import RegularVectorField, cart2cyl
 
 
 class AxiSymmetricSpiral(RegularVectorField):

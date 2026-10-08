@@ -1,8 +1,7 @@
-import ImagineModels as img
-
-import pytest
 import numpy as np
+import pytest
 
+import ImagineModels as img
 
 if not img.__has_random_fields__:
     pytest.skip("ImagineModels was built without FFTW", allow_module_level=True)

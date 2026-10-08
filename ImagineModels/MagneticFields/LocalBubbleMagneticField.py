@@ -1,11 +1,11 @@
-import numpy as np
 import healpy as hp
+import numpy as np
 
-from ImagineModels import RegularVectorField, cyl2cart
+from ImagineModels import RegularVectorField
 
 
 class LBMagneticField(RegularVectorField):
-    """
+    r"""
         ===  LBMagneticField : GMF in the shell of the LocalBubble ===
 
         Implementation of the analytical model for the GMF in the shell of the
@@ -14,9 +14,9 @@ class LBMagneticField(RegularVectorField):
                 inner surface of the Local Bubble.
             Refs:   - https://ui.adsabs.harvard.edu/abs/2018A%26A...611L...5A/abstract
                     - https://ui.adsabs.harvard.edu/abs/2020A%26A...636A..17P/abstract
-                    
+
             LBMagneticField(SkyCoordinates,**kwargs{numerous parameters})
-                
+
                 " B_today \propto n x (B0 x er)
                 "           = B0 (n.er) - er (n.B0)
                 "   where   B_today = vector field now
@@ -94,10 +94,10 @@ class LBMagneticField(RegularVectorField):
 
         # call the function that updates the surface and all related quantities
         self.UpdateShellModel(r_edge)
-        
+
         #
     #
-    
+
     def at_LonLat(self,SkyCoordinates=None):
         '''
             Evaluates the model toward Galactic Longitudes and Latitudes
@@ -119,15 +119,14 @@ class LBMagneticField(RegularVectorField):
             # if sky coord. not specified, full-sky is assumed.
             pix_ids = np.arange(self.npix)
         #
-        
+
         # 2. evaluates the model for those pixels
-        
+
         # surface xyz in explosion center
         xell = self.Surf_Cart[0] - self.dx
         yell = self.Surf_Cart[1] - self.dy
         zell = self.Surf_Cart[2] - self.dz
         # sph coord in explosion centered ref. frame
-        rell = (xell**2+yell**2+zell**2)**.5
         tell = np.mod(np.arctan2((xell**2 + yell**2)**.5,zell),np.pi)
         pell = np.mod(np.arctan2(yell,xell),2*np.pi)
 
@@ -173,7 +172,7 @@ class LBMagneticField(RegularVectorField):
         By /= Bn
         Bz /= Bn
         # and that's it.
-        
+
         return [Bx,By,Bz]
 
 
@@ -186,7 +185,7 @@ class LBMagneticField(RegularVectorField):
 
         npix = self.npix
         nside = self.nside
-        
+
         # a function to get the normal vectors
         def get_normal(modeled_edge):
             neigh = hp.get_all_neighbours(nside,np.arange(npix))[np.arange(0,8,2),:]
@@ -197,7 +196,7 @@ class LBMagneticField(RegularVectorField):
             n = np.cross(v_swne.T,v_senw.T).T
             n /= np.sqrt(np.sum(n**2,axis=0))
             return n
-        
+
         self.surface = distance2shell       # [kpc]
 
         # 3D Cartesian coordinates at the edge of the LB
@@ -206,10 +205,10 @@ class LBMagneticField(RegularVectorField):
         # to draw the normal vectors outward from the observer, we need the
         # unit radial vectors
         erS,_,__ = u_sph(Surf_Cart)
-    
+
         # normal vectors
         Surf_normal = get_normal(self.surface)
-    
+
         # drawn outwards from the observer.
         Surf_normal *= np.sign(np.sum(erS*Surf_normal,axis=0))
 
@@ -217,7 +216,7 @@ class LBMagneticField(RegularVectorField):
         self.Surf_Cart = Surf_Cart
         #
     #
-    
+
     def position_at_LonLat(self,SkyCoordinates=None):
         '''
             Find the Cartesian coordinates where the sky and the model are
@@ -232,7 +231,7 @@ class LBMagneticField(RegularVectorField):
             pix_ids = np.arange(self.npix)
         #
         return self.Surf_Cart[:,pix_ids]
-    
+
     def at_position(self, x, y, z):
         mess = '''You shoud not query this model from Cartesian coordinates.
                 Instead, use the at_LonLat() function and specify the sky
@@ -242,7 +241,7 @@ class LBMagneticField(RegularVectorField):
 
         raise ValueError(mess)
         return
-    
+
 
 def vec_Cart2Sph(vectorField,Position):
     '''
@@ -250,22 +249,22 @@ def vec_Cart2Sph(vectorField,Position):
         to component of the vector field in heliocentric spherical coord.
         system
     '''
-    
+
     # unit basis vector of sph coord. at position
     erS,etS,epS = u_sph(Position)
 
     vx = vectorField[0]
     vy = vectorField[1]
     vz = vectorField[2]
-    
+
     vr = vx * erS[0] + vy * erS[1] + vz * erS[2]
     vt = vx * etS[0] + vy * etS[1] + vz * etS[2]
     vp = vx * epS[0] + vy * epS[1] + vz * epS[2]
-    
+
     #
-    
+
     return [vr,vt,vp]
-        
+
 
 def u_sph(coord):
     """
@@ -283,12 +282,12 @@ def u_sph(coord):
 
     Created on Jun 22 2016
     @author: V.Pelgrims
-    
+
     # # #       STOLLEN from GalaxyBasics in gpempy     # # #
 
     """
 
-    theta = np.arctan2((coord[0]**2 + coord[1]**2)**.5,coord[2])        
+    theta = np.arctan2((coord[0]**2 + coord[1]**2)**.5,coord[2])
     phi = np.arctan2(coord[1],coord[0])
 
     #compute the stuff
@@ -298,7 +297,7 @@ def u_sph(coord):
     Stheta = np.sin(theta)
 
     u_r = np.asarray([Cphi*Stheta, Sphi*Stheta, Ctheta])
-    
+
     u_theta = np.asarray([Cphi*Ctheta, Sphi*Ctheta, -Stheta])
 
     u_phi = np.asarray([-Sphi, Cphi, np.zeros(Cphi.size)])

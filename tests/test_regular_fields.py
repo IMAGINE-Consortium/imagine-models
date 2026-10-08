@@ -1,10 +1,9 @@
 import gc
 
-import ImagineModels as img
-
-import pytest
 import numpy as np
+import pytest
 
+import ImagineModels as img
 
 regular_models = ['JaffeMagneticField', 'HelixMagneticField', 'JF12RegularField', 'SunMagneticField', 'UFMagneticField']
 scalar_models = ['YMW16', 'UniformDensityField']

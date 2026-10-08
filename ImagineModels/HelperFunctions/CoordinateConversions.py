@@ -33,7 +33,7 @@ def cart2cyl(coordinate):
     @author: V.Pelgrims, adapted S.Hutschenreuter
     """
     rho = np.sqrt(coordinate[0]**2 + coordinate[1]**2)
-    phi = np.arctan2(coordinate[1], coordinate[0]) 
+    phi = np.arctan2(coordinate[1], coordinate[0])
     z = coordinate[2]
 
     return np.array([rho, phi, z])
