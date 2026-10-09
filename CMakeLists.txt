@@ -62,6 +62,7 @@ if(BUILD_PYTHON_PACKAGE)
             ${PW}/random/uf26_random.cc
             ${PW}/random/sun_random.cc
             ${PW}/random/jaffe_random.cc
+            ${PW}/random/orlando26_random.cc
             ${PW}/random/gaussian_scalar.cc
             ${PW}/random/jf12_random.cc
             ${PW}/random/log_normal.cc

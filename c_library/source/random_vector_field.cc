@@ -1,5 +1,6 @@
 #include <cmath>
 #include <iostream>
+#include <memory>
 #include <random>
 
 #include "ImagineModelsRandom/RandomVectorField.h"
@@ -47,8 +48,24 @@ void RandomVectorField::_sample(std::array<FFTWWorkspace *, 3> ws, const Regular
 
     unit_random_numbers(ws, grid, seed);
 
+    // independent ordered field
+    std::unique_ptr<FFTWWorkspace> o0, o1, o2;
+    std::array<double *, 3> val_ord{nullptr, nullptr, nullptr};
+    if (independent_ordered && apply_anisotropy) {
+        o0 = std::make_unique<FFTWWorkspace>(shp);
+        o1 = std::make_unique<FFTWWorkspace>(shp);
+        o2 = std::make_unique<FFTWWorkspace>(shp);
+        std::mt19937 gen(seed);
+        gen.discard(3);
+        unit_random_numbers({o0.get(), o1.get(), o2.get()}, grid, static_cast<int>(gen() >> 1));
+        val_ord = {o0->real(), o1->real(), o2->real()};
+    }
+    std::size_t current = 0;
+
     auto apply_profile = [&](std::array<double, 3> &b_rand_val, const double xx, const double yy, const double zz) {
-        const std::array<double, 3> g = b_rand_val;
+        std::array<double, 3> g = b_rand_val;
+        if (val_ord[0] != nullptr)
+            g = {val_ord[0][current], val_ord[1][current], val_ord[2][current]};
         double sp = isotropic_rms(xx, yy, zz);
         b_rand_val[0] *= sp;
         b_rand_val[1] *= sp;
@@ -83,6 +100,7 @@ void RandomVectorField::_sample(std::array<FFTWWorkspace *, 3> ws, const Regular
     const std::size_t padded_nz = ws[0]->padded_shape()[2];
     for_each_point(grid, [&](std::size_t point, double xx, double yy, double zz) {
         const std::size_t idx = point / nz * padded_nz + point % nz;
+        current = idx;
         std::array<double, 3> b{val[0][idx], val[1][idx], val[2][idx]};
         std::array<double, 3> eval = apply_profile(b, xx, yy, zz);
         val[0][idx] = eval[0];

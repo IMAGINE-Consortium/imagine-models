@@ -41,5 +41,6 @@ PYBIND11_MODULE(_core, m) {
     bind_uf26_random(m);
     bind_sun_random(m);
     bind_jaffe_random(m);
+    bind_orlando26_random(m);
 #endif
 }

@@ -42,6 +42,7 @@ if has_fftw:
         JaffeRandomField,
         JF12RandomField,
         LogNormalScalarField,
+        Orlando26RandomField,
         RandomScalarField,
         RandomVectorField,
         SunRandomField,

@@ -118,12 +118,14 @@ def _random_cases():
         "ESRandomField",
         "UF26RandomField",
         "SunRandomField",
+        "Orlando26RandomField",
         "GaussianScalarField",
         "LogNormalScalarField",
     ]:
         cases[f"{name}__default"] = (name, {})
     cases["JF12RandomField__Beck16_uncut"] = ("JF12RandomField", {"set_model": ["Beck16"], "k_min": 0.0})
     cases["JaffeRandomField__uncut"] = ("JaffeRandomField", {"k_min": 0.0})
+    cases["Orlando26RandomField__halo10kpc"] = ("Orlando26RandomField", {"set_model": ["halo10kpc"]})
     cases["SunRandomField__Sun10b"] = ("SunRandomField", {"set_model": ["Sun10b"]})
     cases["UF26RandomField__ringDisk"] = ("UF26RandomField", {"set_model": ["ringDisk"]})
     cases["JF12RandomField__Planck12c"] = ("JF12RandomField", {"set_model": ["Planck12c"]})

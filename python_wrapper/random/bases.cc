@@ -60,7 +60,8 @@ void bind_random_bases(py::module_ &m) {
             "x"_a, "y"_a, "z"_a)
         .def_readwrite("clean_divergence", &RandomVectorField::clean_divergence)
         .def_readwrite("apply_anisotropy", &RandomVectorField::apply_anisotropy)
-        .def_readwrite("anisotropy_rho", &RandomVectorField::anisotropy_rho);
+        .def_readwrite("anisotropy_rho", &RandomVectorField::anisotropy_rho)
+        .def_readwrite("independent_ordered", &RandomVectorField::independent_ordered);
     bind_statistics<RandomVectorField>(vector);
 
     py::class_<RandomScalarField, PyRandomScalarField> scalar(m, "RandomScalarField");

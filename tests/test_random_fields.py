@@ -6,7 +6,7 @@ import ImagineModels as img
 if not img.__has_random_fields__:
     pytest.skip("ImagineModels was built without FFTW", allow_module_level=True)
 
-vector_models = ["JF12RandomField", "ESRandomField", "UF26RandomField", "SunRandomField"]
+vector_models = ["JF12RandomField", "ESRandomField", "UF26RandomField", "SunRandomField", "Orlando26RandomField"]
 scalar_models = ["GaussianScalarField", "LogNormalScalarField"]
 
 grid = img.RegularGrid(shape=[16, 16, 16], reference_point=[-1.0, -1.0, -1.0], increment=[0.125, 0.125, 0.125])
@@ -202,6 +202,38 @@ def test_ordered_component():
     _within([(b[2] ** 2).mean() for b in samples], 25.0 / 3.0)
     model.apply_anisotropy = False
     _within([(model.sample(stat_grid, seed) ** 2).sum(axis=0).mean() for seed in seeds], 4.0)
+
+
+def test_independent_ordered_component():
+    model = VerticalOrdered(rms=2.0)
+    model.clean_divergence = False
+    model.independent_ordered = True
+    samples = [model.sample(stat_grid, seed) for seed in seeds]
+    _within([(b**2).sum(axis=0).mean() for b in samples], 4.0 + 9.0 / 3.0)
+    _within([(b[2] ** 2).mean() for b in samples], 4.0 / 3.0 + 3.0)
+
+
+def test_orlando26_against_paper():
+    model = img.Orlando26RandomField()
+    assert model.model == "halo4kpc" and model.independent_ordered
+    assert (model.b_ran, model.r0_ran, model.z0_ran, model.r_sun, model.b_ordered) == (4.9, 30.0, 4.0, 8.5, 4.3)
+    assert model.isotropic_rms(-8.5, 0.0, 0.0) == pytest.approx(4.9)
+    assert model.isotropic_rms(-8.5, 0.0, 4.0) == pytest.approx(4.9 / np.e)
+    b_or = np.sqrt(4.3**2 - 0.73**2)
+    # toroid peak at r = 7.97, |z| = 3 kpc
+    peak = (-7.97, 0.0, 3.0)
+    assert model.ordered_amplitude(*peak) == pytest.approx(np.sqrt(3.0) * b_or)
+    assert model.rms(*peak) ** 2 == pytest.approx(model.isotropic_rms(*peak) ** 2 + b_or**2)
+    assert model.ordered_amplitude(-8.5, 0.0, 0.0) == 0.0
+    model.set_model("halo10kpc")
+    assert model.b_ordered == 3.2
+    model.clean_divergence = False
+    model.apply_spectrum = False
+    rms = model.rms(stat_grid)
+    ratios = [((model.sample(stat_grid, s) ** 2).sum(axis=0) / rms**2).mean() for s in seeds]
+    _within(ratios, 1.0)
+    with pytest.raises(ValueError):
+        img.Orlando26RandomField("unknown")
 
 
 def test_k_min():

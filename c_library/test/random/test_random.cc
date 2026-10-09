@@ -117,9 +117,9 @@ double relative_divergence(const VectorGridData &b, const RegularGrid &grid) {
 }
 
 using RandomModels = std::tuple<JF12RandomField, ESRandomField, UF26RandomField, SunRandomField, Beck16Field,
-                                Jaffe13Uncut, GaussianScalarField, LogNormalScalarField>;
-using RandomVectorModels =
-    std::tuple<JF12RandomField, ESRandomField, UF26RandomField, SunRandomField, Beck16Field, Jaffe13Uncut>;
+                                Jaffe13Uncut, Orlando26RandomField, GaussianScalarField, LogNormalScalarField>;
+using RandomVectorModels = std::tuple<JF12RandomField, ESRandomField, UF26RandomField, SunRandomField, Beck16Field,
+                                      Jaffe13Uncut, Orlando26RandomField>;
 
 TEMPLATE_LIST_TEST_CASE("samples have the grid shape and are finite", "[random]", RandomModels) {
     TestType model;
@@ -302,6 +302,21 @@ TEST_CASE("ordered component adds its power along the direction", "[random]") {
     }
     check_within(energies, 4. + (12. + 9.) / 3.);
     check_within(parallel, 25. / 3.);
+}
+
+TEST_CASE("independent ordered component adds no cross term", "[random]") {
+    VerticalOrdered model;
+    model.clean_divergence = false;
+    model.independent_ordered = true;
+    std::vector<double> energies, parallel;
+    for (int seed = 0; seed < n_seeds; ++seed) {
+        auto b = model.sample(stat_grid, seed);
+        energies.push_back(mean_square(b));
+        parallel.push_back(mean_square(b, 2));
+    }
+    check_within(energies, 4. + 9. / 3.);
+    check_within(parallel, 4. / 3. + 3.);
+    CHECK(model.sample(stat_grid, 5).data == model.sample(stat_grid, 5).data);
 }
 
 TEST_CASE("k_min removes the modes below it", "[random]") {

@@ -8,10 +8,11 @@ namespace imagine {
 
 class RandomVectorField : public RandomField {
 protected:
-    static double combined_rms(const double &a_iso, const double &a_ord) {
+    double combined_rms(const double &a_iso, const double &a_ord) const {
         if (a_ord == 0.)
             return a_iso;
-        return std::sqrt(a_iso * a_iso + (2. * a_iso * a_ord + a_ord * a_ord) / 3.);
+        const double cross = independent_ordered ? 0. : 2. * a_iso * a_ord;
+        return std::sqrt(a_iso * a_iso + (cross + a_ord * a_ord) / 3.);
     }
 
     void _sample(std::array<FFTWWorkspace *, 3> ws, const RegularGrid &grid, const int seed) const;
@@ -23,6 +24,7 @@ public:
     bool apply_anisotropy = true;
 
     double anisotropy_rho = 1.;
+    bool independent_ordered = false; // second field for ordered part
 
     virtual Vec3<double> anisotropy_direction(const double &x, const double &y, const double &z) const {
         return {0., 0., 0.};
