@@ -25,6 +25,7 @@ The library is licensed GPL-3.0-or-later; the README lists the origin and licenc
 
 - JF12: `solenoidal` switch (Kleimann et al. 2019): divergence-free disk transitions at 5 and 20 kpc and a smooth X-field near the plane (`solenoidal_delta`, `solenoidal_zs`, `solenoidal_outer`).
 - Random fields: optional ordered random component along a direction (`isotropic_rms`, `ordered_amplitude`, `independent_ordered`), `k_min` cutoff of the spectrum.
+- Local Bubble models (Python only): `Alves18MagneticField`, `Pelgrims25MagneticField` (thick shell, six scenarios), `ONeill24MagneticField` (data).
 - Models: `Orlando26RandomField` (Orlando 2026), `JaffeRandomField` (Jaffe et al. 2013), Beck16 variant of `JF12RandomField` (Beck et al. 2016), Sun10b variant of `SunMagneticField` and `SunRandomField` (Sun10, Sun10b; Planck XLII 2016), PS (Prouza & Šmída, in the version of Kachelrieß et al. 2007: BSS-S disk, toroidal halo, dipole), Jaffe13 variant of `JaffeMagneticField` (Jaffe et al. 2013), NE2025 and NE2001 electron densities (`NE2025`, variant `NE2001`), YT20 hot-gas halo (`YT20`), plane-parallel thick disks (`PlaneParallelDensity`, Ocker et al. 2020 and Gaensler et al. 2008), KST24 (Korochkin, Semikoz & Tinyakov 2025), UF26 random field, XH24 halo, JF12 Planck variants (`Planck12b`, `Planck12c`, regular and random), Han XH24 disk variant.
 - `PointCloud` grids for evaluation at arbitrary positions.
 - `derivative` on grids and point clouds, shape `(3, ..., n_active)`.
@@ -38,7 +39,7 @@ The library is licensed GPL-3.0-or-later; the README lists the origin and licenc
 - Grids are values passed to `evaluate(grid)` / `sample(grid, seed)`; `on_grid` and the grid constructors of the models are removed. Python results are NumPy arrays of shape `(3, nx, ny, nz)` or `(nx, ny, nz)`.
 - Parameters: `parameter_names`, `parameters` (dict), `active_parameters`.
 - Published variants are selected with `set_model` (UF24, TF17, Pshirkov, JF12, Han, Sun, UF26), which also loads their parameters.
-- Classes renamed: `JF12RegularField` → `JF12MagneticField`, `SVT22` → `SVT22MagneticField` (Python, now equal to the C++ names), `UFMagneticField` → `UF24MagneticField`, `TFMagneticField` → `TF17MagneticField` (C++ and Python).
+- Classes renamed: `JF12RegularField` → `JF12MagneticField`, `SVT22` → `SVT22MagneticField` (Python, now equal to the C++ names), `UFMagneticField` → `UF24MagneticField`, `TFMagneticField` → `TF17MagneticField` (C++ and Python), `LBMagneticField` → `Pelgrims20MagneticField` (now with the Table 1 parameters per l_max via `set_model`, angles in degrees, `at_LonLat(lon, lat)`, positions Galactocentric).
 - Pshirkov: `set_model("ASS" | "BSS")` and `useDisk` replace `useASS` / `useBSS`.
 - All angle inputs are in degrees. Changed from radians: UF24 `fDiskPhase1-3`, `fDiskPitch`, `fSpurCenter`, `fSpurLength`, `fSpurWidth`; Stanev `b_phi0`; YMW16 `t3_thmin`. Derivatives w.r.t. these parameters are per degree.
 - YMW16: `t3_thmin`, `t3_tan_pitch`, `t3_cos_pitch` replace `t3_phimin` / `t3_tpitch`.

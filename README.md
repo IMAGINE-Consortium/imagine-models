@@ -21,7 +21,7 @@ Optional (detected automatically at build time):
 - [FFTW3](http://fftw.org/) ≥ 3.3, for the random field models
 - [autodiff](https://autodiff.github.io/) (tested with 0.6.12 and 1.1.2) and [Eigen](https://eigen.tuxfamily.org/) ≥ 3.4 (tested with 3.4 and 5.0), for derivatives with respect to model parameters
 - [matplotlib](https://matplotlib.org/), for `plot_slice` and the demo notebooks
-- [healpy](https://healpy.readthedocs.io/), for the Local Bubble model
+- [healpy](https://healpy.readthedocs.io/) and [astropy](https://www.astropy.org/), for the Local Bubble models with data surfaces (extra `localbubble`: `pip install ".[localbubble]"`)
 
 [pybind11](https://github.com/pybind/pybind11) is included as a git submodule.
 
@@ -250,7 +250,10 @@ Differences to the publications are listed under [Deviations from the publicatio
 | Helix | `HelixMagneticField` | | | | |
 | Archimedean spiral | `ArchimedeanMagneticField` | [Jokipii et al. (1977)](https://ui.adsabs.harvard.edu/abs/1977ApJ...213..861J/abstract) | [CRPropa](https://github.com/CRPropa/CRPropa3) (GPL-3.0) | | [ipynb](demos/python/model_examples/archimedes_demo.ipynb) |
 | Axisymmetric spiral (Python only) | `AxiSymmetricSpiral` | | V. Pelgrims | | |
-| Local Bubble (Python only)¹ | `LBMagneticField` | [Pelgrims et al. (2020)](https://www.aanda.org/articles/aa/full_html/2020/04/aa37157-19/aa37157-19.html) | V. Pelgrims | | |
+| Local Bubble, thin shell (Python only)¹ | `Alves18MagneticField` | [Alves et al. (2018)](https://arxiv.org/abs/1803.05251) | | | |
+| Local Bubble, thin shell (Python only)¹ | `Pelgrims20MagneticField` | [Pelgrims et al. (2020)](https://arxiv.org/abs/1911.09691); shell: [Dataverse](https://doi.org/10.7910/DVN/RHPVNC) (CC0) | V. Pelgrims | lmax2, lmax4, lmax6, lmax8, lmax10 | |
+| Local Bubble, thick shell (Python only)¹ | `Pelgrims25MagneticField` | [Pelgrims, Unger & Mariş (2025)](https://arxiv.org/abs/2411.06277) | | SCO, SCA, DCO, DCA, DDO, DDA | |
+| Local Bubble, data (Python only)¹ | `ONeill24MagneticField` | [O'Neill et al. (2024)](https://arxiv.org/abs/2410.17341); data: [Dataverse](https://doi.org/10.7910/DVN/A8HWUF) (CC0) | | | |
 | Fauvet | `FauvetMagneticField` | [Fauvet et al. (2012)](https://arxiv.org/abs/1201.5742) | [hammurabi v3.01](https://sourceforge.net/projects/hammurabicode/) (GPL-3.0) | | [ipynb](demos/python/model_examples/fauvet_demo.ipynb) |
 | Han | `HanMagneticField` | [Han et al. (2018)](https://iopscience.iop.org/article/10.3847/1538-4365/aa9c45); XH24 disk: [Xu & Han (2024)](https://arxiv.org/abs/2404.02038) | XH24 disk: parameter values from the [authors' code](http://zmtt.bao.ac.cn/GMF/)² | Han2018, XH24 | [ipynb](demos/python/model_examples/han_demo.ipynb) |
 | HMR | `HMRMagneticField` | [Harari et al. (1999)](https://arxiv.org/abs/astro-ph/9906309) | [hammurabi v3.01](https://sourceforge.net/projects/hammurabicode/) (GPL-3.0) | | [ipynb](demos/python/model_examples/hmr_demo.ipynb) |
@@ -275,7 +278,7 @@ Differences to the publications are listed under [Deviations from the publicatio
 | Sun | `SunRandomField` | [Sun et al. (2008)](https://www.aanda.org/articles/aa/abs/2008/02/aa8671-07/aa8671-07.html); Sun10b: [Planck XLII (2016)](https://arxiv.org/abs/1601.00546) | | Sun10, Sun10b | |
 | UF26 | `UF26RandomField` | [Unger & Farrar (2026)](https://arxiv.org/abs/2608.21293) | | expDisk, ringDisk | |
 
-¹ `from ImagineModels.MagneticFields.LocalBubbleMagneticField import LBMagneticField`; defined on the shell only, requires healpy.
+¹ `from ImagineModels.MagneticFields.LocalBubbleMagneticField import ...`. The thin-shell and data models give the unit field direction on the shell (`at_LonLat(lon, lat)`, shell positions from `position_at_LonLat`); `Pelgrims25MagneticField` is a 3D field in µG (`at_position`, `at_positions`, `evaluate`), zero outside the shell unless `shell_only = False`. Data surfaces are passed as file paths (Dataverse downloads) or HEALPix maps in kpc and need healpy (O'Neill: also astropy).
 
 ² No licence stated; no code copied.
 
@@ -297,6 +300,7 @@ Differences to the publications are listed under [Deviations from the publicatio
 
 Models not listed here have no known deviations.
 
+- **Alves18**: the paper fits normalised sizes; the physical scale `a_ell` = 0.1 kpc is a default (Fig. 2 compares with Liu et al. scaled by 1/(100 pc)). The spheroid is oriented by the Euler angles of Table 1 (ψ = 216°, θ = 30°, ZXZ), i.e. long axis towards (l, b) = (126°, 60°); this reproduces the published polar-cap mean directions, the text's "(216°, 60°)" does not.
 - **Archimedean spiral**: no fitted model; dimensionless parameters as in CRPropa (`R_0` in kpc, `Omega / v_w` in 1/kpc, `B_0` the radial field at `R_0`).
 - **ES random field**: no publication; rms profile as in hammurabiX, `b0 * sqrt(exp(-(r - r_obs)/r0) exp(-(|z| - |z_obs|)/z0))`.
 - **Han, variant XH24**: disk as in the authors' code, not in the papers: `R_s(6)` = 8.16 kpc, an extra zone 10.5–15 kpc with `B_s7` = 4.5 µG, disk to 20 kpc.
@@ -307,11 +311,14 @@ Models not listed here have no known deviations.
 - **Jaffe13 (random)**: arm and ring geometry, field directions and arm widths of `JaffeMagneticField("Jaffe13")` (see Jaffe); ring included like an arm, weighted by |`ring_amp`| (as in hammurabi v3.01; Table A1 sums over arms); field set to zero beyond 20 kpc (sphere), as the coherent field.
 - **KST24**: from the authors' code, not in the paper: Sagittarius-Carina arm widening by 3° along the arm, radial (3–17 kpc) and vertical arm cut-offs, arm widths capped at 1.2 kpc, spiral scale a = 3 kpc; Sagittarius-Carina `rdisk_sagcar` = 0.79 kpc as in the code (Table 2: 0.8); outer Perseus field −3.5 µG as in Table 2 and CRPropa (the authors' Zenodo code uses −2.5 µG).
 - **NE2025 / NE2001**: electron density only (the fluctuation parameters F and scattering are not included); double instead of single precision; position parameters (Galactic Centre, local ISM) in the NE2001 frame: x towards l = 90°, Sun at (0, 8.5, 0) kpc.
+- **ONeill24**: field orientation of the nearest HEALPix pixel (N_side = 256) of the published table.
+- **Orlando26**: ordered random halo with amplitude √(B_OH² − B_H²), B_H = 0.73 µG (the paper fits only the total ordered field B_OH), as a Gaussian projection of an independent random field along the XH24 toroid; the paper gives only the rms, the power spectrum is the library default; R⊙ = 8.5 kpc (not stated).
+- **Pelgrims20**: nearest pixel of the shell map, normals from neighbouring pixels; only the L19 shell (the LE19 shell is not public).
+- **Pelgrims25**: DDO/DDA need the outer shell surface (Appendix B), which is not public (`outer_map`); data surfaces are re-centred on the explosion centre by bisection with bilinear HEALPix interpolation and differentiated numerically.
 - **Plane-parallel, Ocker20**: smooth plane-parallel component only; the paper's clumps and voids are specific to single lines of sight.
 - **PS**: the version of Kachelrieß et al. (2007), not the original of Prouza & Šmída (2003); disk amplitude constant for r < 4 kpc as in the TT model (the paper leaves the inner disk open); the 20 kpc cut applies to the disk only; dipole core (R < 0.5 kpc) B = (0, 0, −100 µG); the halo's solar-circle radius `h_R0` is a setting.
 - **Stanev**: eq. 4 used with exp(−|z|/z0) (sign missing in the paper); field cut at cylindrical r = 20 kpc (the paper: 20 kpc in all directions).
 - **Sun**: halo with the parameters of Sun & Reich (2010): `bH_B0` = 2 µG, `bH_z1a`/`bH_z1b` = 0.2/4 kpc. Sun10b keeps this halo; Planck XLII ran hammurabi, whose defaults are `bH_z1b` = 0.4 kpc and a clockwise northern halo.
-- **Orlando26**: ordered random halo with amplitude √(B_OH² − B_H²), B_H = 0.73 µG (the paper fits only the total ordered field B_OH), as a Gaussian projection of an independent random field along the XH24 toroid; the paper gives only the rms, the power spectrum is the library default; R⊙ = 8.5 kpc (not stated).
 - **Sun (random)**: the papers give only the rms; the power spectrum is the library default. Sun10b: ordered random component (β = 3) not modelled.
 - **SVT22**: `B_val` = 3.72 µG; the published best fit is 3.96 µG (3 µG in arXiv v1).
 - **TF17**: lower limits of Table 2 used as values, as in CRPropa.

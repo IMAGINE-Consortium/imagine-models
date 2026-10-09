@@ -95,7 +95,7 @@ jobs:
           features: ${{ matrix.features }}
           eigen: ${{ matrix.eigen || '3' }}
       - name: Install
-        run: python -m pip install ".[test]"
+        run: python -m pip install ".[test${{ matrix.features == 'full' && ',localbubble' || '' }}]"
       - name: Check detected features
         working-directory: ${{ runner.temp }}
         run: python -c "import ImagineModels as im; print(im.__version__, im.has_autodiff, im.has_fftw); assert im.has_autodiff == $EXPECTED and im.has_fftw == $EXPECTED"
