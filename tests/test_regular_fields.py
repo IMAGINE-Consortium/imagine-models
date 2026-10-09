@@ -280,6 +280,21 @@ def test_han_variants():
         han.set_model("unknown")
 
 
+def test_sun_variants():
+    sun = img.SunMagneticField()
+    assert sun.model == "Sun10" and sun.b_Bc == 2.0
+    sun10b = img.SunMagneticField("Sun10b")
+    assert sun10b.b_Bc == 0.5 and sun10b.b_B0 == sun.b_B0
+    inner, outer = (3.0, 1.0, 0.1), (-8.3, 1.0, 0.1)
+    diff = np.asarray(sun.at_position(*inner)) - np.asarray(sun10b.at_position(*inner))
+    assert np.linalg.norm(diff) == pytest.approx(1.5) and diff[2] == 0.0
+    assert np.array_equal(sun10b.at_position(*outer), sun.at_position(*outer))
+    sun.set_model("Sun10b")
+    assert np.array_equal(sun.at_position(*inner), sun10b.at_position(*inner))
+    with pytest.raises(ValueError):
+        sun.set_model("unknown")
+
+
 @pytest.mark.parametrize("model_string", ["JF12MagneticField", "UF24MagneticField", "YMW16"])
 def test_derivative_on_grids(model_string):
     if not img.has_autodiff:

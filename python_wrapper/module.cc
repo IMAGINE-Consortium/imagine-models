@@ -39,5 +39,6 @@ PYBIND11_MODULE(_core, m) {
     bind_lognormal(m);
     bind_jf12_random(m);
     bind_uf26_random(m);
+    bind_sun_random(m);
 #endif
 }

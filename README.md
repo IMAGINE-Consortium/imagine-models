@@ -260,7 +260,7 @@ Differences to the publications are listed under [Deviations from the publicatio
 | PS | `PSMagneticField` | [Kachelrieß et al. (2007)](https://arxiv.org/abs/astro-ph/0510444), after [Prouza & Šmída (2003)](https://arxiv.org/abs/astro-ph/0307165) | | | |
 | Pshirkov | `PshirkovMagneticField` | [Pshirkov et al. (2011)](https://iopscience.iop.org/article/10.1088/0004-637X/738/2/192) | [CRPropa](https://github.com/CRPropa/CRPropa3) (GPL-3.0) | ASS, BSS | [ipynb](demos/python/model_examples/pshirkov_demo.ipynb) |
 | Stanev | `StanevBSSMagneticField` | [Stanev (1997)](https://arxiv.org/abs/astro-ph/9607086) | [hammurabi v3.01](https://sourceforge.net/projects/hammurabicode/) (GPL-3.0) | | [ipynb](demos/python/model_examples/stanev_demo.ipynb) |
-| Sun | `SunMagneticField` | [Sun et al. (2008)](https://www.aanda.org/articles/aa/abs/2008/02/aa8671-07/aa8671-07.html); halo: [Sun & Reich (2010)](https://arxiv.org/abs/1010.4394) | [hammurabi v3.01](https://sourceforge.net/projects/hammurabicode/) (GPL-3.0) | | [ipynb](demos/python/model_examples/sun_demo.ipynb) |
+| Sun | `SunMagneticField` | [Sun et al. (2008)](https://www.aanda.org/articles/aa/abs/2008/02/aa8671-07/aa8671-07.html); halo: [Sun & Reich (2010)](https://arxiv.org/abs/1010.4394); Sun10b: [Planck XLII (2016)](https://arxiv.org/abs/1601.00546) | [hammurabi v3.01](https://sourceforge.net/projects/hammurabicode/) (GPL-3.0) | Sun10, Sun10b | [ipynb](demos/python/model_examples/sun_demo.ipynb) |
 | SVT22 | `SVT22MagneticField` | [Shaw et al. (2022)](https://academic.oup.com/mnras/article/517/2/2534/6731784) | | | [ipynb](demos/python/model_examples/svt22_demo.ipynb) |
 | TF17 | `TF17MagneticField` | [Terral & Ferrière (2017)](https://arxiv.org/abs/1611.10222); field forms: [Ferrière & Terral (2014)](https://arxiv.org/abs/1312.1974) (halo model C, disks from A, B, D) | [CRPropa](https://github.com/CRPropa/CRPropa3) (GPL-3.0) | disk Ad1, Bd1, Dd1 × halo C0, C1 | [ipynb](demos/python/model_examples/tf17_demo.ipynb) |
 | TT | `TTMagneticField` | [Tinyakov & Tkachev (2002)](https://arxiv.org/abs/astro-ph/0111305) | [hammurabi v3.01](https://sourceforge.net/projects/hammurabicode/) (GPL-3.0) | | [ipynb](demos/python/model_examples/tt_demo.ipynb) |
@@ -270,6 +270,7 @@ Differences to the publications are listed under [Deviations from the publicatio
 | **Random models** | | | | | |
 | ES | `ESRandomField` | | [hammurabiX](https://github.com/hammurabi-dev/hammurabiX) (GPL-3.0) | | |
 | JF12 | `JF12RandomField` | [Jansson & Farrar (2012)](https://ui.adsabs.harvard.edu/abs/2012ApJ...761L..11J/abstract); Planck variants: [Planck XLII (2016)](https://arxiv.org/abs/1601.00546) | [hammurabiX](https://github.com/hammurabi-dev/hammurabiX) (GPL-3.0), [CRPropa](https://github.com/CRPropa/CRPropa3) (GPL-3.0) | JF12, Planck12b, Planck12c | [ipynb](demos/python/model_examples/jf12_random_demo.ipynb) |
+| Sun | `SunRandomField` | [Sun et al. (2008)](https://www.aanda.org/articles/aa/abs/2008/02/aa8671-07/aa8671-07.html); Sun10b: [Planck XLII (2016)](https://arxiv.org/abs/1601.00546) | | Sun10, Sun10b | |
 | UF26 | `UF26RandomField` | [Unger & Farrar (2026)](https://arxiv.org/abs/2608.21293) | | expDisk, ringDisk | |
 
 ¹ `from ImagineModels.MagneticFields.LocalBubbleMagneticField import LBMagneticField`; defined on the shell only, requires healpy.
@@ -306,7 +307,8 @@ Models not listed here have no known deviations.
 - **Plane-parallel, Ocker20**: smooth plane-parallel component only; the paper's clumps and voids are specific to single lines of sight.
 - **PS**: the version of Kachelrieß et al. (2007), not the original of Prouza & Šmída (2003); disk amplitude constant for r < 4 kpc as in the TT model (the paper leaves the inner disk open); the 20 kpc cut applies to the disk only; dipole core (R < 0.5 kpc) B = (0, 0, −100 µG); the halo's solar-circle radius `h_R0` is a setting.
 - **Stanev**: eq. 4 used with exp(−|z|/z0) (sign missing in the paper); field cut at cylindrical r = 20 kpc (the paper: 20 kpc in all directions).
-- **Sun**: halo with the parameters of Sun & Reich (2010): `bH_B0` = 2 µG, `bH_z1a`/`bH_z1b` = 0.2/4 kpc.
+- **Sun**: halo with the parameters of Sun & Reich (2010): `bH_B0` = 2 µG, `bH_z1a`/`bH_z1b` = 0.2/4 kpc. Sun10b keeps this halo; Planck XLII ran hammurabi, whose defaults are `bH_z1b` = 0.4 kpc and a clockwise northern halo.
+- **Sun (random)**: the papers give only the rms; the power spectrum is the library default. Sun10b: ordered random component (β = 3) not modelled.
 - **SVT22**: `B_val` = 3.72 µG; the published best fit is 3.96 µG (3 µG in arXiv v1).
 - **TF17**: lower limits of Table 2 used as values, as in CRPropa.
 - **UF26**: the paper constrains only the rms; the power spectrum is the library default.

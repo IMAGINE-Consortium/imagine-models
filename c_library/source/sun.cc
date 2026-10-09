@@ -1,10 +1,21 @@
 #include "ImagineModels/Sun.h"
 #include "ImagineModels/units.h"
+#include <algorithm>
 #include <cmath>
+#include <stdexcept>
 
 #include "ImagineModels/helpers.h"
 
 namespace imagine {
+
+void SunMagneticField::set_model(const std::string &model) {
+    if (std::find(available_models.begin(), available_models.end(), model) == available_models.end())
+        throw std::invalid_argument("Unknown Sun model '" + model + "'.");
+    active_model = model;
+    parameters = SunParameters<double>{};
+    if (model == "Sun10b")
+        parameters.b_Bc = 0.5;
+}
 
 template <typename T>
 Vec3<T> SunMagneticField::field(const double &x, const double &y, const double &z, const SunParameters<T> &p) const {

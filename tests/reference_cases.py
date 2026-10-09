@@ -95,6 +95,7 @@ def _regular_cases():
     cases["JaffeMagneticField__quadruple"] = ("JaffeMagneticField", {"quadruple": True})
     cases["PshirkovMagneticField__ass"] = ("PshirkovMagneticField", {"set_model": ["ASS"]})
     cases["PshirkovMagneticField__no_halo"] = ("PshirkovMagneticField", {"useHalo": False})
+    cases["SunMagneticField__Sun10b"] = ("SunMagneticField", {"set_model": ["Sun10b"]})
     cases["PSMagneticField__no_dipole"] = ("PSMagneticField", {"do_dipole": False})
     cases["WMAPMagneticField__anti"] = ("WMAPMagneticField", {"b_anti": True})
     for disk in ["Ad1", "Bd1", "Dd1"]:
@@ -112,8 +113,16 @@ def _regular_cases():
 
 def _random_cases():
     cases = {}
-    for name in ["JF12RandomField", "ESRandomField", "UF26RandomField", "GaussianScalarField", "LogNormalScalarField"]:
+    for name in [
+        "JF12RandomField",
+        "ESRandomField",
+        "UF26RandomField",
+        "SunRandomField",
+        "GaussianScalarField",
+        "LogNormalScalarField",
+    ]:
         cases[f"{name}__default"] = (name, {})
+    cases["SunRandomField__Sun10b"] = ("SunRandomField", {"set_model": ["Sun10b"]})
     cases["UF26RandomField__ringDisk"] = ("UF26RandomField", {"set_model": ["ringDisk"]})
     cases["JF12RandomField__Planck12c"] = ("JF12RandomField", {"set_model": ["Planck12c"]})
     cases["JF12RandomField__no_cleaning"] = ("JF12RandomField", {"clean_divergence": False})

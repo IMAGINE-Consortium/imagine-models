@@ -43,6 +43,7 @@ if has_fftw:
         LogNormalScalarField,
         RandomScalarField,
         RandomVectorField,
+        SunRandomField,
         UF26RandomField,
     )
 

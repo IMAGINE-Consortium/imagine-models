@@ -6,7 +6,7 @@ import ImagineModels as img
 if not img.__has_random_fields__:
     pytest.skip("ImagineModels was built without FFTW", allow_module_level=True)
 
-vector_models = ["JF12RandomField", "ESRandomField", "UF26RandomField"]
+vector_models = ["JF12RandomField", "ESRandomField", "UF26RandomField", "SunRandomField"]
 scalar_models = ["GaussianScalarField", "LogNormalScalarField"]
 
 grid = img.RegularGrid(shape=[16, 16, 16], reference_point=[-1.0, -1.0, -1.0], increment=[0.125, 0.125, 0.125])
@@ -228,6 +228,25 @@ def test_uf26_against_paper():
     assert np.array_equal(disk.rms(np.array([-8.0, 3.0]), 1.0, 0.2), ring.rms(np.array([-8.0, 3.0]), 1.0, 0.2))
     with pytest.raises(ValueError):
         img.UF26RandomField("unknown")
+
+
+def test_sun_random_against_paper():
+    sun10 = img.SunRandomField()
+    assert sun10.model == "Sun10"
+    assert sun10.rms(np.array([-8.5, 0.0, 15.0]), 0.0, np.array([0.0, 2.0, -4.0])) == pytest.approx([3.0, 3.0, 3.0])
+
+    sun10b = img.SunRandomField("Sun10b")
+    assert (sun10b.b_iso, sun10b.r0, sun10b.f_disk, sun10b.h_halo, sun10b.h_disk) == (6.4, 30.0, 0.5, 3.0, 1.0)
+    assert sun10b.rms(-8.5, 0.0, 0.0) == pytest.approx(6.4)
+    assert sun10b.rms(-8.5 - 30.0, 0.0, 0.0) == pytest.approx(6.4 / np.e)
+    z = 2.0
+    expected = 6.4 * (0.5 / np.cosh(z / 3.0) ** 2 + 0.5 / np.cosh(z / 1.0) ** 2)
+    assert sun10b.rms(0.0, 8.5, z) == pytest.approx(expected)
+
+    sun10b.set_model("Sun10")
+    assert sun10b.b_iso == 3.0
+    with pytest.raises(ValueError):
+        img.SunRandomField("unknown")
 
 
 def test_jf12_random_variants():

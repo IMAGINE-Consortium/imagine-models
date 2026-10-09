@@ -119,4 +119,5 @@ void bind_gaussian_scalar(py::module_ &m);
 void bind_lognormal(py::module_ &m);
 void bind_jf12_random(py::module_ &m);
 void bind_uf26_random(py::module_ &m);
+void bind_sun_random(py::module_ &m);
 #endif
