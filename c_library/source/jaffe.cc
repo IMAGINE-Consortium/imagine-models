@@ -338,4 +338,12 @@ template <typename T> T JaffeMagneticField::halo_scaling(const double &z, const 
 
 IMAGINE_INSTANTIATE_VECTOR_MODEL(JaffeMagneticField)
 
+// used by JaffeRandomField
+template Vec3<double> JaffeMagneticField::orientation<double>(const double &, const double &, const double &,
+                                                              const JaffeParameters<double> &) const;
+template double JaffeMagneticField::radial_scaling<double>(const double &, const double &,
+                                                           const JaffeParameters<double> &) const;
+template std::vector<double> JaffeMagneticField::arm_compress<double>(const double &, const double &, const double &,
+                                                                      const JaffeParameters<double> &) const;
+
 }

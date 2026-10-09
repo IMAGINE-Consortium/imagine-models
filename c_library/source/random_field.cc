@@ -1,5 +1,6 @@
 #include <cmath>
 #include <random>
+#include <stdexcept>
 
 #include "ImagineModelsRandom/RandomField.h"
 
@@ -40,7 +41,9 @@ double RandomField::simple_spectrum(const double &abs_k, const double &k0, const
 }
 
 double RandomField::mode_power(const double &abs_k) const {
-    return apply_spectrum ? spectrum(abs_k) : 1.;
+    if (!apply_spectrum)
+        return 1.;
+    return abs_k < k_min ? 0. : spectrum(abs_k);
 }
 
 void RandomField::seed_complex_random_numbers(fftw_complex *vec, const std::array<int, 3> &shp,
@@ -75,6 +78,8 @@ void RandomField::seed_complex_random_numbers(fftw_complex *vec, const std::arra
                 const double multiplicity = (l == 0 or l == nyquist_z) ? 1. : 2.;
                 total_power += multiplicity * mode_power(wave_vector_length(i, j, l));
             }
+    if (!(total_power > 0.))
+        throw std::invalid_argument("RandomField: no Fourier modes with power on this grid (k_min too large?).");
 
     auto gen = std::mt19937(seed);
     StandardNormal nd;

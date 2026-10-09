@@ -24,7 +24,8 @@ template <typename Field, typename PyClass> void bind_statistics(PyClass &cls) {
             },
             "x"_a, "y"_a, "z"_a, doc::variance)
         .def("spectrum", &Field::spectrum, "abs_k"_a, doc::spectrum)
-        .def_readwrite("apply_spectrum", &Field::apply_spectrum);
+        .def_readwrite("apply_spectrum", &Field::apply_spectrum)
+        .def_readwrite("k_min", &Field::k_min);
 }
 
 void bind_random_bases(py::module_ &m) {
@@ -43,6 +44,20 @@ void bind_random_bases(py::module_ &m) {
             },
             "grid"_a, "seed"_a, doc::random_numbers)
         .def("anisotropy_direction", &RandomVectorField::anisotropy_direction, "x"_a, "y"_a, "z"_a)
+        .def(
+            "isotropic_rms",
+            [](const RandomVectorField &self, const py::object &x, const py::object &y, const py::object &z) {
+                return map_positions([&](double a, double b, double c) { return self.isotropic_rms(a, b, c); }, x, y,
+                                     z);
+            },
+            "x"_a, "y"_a, "z"_a)
+        .def(
+            "ordered_amplitude",
+            [](const RandomVectorField &self, const py::object &x, const py::object &y, const py::object &z) {
+                return map_positions([&](double a, double b, double c) { return self.ordered_amplitude(a, b, c); }, x,
+                                     y, z);
+            },
+            "x"_a, "y"_a, "z"_a)
         .def_readwrite("clean_divergence", &RandomVectorField::clean_divergence)
         .def_readwrite("apply_anisotropy", &RandomVectorField::apply_anisotropy)
         .def_readwrite("anisotropy_rho", &RandomVectorField::anisotropy_rho);

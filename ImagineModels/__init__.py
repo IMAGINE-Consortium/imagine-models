@@ -39,6 +39,7 @@ if has_fftw:
     from ._core import (
         ESRandomField,
         GaussianScalarField,
+        JaffeRandomField,
         JF12RandomField,
         LogNormalScalarField,
         RandomScalarField,

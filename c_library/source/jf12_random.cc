@@ -11,7 +11,13 @@ void JF12RandomField::set_model(const std::string &model) {
     if (std::find(available_models.begin(), available_models.end(), model) == available_models.end())
         throw std::invalid_argument("Unknown JF12 model '" + model + "'.");
     active_model = model;
-    regular_base.set_model(model);
+    regular_base.set_model(model == "Beck16" ? "JF12" : model);
+    spectral_offset = 1.;
+    spectral_slope = 2.;
+    k_min = 0.;
+    f_iso = 1.;
+    f_aniso = 0.;
+    beta = 1.36;
     b0_1 = 10.81;
     b0_2 = 6.96;
     b0_3 = 9.59;
@@ -25,6 +31,14 @@ void JF12RandomField::set_model(const std::string &model) {
     arm_shift = 1.;
     if (model == "JF12")
         return;
+    if (model == "Beck16") { // Sect. 3.1
+        f_iso = 0.6;
+        f_aniso = 0.3;
+        spectral_offset = 0.;
+        spectral_slope = 5. / 3.;
+        k_min = 1.;
+        return;
+    }
     const double b_iso = 7.8;
     b0_1 = b0_3 = b0_5 = b0_7 = 0.4 * b_iso;
     b0_2 = b0_4 = b0_6 = b0_8 = 0.8 * b_iso;
@@ -47,6 +61,21 @@ Vec3<double> JF12RandomField::anisotropy_direction(const double &x, const double
 }
 
 double JF12RandomField::rms(const double &x, const double &y, const double &z) const {
+    return combined_rms(isotropic_rms(x, y, z), apply_anisotropy ? ordered_amplitude(x, y, z) : 0.);
+}
+
+double JF12RandomField::isotropic_rms(const double &x, const double &y, const double &z) const {
+    return f_iso * profile(x, y, z);
+}
+
+double JF12RandomField::ordered_amplitude(const double &x, const double &y, const double &z) const {
+    if (f_aniso == 0.)
+        return 0.;
+    const Vec3<double> b = regular_base.at_position(x, y, z);
+    return f_aniso * std::sqrt(1.5 * beta) * std::sqrt(b[0] * b[0] + b[1] * b[1] + b[2] * b[2]); // eq. 2.9
+}
+
+double JF12RandomField::profile(const double &x, const double &y, const double &z) const {
 
     const double r{sqrt(x * x + y * y)};
     const double rho{sqrt(x * x + y * y + z * z)};

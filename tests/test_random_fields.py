@@ -188,6 +188,83 @@ def test_anisotropy(rho):
     )
 
 
+class VerticalOrdered(VerticalAnisotropy):
+    def ordered_amplitude(self, x, y, z):
+        return 3.0
+
+
+def test_ordered_component():
+    model = VerticalOrdered(rms=2.0)
+    model.clean_divergence = False
+    assert model.isotropic_rms(0.0, 0.0, 0.0) == 2.0 and model.ordered_amplitude(0.0, 0.0, 0.0) == 3.0
+    samples = [model.sample(stat_grid, seed) for seed in seeds]
+    _within([(b**2).sum(axis=0).mean() for b in samples], 4.0 + (12.0 + 9.0) / 3.0)
+    _within([(b[2] ** 2).mean() for b in samples], 25.0 / 3.0)
+    model.apply_anisotropy = False
+    _within([(model.sample(stat_grid, seed) ** 2).sum(axis=0).mean() for seed in seeds], 4.0)
+
+
+def test_k_min():
+    model = ConstantRandomField(rms=2.0, slope=2.0)
+    model.clean_divergence = False
+    model.k_min = 1.5
+    b = model.sample(stat_grid, 3)
+    power = np.abs(np.fft.fftn(b[0])) ** 2
+    k = np.sqrt(
+        sum(np.meshgrid(*[np.fft.fftfreq(n, d) ** 2 for n, d in zip(stat_grid.shape, [0.25] * 3)], indexing="ij"))
+    )
+    assert power[(k < 1.5) & (k > 0)].max() < 1e-20 * power.max()
+    _within([(model.sample(stat_grid, seed) ** 2).sum(axis=0).mean() for seed in seeds], 4.0)
+    model.k_min = 100.0
+    with pytest.raises(ValueError):
+        model.sample(stat_grid, 3)
+
+
+def test_beck16_against_paper():
+    beck = img.JF12RandomField("Beck16")
+    jf12 = img.JF12RandomField()
+    assert (beck.f_iso, beck.f_aniso, beck.beta, beck.k_min) == (0.6, 0.3, 1.36, 1.0)
+    assert (beck.spectral_offset, beck.spectral_slope) == (0.0, pytest.approx(5.0 / 3.0))
+    assert beck.regular_base.model == "JF12" and beck.b0_7 == jf12.b0_7
+    point = (-8.5, 1.0, 0.2)
+    b_reg = np.linalg.norm(jf12.regular_base.at_position(*point))
+    a_iso, a_ord = 0.6 * jf12.rms(*point), 0.3 * np.sqrt(1.5 * 1.36) * b_reg
+    assert beck.isotropic_rms(*point) == pytest.approx(a_iso)
+    assert beck.ordered_amplitude(*point) == pytest.approx(a_ord)
+    assert beck.rms(*point) == pytest.approx(np.sqrt(a_iso**2 + (2 * a_iso * a_ord + a_ord**2) / 3))
+    beck.clean_divergence = False
+    beck.apply_spectrum = False
+    rms = beck.rms(stat_grid)
+    selected = rms > 1e-3
+    ratios = [((beck.sample(stat_grid, s) ** 2).sum(axis=0)[selected] / rms[selected] ** 2).mean() for s in seeds]
+    _within(ratios, 1.0)
+    beck.set_model("JF12")
+    assert (beck.f_iso, beck.f_aniso, beck.k_min, beck.spectral_slope) == (1.0, 0.0, 0.0, 2.0)
+
+
+def test_jaffe_random_against_paper():
+    model = img.JaffeRandomField()
+    assert (model.b_rms, model.h_rms, model.r_grf, model.f_ord, model.k_min) == (3.5, 2.0, 20.0, 0.15, 10.0)
+    assert (model.spectral_offset, model.spectral_slope) == (0.0, 0.37)
+    # interarm points: background only
+    for r_ia in [8.5, 12.0]:
+        assert model.isotropic_rms(-r_ia, 0.0, 0.0) == pytest.approx(3.5 * np.exp(-(r_ia**2) / 400.0), rel=1e-3)
+    # arm centre: rho_c = C0 = 2.5
+    r = np.linspace(5.5, 11.5, 4000)
+    excess = model.isotropic_rms(-r, 0.0, 0.0) - 3.5 * np.exp(-(r**2) / 400.0)
+    assert excess.max() == pytest.approx(3.5 * 2.5, rel=1e-3)
+    assert np.allclose(model.ordered_amplitude(-r, 0.0, 0.0), 0.15 * excess)
+    direction = np.asarray(model.anisotropy_direction(-8.5, 1.0, 0.1))
+    coherent = np.asarray(model.regular_base.at_position(-8.5, 1.0, 0.1))
+    assert np.linalg.norm(np.cross(direction, coherent)) < 1e-12 * np.linalg.norm(coherent)
+    assert model.rms(0.0, 0.0, 21.0) == 0.0
+    with pytest.raises(ValueError):
+        model.sample(stat_grid, 3)
+    fine = img.RegularGrid(shape=[24, 24, 24], reference_point=[-8.8, -0.3, -0.3], increment=[0.025] * 3)
+    b = model.sample(fine, 3)
+    assert b.shape == (3, 24, 24, 24) and np.isfinite(b).all()
+
+
 def test_jf12_anisotropy_follows_regular_field():
     model = img.JF12RandomField()
     regular = img.JF12MagneticField()

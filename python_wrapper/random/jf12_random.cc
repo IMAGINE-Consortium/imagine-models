@@ -13,6 +13,9 @@ void bind_jf12_random(py::module_ &m) {
 
         .def_readwrite("spectral_offset", &JF12RandomField::spectral_offset)
         .def_readwrite("spectral_slope", &JF12RandomField::spectral_slope)
+        .def_readwrite("f_iso", &JF12RandomField::f_iso)
+        .def_readwrite("f_aniso", &JF12RandomField::f_aniso)
+        .def_readwrite("beta", &JF12RandomField::beta)
 
         .def_readwrite("b0_1", &JF12RandomField::b0_1)
         .def_readwrite("b0_2", &JF12RandomField::b0_2)

@@ -91,6 +91,7 @@ if(IMAGINE_HAS_FFTW)
         ${IM_SOURCE_DIR}/es_random.cc
         ${IM_SOURCE_DIR}/uf26_random.cc
         ${IM_SOURCE_DIR}/sun_random.cc
+        ${IM_SOURCE_DIR}/jaffe_random.cc
     )
 endif()
 

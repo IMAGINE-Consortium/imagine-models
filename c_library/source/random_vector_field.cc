@@ -48,7 +48,8 @@ void RandomVectorField::_sample(std::array<FFTWWorkspace *, 3> ws, const Regular
     unit_random_numbers(ws, grid, seed);
 
     auto apply_profile = [&](std::array<double, 3> &b_rand_val, const double xx, const double yy, const double zz) {
-        double sp = rms(xx, yy, zz);
+        const std::array<double, 3> g = b_rand_val;
+        double sp = isotropic_rms(xx, yy, zz);
         b_rand_val[0] *= sp;
         b_rand_val[1] *= sp;
         b_rand_val[2] *= sp;
@@ -59,6 +60,13 @@ void RandomVectorField::_sample(std::array<FFTWWorkspace *, 3> ws, const Regular
             if (e_length > 1e-10) {
                 for (double &c : e)
                     c /= e_length;
+                // ordered component
+                const double a_ord = ordered_amplitude(xx, yy, zz);
+                if (a_ord != 0.) {
+                    const double g_dot_e = g[0] * e[0] + g[1] * e[1] + g[2] * e[2];
+                    for (int ii = 0; ii < 3; ++ii)
+                        b_rand_val[ii] += a_ord * g_dot_e * e[ii];
+                }
                 const double rho2 = anisotropy_rho * anisotropy_rho;
                 const double rhonorm = 1. / std::sqrt(rho2 / 3. + 2. / (3. * rho2));
                 const double b_dot_e = b_rand_val[0] * e[0] + b_rand_val[1] * e[1] + b_rand_val[2] * e[2];

@@ -2,6 +2,7 @@
 #include <complex>
 #include <memory>
 #include <numeric>
+#include <stdexcept>
 #include <vector>
 
 #include <catch2/catch_template_test_macros.hpp>
@@ -37,6 +38,19 @@ public:
     Vec3<double> anisotropy_direction(const double &, const double &, const double &) const override {
         return {0., 0., 3.};
     }
+};
+
+class VerticalOrdered : public VerticalAnisotropy {
+public:
+    double ordered_amplitude(const double &, const double &, const double &) const override { return 3.; }
+};
+
+struct Beck16Field : JF12RandomField {
+    Beck16Field() : JF12RandomField("Beck16") { k_min = 0.; }
+};
+
+struct Jaffe13Uncut : JaffeRandomField {
+    Jaffe13Uncut() { k_min = 0.; }
 };
 
 void check_within(const std::vector<double> &values, double expected, double n_sigma = 5.) {
@@ -102,9 +116,10 @@ double relative_divergence(const VectorGridData &b, const RegularGrid &grid) {
 
 }
 
-using RandomModels = std::tuple<JF12RandomField, ESRandomField, UF26RandomField, SunRandomField, GaussianScalarField,
-                                LogNormalScalarField>;
-using RandomVectorModels = std::tuple<JF12RandomField, ESRandomField, UF26RandomField, SunRandomField>;
+using RandomModels = std::tuple<JF12RandomField, ESRandomField, UF26RandomField, SunRandomField, Beck16Field,
+                                Jaffe13Uncut, GaussianScalarField, LogNormalScalarField>;
+using RandomVectorModels =
+    std::tuple<JF12RandomField, ESRandomField, UF26RandomField, SunRandomField, Beck16Field, Jaffe13Uncut>;
 
 TEMPLATE_LIST_TEST_CASE("samples have the grid shape and are finite", "[random]", RandomModels) {
     TestType model;
@@ -273,6 +288,43 @@ TEMPLATE_LIST_TEST_CASE("evaluate_rms equals rms at each point", "[random]", Ran
     REQUIRE(on_cloud.size() == 3);
     for_each_point(
         cloud, [&](std::size_t idx, double x, double y, double z) { CHECK(on_cloud(0, idx) == model.rms(x, y, z)); });
+}
+
+TEST_CASE("ordered component adds its power along the direction", "[random]") {
+    VerticalOrdered model;
+    model.clean_divergence = false;
+    CHECK(model.rms(0., 0., 0.) == 2.); // overridden total
+    std::vector<double> energies, parallel;
+    for (int seed = 0; seed < n_seeds; ++seed) {
+        auto b = model.sample(stat_grid, seed);
+        energies.push_back(mean_square(b));
+        parallel.push_back(mean_square(b, 2));
+    }
+    check_within(energies, 4. + (12. + 9.) / 3.);
+    check_within(parallel, 25. / 3.);
+}
+
+TEST_CASE("k_min removes the modes below it", "[random]") {
+    ConstantRandomField model(2.);
+    model.k_min = 100.;
+    CHECK_THROWS_AS(model.sample(stat_grid, 3), std::invalid_argument);
+    model.k_min = 1.5;
+    model.clean_divergence = false;
+    std::vector<double> energies;
+    for (int seed = 0; seed < n_seeds; ++seed)
+        energies.push_back(mean_square(model.sample(stat_grid, seed)));
+    check_within(energies, 4.);
+}
+
+TEST_CASE("Jaffe13 random field on a grid finer than its outer scale", "[random]") {
+    JaffeRandomField model;
+    CHECK(model.k_min == 10.);
+    CHECK_THROWS_AS(model.sample(stat_grid, 3), std::invalid_argument);
+    const RegularGrid fine({24, 24, 24}, {-8.8, -.3, -.3}, {.025, .025, .025});
+    auto b = model.sample(fine, 3);
+    CHECK(all_finite(b.data));
+    CHECK(mean_square(b) > 0.);
+    CHECK(b.data == model.sample(fine, 3).data);
 }
 
 TEST_CASE("JF12 anisotropy follows the regular JF12 field", "[random]") {

@@ -120,4 +120,5 @@ void bind_lognormal(py::module_ &m);
 void bind_jf12_random(py::module_ &m);
 void bind_uf26_random(py::module_ &m);
 void bind_sun_random(py::module_ &m);
+void bind_jaffe_random(py::module_ &m);
 #endif

@@ -23,6 +23,7 @@ public:
     virtual ~RandomField() = default;
 
     bool apply_spectrum = true;
+    double k_min = 0.; // 1/kpc, no power below
 
     virtual double spectrum(const double &abs_k) const = 0;
 

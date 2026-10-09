@@ -15,6 +15,12 @@ public:
     Vec3<double> anisotropy_direction(const double &x, const double &y, const double &z) const override {
         PYBIND11_OVERRIDE(Vec3<double>, RandomVectorField, anisotropy_direction, x, y, z);
     }
+    double isotropic_rms(const double &x, const double &y, const double &z) const override {
+        PYBIND11_OVERRIDE(double, RandomVectorField, isotropic_rms, x, y, z);
+    }
+    double ordered_amplitude(const double &x, const double &y, const double &z) const override {
+        PYBIND11_OVERRIDE(double, RandomVectorField, ordered_amplitude, x, y, z);
+    }
 };
 
 class PyRandomScalarField : public RandomScalarField {

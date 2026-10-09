@@ -1,7 +1,8 @@
-// Reference: Jansson & Farrar 2012, arXiv:1210.7820; Planck variants: Planck XLII 2016, arXiv:1601.00546 (Table C.1)
+// Reference: Jansson & Farrar 2012, arXiv:1210.7820; Planck variants: Planck XLII 2016, arXiv:1601.00546 (Table C.1); Beck16 variant: Beck et al. 2016, arXiv:1409.5120 (eqs. 2.6-2.9)
 // Based on: hammurabiX, GPL-3.0; compared with CRPropa (JF12Field, PlanckJF12bField), GPL-3.0
 // Deviations:
 // - Planck variants without the striation factor beta
+// - Beck16: divergence cleaning (if on) acts on the total random field; Beck et al. use a divergence-free G before scaling
 
 #pragma once
 
@@ -35,10 +36,13 @@ public:
     const double inc = 11.5;                                            // inclination, in degrees
     double spectral_offset = 1.;
     double spectral_slope = 2.;
+    double f_iso = 1.;   // isotropic scaling
+    double f_aniso = 0.; // anisotropic scaling
+    double beta = 1.36;  // striation
 
     JF12MagneticField regular_base = JF12MagneticField();
 
-    const std::array<std::string, 3> available_models{"JF12", "Planck12b", "Planck12c"};
+    const std::array<std::string, 4> available_models{"JF12", "Planck12b", "Planck12c", "Beck16"};
     explicit JF12RandomField(const std::string &model = "JF12") { set_model(model); }
     void set_model(const std::string &model);
     const std::string &model() const { return active_model; }
@@ -46,9 +50,12 @@ public:
 
     double spectrum(const double &abs_k) const override;
     double rms(const double &x, const double &y, const double &z) const override;
+    double isotropic_rms(const double &x, const double &y, const double &z) const override;
+    double ordered_amplitude(const double &x, const double &y, const double &z) const override;
     Vec3<double> anisotropy_direction(const double &x, const double &y, const double &z) const override;
 
 private:
+    double profile(const double &x, const double &y, const double &z) const;
     std::string active_model = "JF12";
 };
 

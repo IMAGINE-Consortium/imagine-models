@@ -9,5 +9,6 @@
 
 #include "ImagineModelsRandom/ESRandom.h"
 #include "ImagineModelsRandom/JF12Random.h"
+#include "ImagineModelsRandom/JaffeRandom.h"
 #include "ImagineModelsRandom/SunRandom.h"
 #include "ImagineModelsRandom/UF26Random.h"
