@@ -98,6 +98,7 @@ void bind_kst24(py::module_ &m);
 void bind_ne2025(py::module_ &m);
 void bind_plane_parallel(py::module_ &m);
 void bind_yt20(py::module_ &m);
+void bind_ps(py::module_ &m);
 void bind_pshirkov(py::module_ &m);
 void bind_jf12(py::module_ &m);
 void bind_stanev(py::module_ &m);

@@ -19,6 +19,7 @@ PYBIND11_MODULE(_core, m) {
     bind_ne2025(m);
     bind_plane_parallel(m);
     bind_yt20(m);
+    bind_ps(m);
     bind_pshirkov(m);
     bind_jf12(m);
     bind_stanev(m);

@@ -66,6 +66,7 @@ def _regular_cases():
         "KST24MagneticField",
         "NE2025",
         "PlaneParallelDensity",
+        "PSMagneticField",
         "PshirkovMagneticField",
         "SVT22MagneticField",
         "StanevBSSMagneticField",
@@ -94,6 +95,7 @@ def _regular_cases():
     cases["JaffeMagneticField__quadruple"] = ("JaffeMagneticField", {"quadruple": True})
     cases["PshirkovMagneticField__ass"] = ("PshirkovMagneticField", {"set_model": ["ASS"]})
     cases["PshirkovMagneticField__no_halo"] = ("PshirkovMagneticField", {"useHalo": False})
+    cases["PSMagneticField__no_dipole"] = ("PSMagneticField", {"do_dipole": False})
     cases["WMAPMagneticField__anti"] = ("WMAPMagneticField", {"b_anti": True})
     for disk in ["Ad1", "Bd1", "Dd1"]:
         for halo in ["C0", "C1"]:

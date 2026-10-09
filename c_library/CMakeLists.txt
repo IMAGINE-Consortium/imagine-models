@@ -74,6 +74,7 @@ set(IM_SRC_FILES
     ${IM_SOURCE_DIR}/stanev.cc
     ${IM_SOURCE_DIR}/fauvet.cc
     ${IM_SOURCE_DIR}/tt.cc
+    ${IM_SOURCE_DIR}/ps.cc
     ${IM_SOURCE_DIR}/hmr.cc
     ${IM_SOURCE_DIR}/svt22.cc
     ${IM_SOURCE_DIR}/uf24.cc

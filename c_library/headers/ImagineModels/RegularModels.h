@@ -11,6 +11,7 @@
 #include "ImagineModels/Jaffe.h"
 #include "ImagineModels/KST24.h"
 #include "ImagineModels/NE2025.h"
+#include "ImagineModels/PS.h"
 #include "ImagineModels/PlaneParallel.h"
 #include "ImagineModels/Pshirkov.h"
 #include "ImagineModels/SVT22.h"

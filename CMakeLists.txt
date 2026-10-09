@@ -42,6 +42,7 @@ if(BUILD_PYTHON_PACKAGE)
         ${PW}/regular/plane_parallel.cc
         ${PW}/regular/yt20.cc
         ${PW}/regular/jf12.cc
+        ${PW}/regular/ps.cc
         ${PW}/regular/pshirkov.cc
         ${PW}/regular/stanev.cc
         ${PW}/regular/sun.cc

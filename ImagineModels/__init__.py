@@ -15,6 +15,7 @@ from ._core import (
     PlaneParallelDensity,
     PointCloud,
     PshirkovMagneticField,
+    PSMagneticField,
     RegularGrid,
     RegularScalarField,
     RegularVectorField,
